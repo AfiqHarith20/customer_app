@@ -160,7 +160,8 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                           ),
                         );
                       },
-                    ));
+                    ),
+                    );
         });
   }
 
