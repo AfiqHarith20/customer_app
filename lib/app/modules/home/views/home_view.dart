@@ -291,9 +291,7 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                                 Text(
                                   Constant.amountShow(
-                                    amount: controller
-                                        .customerModel.value.walletAmount
-                                        .toString(),
+                                    amount: controller.customerModel.value.walletAmount.toString() ?? '0',
                                   ),
                                   style: TextStyle(
                                     fontSize: 20,
@@ -307,10 +305,10 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(15, 15, 0, 0),
+                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                         //apply padding to all four sides
                         child: Text(
-                          'Latest News'.tr,
+                          'Information'.tr,
                           style: const TextStyle(
                             fontFamily: AppThemData.medium,
                             fontWeight: FontWeight.bold,
@@ -461,7 +459,7 @@ class _HomeViewState extends State<HomeView> {
                                                 style: const TextStyle(
                                                     fontSize: 14,
                                                     fontStyle: FontStyle.normal,
-                                                    color: Colors.blueGrey))
+                                                    color: Colors.blueGrey),),
                                           ],
                                         )
                                       ],
