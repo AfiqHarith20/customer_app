@@ -13,6 +13,7 @@ import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
 import 'package:customer_app/app/models/owner_model.dart';
 import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
+import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/models/referral_model.dart';
 import 'package:customer_app/app/models/review_model.dart';
 import 'package:customer_app/app/models/tax_model.dart';
@@ -687,6 +688,27 @@ class FireStoreUtils {
       return null;
     });
     return seasonPassList;
+  }
+
+  static Future<List<PrivatePassModel>?> getPrivatePassData() async {
+    List<PrivatePassModel> privatePassList = [];
+    await fireStore
+        .collection(CollectionName.privatePass)
+        .where('userType', isEqualTo: 'Customer')
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        PrivatePassModel privatePassModel =
+            PrivatePassModel.fromJson(element.data());
+        print('${element['passName']}');
+        privatePassList.add(privatePassModel);
+        print('-------length----->${privatePassList.length}');
+      }
+    }).catchError((error) {
+      log("Failed to get data: $error");
+      return null;
+    });
+    return privatePassList;
   }
 
   static Future<List<MyPurchasePassModel>?> getMySeasonPassData() async {

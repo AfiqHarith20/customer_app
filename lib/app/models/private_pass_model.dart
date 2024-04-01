@@ -1,4 +1,4 @@
-class PrivateParkModel {
+class PrivatePassModel {
   String? id;
   String? passName;
   String? validity;
@@ -7,9 +7,9 @@ class PrivateParkModel {
   bool? availability;
   bool? status;
 
-  PrivateParkModel ({this.id, this.passName, this.validity, this.price, this.userType, this.availability, this.status});
+  PrivatePassModel ({this.id, this.passName, this.validity, this.price, this.userType, this.availability, this.status});
 
-  PrivateParkModel.fromJson(Map<String, dynamic> json) {
+  PrivatePassModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     passName = json['passName'];
     validity = json['validity'];

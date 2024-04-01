@@ -1,4 +1,6 @@
 import 'package:customer_app/app/modules/notification_screen/views/notification_screen_view.dart';
+import 'package:customer_app/app/modules/purchase_pass_private/bindings/purchase_pass_private_binding.dart';
+import 'package:customer_app/app/modules/purchase_pass_private/views/purchase_pass_private_view.dart';
 import 'package:customer_app/app/modules/qrcode_screen/views/qrcode_screen_view.dart';
 import 'package:customer_app/app/modules/search_summon_screen/bindings/search_summon_screen_binding.dart';
 import 'package:customer_app/app/modules/search_summon_screen/views/search_summon_screen_view.dart';
@@ -247,6 +249,10 @@ class AppPages {
       page: () => const PurchasePassView(),
       binding: PurchasePassBinding(),
     ),
+    GetPage(
+      name: _Paths.PURCHASE_PASS_PRIVATE, 
+      page: () => PurchasePassPrivateView(), 
+      binding: PurchasePassPrivateBinding(),),
     GetPage(
       name: _Paths.MY_SEASON_PASS,
       page: () => const MySeasonPassView(),

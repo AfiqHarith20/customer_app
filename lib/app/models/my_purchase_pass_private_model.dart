@@ -1,4 +1,4 @@
-import 'package:customer_app/app/models/private_park_model.dart';
+import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyPurchasePassPrivateModel {
@@ -21,12 +21,12 @@ class MyPurchasePassPrivateModel {
 
   Timestamp? createAt;
 
-  PrivateParkModel? privateParkModel;
+  PrivatePassModel? privatePassModel;
 
   MyPurchasePassPrivateModel({
     this.id,
     this.customerId,
-    this.privateParkModel,
+    this.privatePassModel,
     this.fullName,
     this.email,
     this.identificationNo,
@@ -60,9 +60,9 @@ class MyPurchasePassPrivateModel {
     endDate = json['endDate'];
     createAt = json['createAt'];
     paymentType = json['paymentType'];
-    privateParkModel = json['privateParkModel'] != null
-        ? PrivateParkModel.fromJson(json['privateParkModel'])
-        : PrivateParkModel();
+    privatePassModel = json['privatePassModel'] != null
+        ? PrivatePassModel.fromJson(json['privatePassModel'])
+        : PrivatePassModel();
   }
 
   Map<String, dynamic> toJson() {
@@ -83,8 +83,8 @@ class MyPurchasePassPrivateModel {
     data['endDate'] = endDate;
     data['createAt'] = createAt;
     data['paymentType'] = paymentType;
-    if (privateParkModel != null) {
-      data['privateParkModel'] = privateParkModel!.toJson();
+    if (privatePassModel != null) {
+      data['privatePassModel'] = privatePassModel!.toJson();
     }
     return data;
   }

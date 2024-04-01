@@ -14,7 +14,7 @@ dependencies:
   firebase_storage: ^11.2.8
   flutter_local_notifications: ^16.1.0
   get: ^4.6.6
-  image_picker: ^1.0.4
+  image_picker: ^1.0.7
   intl: ^0.18.1
   syncfusion_flutter_datepicker: ^23.1.40
   pin_code_fields: ^8.0.1
@@ -52,6 +52,8 @@ dependencies:
 
   flutter:
     sdk: flutter
+  skeletonizer: ^1.1.1
+  custom_sliding_segmented_control: ^1.8.1
 
 dev_dependencies:
   flutter_lints: ^2.0.3

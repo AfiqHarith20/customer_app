@@ -39,60 +39,60 @@ class PurchasePassView extends GetView<PurchasePassController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Pass Type*".tr,
-                        style: TextStyle(fontSize: 16, color: AppColors.darkGrey06, fontFamily: AppThemData.regular),
-                      ),
-                      const SizedBox(height: 5),
-                      DropdownButtonFormField<SeasonPassModel>(
-                          isExpanded: false,
-                          icon: const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: AppColors.lightGrey10,
-                            size: 30,
-                          ),
-                          decoration: InputDecoration(
-                            errorStyle: const TextStyle(color: Colors.red),
-                            filled: true,
-                            fillColor: AppColors.white,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
-                            disabledBorder: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: AppColors.white, width: 1),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: AppColors.white, width: 1),
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: AppColors.white, width: 1),
-                            ),
-                            errorBorder: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: AppColors.white, width: 1),
-                            ),
-                            border: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(color: AppColors.white, width: 1),
-                            ),
-                            hintStyle: const TextStyle(fontFamily: AppThemData.regular),
-                          ),
-                          value: controller.selectedSessionPass.value,
-                          onChanged: (value) {
-                            controller.selectedSessionPass.value = value!;
-                          },
-                          style: const TextStyle(color: AppColors.darkGrey10),
-                          hint: Text(
-                            "Select Pass Type".tr,
-                            style: const TextStyle(fontFamily: AppThemData.semiBold, color: AppColors.darkGrey10),
-                          ),
-                          items: controller.seasonPassList.map((item) {
-                            return DropdownMenuItem<SeasonPassModel>(
-                              value: item,
-                              child: Text(item.passName.toString(), style: const TextStyle(fontFamily: AppThemData.semiBold, color: AppColors.darkGrey10)),
-                            );
-                          }).toList()),
+                      // Text(
+                      //   "Pass Type*".tr,
+                      //   style: TextStyle(fontSize: 16, color: AppColors.darkGrey06, fontFamily: AppThemData.regular),
+                      // ),
+                      // const SizedBox(height: 5),
+                      // DropdownButtonFormField<SeasonPassModel>(
+                      //     isExpanded: false,
+                      //     icon: const Icon(
+                      //       Icons.keyboard_arrow_down,
+                      //       color: AppColors.lightGrey10,
+                      //       size: 30,
+                      //     ),
+                      //     decoration: InputDecoration(
+                      //       errorStyle: const TextStyle(color: Colors.red),
+                      //       filled: true,
+                      //       fillColor: AppColors.white,
+                      //       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+                      //       disabledBorder: UnderlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(30),
+                      //         borderSide: const BorderSide(color: AppColors.white, width: 1),
+                      //       ),
+                      //       focusedBorder: UnderlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(30),
+                      //         borderSide: const BorderSide(color: AppColors.white, width: 1),
+                      //       ),
+                      //       enabledBorder: UnderlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(30),
+                      //         borderSide: const BorderSide(color: AppColors.white, width: 1),
+                      //       ),
+                      //       errorBorder: UnderlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(30),
+                      //         borderSide: const BorderSide(color: AppColors.white, width: 1),
+                      //       ),
+                      //       border: UnderlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(30),
+                      //         borderSide: const BorderSide(color: AppColors.white, width: 1),
+                      //       ),
+                      //       hintStyle: const TextStyle(fontFamily: AppThemData.regular),
+                      //     ),
+                      //     value: controller.selectedSessionPass.value,
+                      //     onChanged: (value) {
+                      //       controller.selectedSessionPass.value = value!;
+                      //     },
+                      //     style: const TextStyle(color: AppColors.darkGrey10),
+                      //     hint: Text(
+                      //       "Select Pass Type".tr,
+                      //       style: const TextStyle(fontFamily: AppThemData.semiBold, color: AppColors.darkGrey10),
+                      //     ),
+                      //     items: controller.seasonPassList.map((item) {
+                      //       return DropdownMenuItem<SeasonPassModel>(
+                      //         value: item,
+                      //         child: Text(item.passName.toString(), style: const TextStyle(fontFamily: AppThemData.semiBold, color: AppColors.darkGrey10)),
+                      //       );
+                      //     }).toList()),
                       TextFieldWidgetPrefix(
                         prefix: Padding(
                           padding: const EdgeInsets.all(12.0),

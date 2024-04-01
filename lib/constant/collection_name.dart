@@ -15,5 +15,6 @@ class CollectionName {
   static const String review = "review";
   static const String carousel = "carousel";
   static const String seasonPass = "season_pass";
+  static const String privatePass = "private_park";
 
 }

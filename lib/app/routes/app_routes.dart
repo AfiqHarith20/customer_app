@@ -36,6 +36,7 @@ abstract class Routes {
   static const CONTACT_US_SCREEN = _Paths.CONTACT_US_SCREEN;
   static const SEASON_PASS = _Paths.SEASON_PASS;
   static const PURCHASE_PASS = _Paths.PURCHASE_PASS;
+  static const PURCHASE_PASS_PRIVATE = _Paths.PURCHASE_PASS_PRIVATE;
   static const MY_SEASON_PASS = _Paths.MY_SEASON_PASS;
   static const SEARCH_SUMMON_SCREEN = _Paths.SEARCH_SUMMON_SCREEN;
   static const QRCODE_SCREEN = _Paths.QRCODE_SCREEN;
@@ -77,6 +78,7 @@ abstract class _Paths {
   static const CONTACT_US_SCREEN = '/contact-us-screen';
   static const SEASON_PASS = '/season-pass';
   static const PURCHASE_PASS = '/purchase-pass';
+  static const PURCHASE_PASS_PRIVATE = '/purchase-private-pass';
   static const MY_SEASON_PASS = '/my-season-pass';
   static const SEARCH_SUMMON_SCREEN = '/search-summon-screen';
   static const QRCODE_SCREEN = '/qrcode-screen';

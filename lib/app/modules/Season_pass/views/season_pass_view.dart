@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/models/private_pass_model.dart';
+import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:sliding_switch/sliding_switch.dart';
 
 import '../../../../constant/constant.dart';
 import '../../../../themes/app_colors.dart';
@@ -52,95 +56,155 @@ class SeasonPassView extends GetView<SeasonPassController> {
               //   )
               // ],
             ),
-            body: controller.isLoading.value
-                ? Constant.loader()
-                : ListView.builder(
-                    itemCount: controller.seasonPassList.length,
-                    itemBuilder: (context, index) {
-                      SeasonPassModel seasonPassModel = controller.seasonPassList[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.darkGrey02.withOpacity(0.5))),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: ListTile(
-                                  leading: Container(
-                                    height: 56,
-                                    width: 56,
-                                    decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(200)),
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icons/ic_pass.svg',
-                                        height: 20,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    seasonPassModel.passName.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: AppThemData.bold,
-                                      color: AppColors.darkGrey08,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    'RM ${seasonPassModel.price} ',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: AppThemData.medium,
-                                      color: AppColors.yellow04,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Divider(height: 2, color: AppColors.darkGrey02.withOpacity(0.5)),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              itemWidget(
-                                subText: '${seasonPassModel.validity}',
-                                title: "Validity:",
-                              ),
-                              // itemWidget(
-                              //   subText: '${seasonPassModel.userType}',
-                              //   title: "This is for:",
-                              // ),
-                              // itemWidget(
-                              //   subText: "Yes".tr,
-                              //   title: 'Availability:',r
-                              // ),
-                              InkWell(
-                                onTap: () {
-                                  Get.toNamed(Routes.PURCHASE_PASS, arguments: {"seasonPassModel": seasonPassModel});
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(left: 15, right: 15, top: 10),
-                                  height: 56,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(200)),
-                                  child: Center(
-                                    child: Text("Buy".tr,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: AppThemData.regular,
-                                        )),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                   body: controller.isLoading.value
+              ? Constant.loader()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Custom sliding segmented control
+                    _buildCustomSliding(controller),
+                    // Content based on selected segment
+                    _buildContent(controller.seasonPassList, controller.privatePassList),
+                  ],
+                ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCustomSliding(SeasonPassController controller) {
+    return Center(
+      child: SlidingSwitch(
+                      value: controller.selectedSegment == 0 ? true : false,
+                      width: 350,
+                      onChanged: (bool value) {
+                        controller.changeSegment(value);
+                      },
+                      height: 40,
+                      animationDuration: const Duration(milliseconds: 400),
+                      onTap: () {},
+                      onDoubleTap: () {},
+                      onSwipe: () {},
+                      textOff: "Season Pass".tr,
+                      textOn: "Special Lot".tr,
+                      colorOn: Colors.black,
+                      colorOff: Colors.black,
+                      background: Colors.amber,
+                      buttonColor: const Color(0xfff7f5f7),
+                      inactiveColor: const Color(0xff636f7b),
+                    ),
+      
+    );
+  }
+
+  Widget _buildContent(List<SeasonPassModel> seasonPassList, List<PrivatePassModel> privatePassList) {
+    return Expanded(
+      child: Obx(() {
+        if (controller.selectedSegment.value == false) {
+          return _buildPassSection(seasonPassList);
+        } else {
+          return _buildPrivatePassSection(privatePassList);
+        }
+      }),
+    );
+  }
+
+  Widget _buildPassSection(List<SeasonPassModel> seasonPassList) {
+    return ListView.builder(
+      itemCount: seasonPassList.length,
+      itemBuilder: (context, index) {
+        SeasonPassModel seasonPassModel = seasonPassList[index];
+        return _buildPassItem(seasonPassModel);
+      },
+    );
+  }
+
+  Widget _buildPrivatePassSection(List<PrivatePassModel> privatePassList) {
+    return ListView.builder(
+      itemCount: privatePassList.length,
+      itemBuilder: (context, index) {
+        PrivatePassModel privatePassModel = privatePassList[index];
+        return _buildPassItem(privatePassModel);
+      },
+    );
+  }
+
+  Widget _buildPassItem(dynamic passModel) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.darkGrey02.withOpacity(0.5)),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: ListTile(
+                leading: Container(
+                  height: 56,
+                  width: 56,
+                  decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(200)),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/icons/ic_pass.svg',
+                      height: 20,
+                    ),
                   ),
-          );
-        });
+                ),
+                title: Text(
+                  passModel.passName.toString(),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontFamily: AppThemData.bold,
+                    color: AppColors.darkGrey08,
+                  ),
+                ),
+                subtitle: Text(
+                  'RM ${passModel.price} ',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontFamily: AppThemData.medium,
+                    color: AppColors.yellow04,
+                  ),
+                ),
+              ),
+            ),
+            Divider(height: 2, color: AppColors.darkGrey02.withOpacity(0.5)),
+            const SizedBox(height: 10),
+            itemWidget(subText: '${passModel.validity}', title: "Validity:"),
+            InkWell(
+              onTap: () {
+                // Adjust navigation based on the pass type
+                if (passModel is SeasonPassModel) {
+                  Get.toNamed(Routes.PURCHASE_PASS, arguments: {"seasonPassModel": passModel});
+                } else if (passModel is PrivatePassModel) {
+                  Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {"privatePassModel": passModel});
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.only(left: 15, right: 15, top: 10),
+                height: 56,
+                width: double.infinity,
+                decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(200)),
+                child: Center(
+                  child: Text(
+                    passModel is SeasonPassModel ? "Buy".tr : "Buy".tr,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontFamily: AppThemData.regular,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget itemWidget({
@@ -152,18 +216,22 @@ class SeasonPassView extends GetView<SeasonPassController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title.tr,
-              style: const TextStyle(
-                fontSize: 16,
-                fontFamily: AppThemData.regular,
-                color: AppColors.darkGrey07,
-              )),
-          Text(subText.tr,
-              style: const TextStyle(
-                fontSize: 16,
-                fontFamily: AppThemData.medium,
-                color: AppColors.labelColorLightPrimary,
-              )),
+          Text(
+            title.tr,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: AppThemData.regular,
+              color: AppColors.darkGrey07,
+            ),
+          ),
+          Text(
+            subText.tr,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: AppThemData.medium,
+              color: AppColors.labelColorLightPrimary,
+            ),
+          ),
         ],
       ).marginOnly(left: 10, right: 10),
     );
