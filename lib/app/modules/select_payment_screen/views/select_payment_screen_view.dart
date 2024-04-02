@@ -46,16 +46,18 @@ class SelectPaymentScreenView extends StatelessWidget {
                               image: "assets/images/wallet.png"),
                         ),
                         Visibility(
-                            visible: controller.paymentModel.value.commercePay !=
-                                null &&
-                                controller.paymentModel.value.commercePay!.enable ==
+                            visible: controller
+                                        .paymentModel.value.commercePay !=
+                                    null &&
+                                controller.paymentModel.value.commercePay!
+                                        .enable ==
                                     true,
                             child: paymentDecoration(
                                 controller: controller,
-                                value: controller.paymentModel.value.commercePay!.name
+                                value: controller
+                                    .paymentModel.value.commercePay!.name
                                     .toString(),
-                                image: "assets/images/online_banking.png")
-                        ),
+                                image: "assets/images/online_banking.png")),
                         Visibility(
                             visible: controller.paymentModel.value.strip !=
                                     null &&
@@ -65,8 +67,7 @@ class SelectPaymentScreenView extends StatelessWidget {
                                 controller: controller,
                                 value: controller.paymentModel.value.strip!.name
                                     .toString(),
-                                image: "assets/images/stripe.png")
-                        ),
+                                image: "assets/images/stripe.png")),
                         Visibility(
                             visible: controller.paymentModel.value.paypal !=
                                     null &&
@@ -77,8 +78,7 @@ class SelectPaymentScreenView extends StatelessWidget {
                                 value: controller
                                     .paymentModel.value.paypal!.name
                                     .toString(),
-                                image: "assets/images/paypal.png")
-                        )
+                                image: "assets/images/paypal.png"))
                       ],
                     ),
                   ),
@@ -101,9 +101,9 @@ class SelectPaymentScreenView extends StatelessWidget {
                       controller.paymentModel.value.commercePay!.name) {
                     controller.commercepayMakePayment(
                         amount: double.parse(controller.purchasePassModel.value
-                            .seasonPassModel!.price!)
+                                .seasonPassModel!.price!)
                             .toStringAsFixed(
-                            Constant.currencyModel!.decimalDigits!));
+                                Constant.currencyModel!.decimalDigits!));
                     Get.toNamed(Routes.SELECT_BANK_PROVIDER_SCREEN);
                   } else if (controller.selectedPaymentMethod.value ==
                       controller.paymentModel.value.strip!.name) {
@@ -204,17 +204,22 @@ paymentDecoration(
                         color: AppColors.darkGrey08),
                   ),
                 ),
-                (value == "wallet")?
-                  Text(
-                    "Available Balance:-".tr + Constant.amountShow(amount: controller.customerModel.value.walletAmount),
-                    style: const TextStyle(
-                        fontFamily: AppThemData.medium,
-                        color: AppColors.darkGrey05),
-                  ) : Text(
-                  "Select Bank".tr,
-                  style: const TextStyle(
-                      fontFamily: AppThemData.medium,
-                      color: AppColors.darkGrey05),)
+                (value == "wallet")
+                    ? Text(
+                        "Available Balance:-".tr +
+                            Constant.amountShow(
+                                amount: controller
+                                    .customerModel.value.walletAmount),
+                        style: const TextStyle(
+                            fontFamily: AppThemData.medium,
+                            color: AppColors.darkGrey05),
+                      )
+                    : Text(
+                        "Select Bank".tr,
+                        style: const TextStyle(
+                            fontFamily: AppThemData.medium,
+                            color: AppColors.darkGrey05),
+                      )
               ],
             ),
           ),

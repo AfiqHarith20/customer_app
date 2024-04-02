@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/admin_commission.dart';
@@ -13,6 +14,8 @@ import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
 import 'package:customer_app/app/models/owner_model.dart';
 import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
+import 'package:customer_app/app/models/pending_pass_model.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/models/referral_model.dart';
 import 'package:customer_app/app/models/review_model.dart';
@@ -23,6 +26,7 @@ import 'package:customer_app/constant/collection_name.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 import '../app/models/carousel_model.dart';
 import '../app/models/my_purchase_pass_model.dart';
@@ -666,6 +670,57 @@ class FireStoreUtils {
       log("Failed to update user: $error");
       isAdded = false;
     });
+    return isAdded;
+  }
+
+  static Future<bool?> setPendingPass(
+      PendingPassModel pendingPassModel, XFile? imageFile) async {
+    bool isAdded = false;
+    debugPrint('Adding pending pass: ${pendingPassModel.toJson()}');
+
+    // Add the pending pass data to Firestore
+    await fireStore
+        .collection(CollectionName.pendingPass)
+        .doc(pendingPassModel.id)
+        .set(pendingPassModel.toJson())
+        .then((value) {
+      isAdded = true;
+    }).catchError((error) {
+      print("Failed to send detail: $error");
+      isAdded = false;
+    });
+
+    // Upload image if it exists
+    if (imageFile != null) {
+      try {
+        // Convert XFile to File
+        File file = File(imageFile.path);
+
+        // Get a reference to the storage service
+        firebase_storage.FirebaseStorage storage =
+            firebase_storage.FirebaseStorage.instance;
+
+        // Create a reference to the location you want to upload to in Firebase Storage
+        firebase_storage.Reference ref =
+            storage.ref().child('parkingImages/${pendingPassModel.id}.jpg');
+
+        // Upload the file to Firebase Storage
+        await ref.putFile(file);
+
+        // Get the download URL
+        String imageUrl = await ref.getDownloadURL();
+
+        // Assign the imageUrl to pendingPassModel
+        pendingPassModel.image = imageUrl;
+
+        // Set isAdded to true
+        isAdded = true;
+      } catch (error) {
+        print('Failed to upload image: $error');
+        return null;
+      }
+    }
+
     return isAdded;
   }
 

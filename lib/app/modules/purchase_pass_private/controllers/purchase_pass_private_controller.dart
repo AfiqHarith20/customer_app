@@ -1,6 +1,8 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
+import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/models/customer_model.dart';
@@ -9,6 +11,7 @@ import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -34,10 +37,9 @@ class PurchasePassPrivateController extends GetxController {
     "Pas Bulanan 6",
     "Pas Bulanan 12"
   ];
-  Rx<PrivatePassModel> selectedSessionPass = PrivatePassModel().obs;
+  Rx<PrivatePassModel> selectedPrivatePass = PrivatePassModel().obs;
 
-  Rx<MyPurchasePassPrivateModel> purchasePassModel =
-      MyPurchasePassPrivateModel().obs;
+  Rx<PendingPassModel> pendingPassModel = PendingPassModel().obs;
   final FirebaseAuth auth = FirebaseAuth.instance;
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
   RxList<File> imageFiles = <File>[].obs;
@@ -47,7 +49,7 @@ class PurchasePassPrivateController extends GetxController {
   }
 
   Rx<CustomerModel> customerModel = CustomerModel().obs;
-  File? imageFile;
+  XFile? imageFile;
 
   @override
   void onInit() {
@@ -62,13 +64,13 @@ class PurchasePassPrivateController extends GetxController {
         privatePassList.value = value;
       }
     });
-
     dynamic argumentData = Get.arguments;
-    if (argumentData != null && argumentData['seasonPassModel'] != null) {
-      PrivatePassModel temp = argumentData['seasonPassModel'];
-      selectedSessionPass.value =
-          privatePassList.firstWhereOrNull((p0) => p0.id == temp.id)!;
+    if (argumentData != null) {
+      PrivatePassModel temp = argumentData['privatePassModel'];
+      selectedPrivatePass.value =
+          privatePassList.where((p0) => p0.id == temp.id).first;
     }
+    update();
   }
 
   getProfileData() async {
@@ -83,28 +85,35 @@ class PurchasePassPrivateController extends GetxController {
     });
   }
 
-  addSeasonPassData() async {
-    purchasePassModel.value.id = Constant.getUuid();
-    purchasePassModel.value.customerId = FireStoreUtils.getCurrentUid();
-    purchasePassModel.value.privatePassModel = selectedSessionPass.value;
-    purchasePassModel.value.fullName = fullNameController.value.text;
-    purchasePassModel.value.email = emailController.value.text;
-    purchasePassModel.value.identificationNo =
+  addPrivatePassData() async {
+    pendingPassModel.value.id = Constant.getUuid();
+    pendingPassModel.value.customerId = FireStoreUtils.getCurrentUid();
+    pendingPassModel.value.privatePassModel = selectedPrivatePass.value;
+    pendingPassModel.value.fullName = fullNameController.value.text;
+    pendingPassModel.value.email = emailController.value.text;
+    pendingPassModel.value.identificationNo =
         identificationNoController.value.text;
-    purchasePassModel.value.mobileNumber = phoneNumberController.value.text;
-    purchasePassModel.value.vehicleNo = vehicleNoController.value.text;
-    purchasePassModel.value.lotNo = lotNoController.value.text;
-    purchasePassModel.value.companyName = companyNameController.value.text;
-    purchasePassModel.value.companyRegistrationNo =
+    pendingPassModel.value.mobileNumber = phoneNumberController.value.text;
+    pendingPassModel.value.vehicleNo = vehicleNoController.value.text;
+    pendingPassModel.value.lotNo = lotNoController.value.text;
+    pendingPassModel.value.image = imageFile?.path;
+    pendingPassModel.value.companyName = companyNameController.value.text;
+    pendingPassModel.value.companyRegistrationNo =
         companyRegistrationNoController.value.text;
-    purchasePassModel.value.address = addressController.value.text;
-    purchasePassModel.value.countryCode = countryCode.reactive.toString();
-    purchasePassModel.value.startDate = Timestamp.now();
-    purchasePassModel.value.createAt = Timestamp.now();
-    purchasePassModel.value.endDate = Timestamp.fromDate(DateTime.timestamp()
+    pendingPassModel.value.address = addressController.value.text;
+    pendingPassModel.value.countryCode = countryCode.reactive.toString();
+    pendingPassModel.value.startDate = Timestamp.now();
+    pendingPassModel.value.createAt = Timestamp.now();
+    pendingPassModel.value.endDate = Timestamp.fromDate(DateTime.timestamp()
         .add(Duration(
             days:
-                checkDuration(selectedSessionPass.value.validity.toString()))));
+                checkDuration(selectedPrivatePass.value.validity.toString()))));
+
+    // Setting default status as "pending"
+    pendingPassModel.value.status = "pending";
+
+    // Now, send the data to Firestore
+    await FireStoreUtils.setPendingPass(pendingPassModel.value, imageFile);
   }
 
   checkDuration(String time) {
@@ -125,6 +134,14 @@ class PurchasePassPrivateController extends GetxController {
     }
   }
 
+  pendingOrder() async {
+    await FireStoreUtils.setPendingPass(pendingPassModel.value, imageFile)
+        .then((value) {
+      Get.back();
+      Get.toNamed(Routes.DASHBOARD_SCREEN);
+    });
+  }
+
   Future<void> pickImage() async {
     final picker = ImagePicker();
     final pickedFileGallery =
@@ -132,12 +149,25 @@ class PurchasePassPrivateController extends GetxController {
     final pickedFileCamera = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFileGallery != null) {
-      imageFile = File(pickedFileGallery.path);
+      final image = File(pickedFileGallery.path);
+      final compressedImage = await compressImage(image);
+      imageFile = compressedImage;
       update();
     } else if (pickedFileCamera != null) {
-      imageFile = File(pickedFileCamera.path);
+      final image = File(pickedFileCamera.path);
+      final compressedImage = await compressImage(image);
+      imageFile = compressedImage;
       update();
     }
+  }
+
+  Future<XFile?> compressImage(File image) async {
+    final result = await FlutterImageCompress.compressAndGetFile(
+      image.absolute.path,
+      image.absolute.path,
+      quality: 50, // Adjust quality as needed
+    );
+    return result;
   }
 
   Future<void> onImageButtonPressed(ImageSource source,

@@ -13,7 +13,14 @@ import 'package:get/get.dart';
 class DashboardScreenController extends GetxController {
   RxInt selectedIndex = 0.obs;
 
-  RxList pageList = [const HomeView(), const MySeasonPassView(), const SearchSummonScreenView(), const WalletScreenView(), const ProfileScreenView()].obs;
+  // Define the expected types for each page
+  final List<Widget> pageList = [
+    const HomeView(),
+    const MySeasonPassView(),
+    const SearchSummonScreenView(),
+    const WalletScreenView(),
+    const ProfileScreenView(),
+  ];
 
   // const SizedBox()
 }

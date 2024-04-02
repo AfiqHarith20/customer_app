@@ -206,7 +206,7 @@ class _HomeViewState extends State<HomeView> {
                           // ),
                           Text(
                             'NAZIFA PARKING'.tr,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                               fontFamily: AppThemData.medium,
                               fontWeight: FontWeight.bold,
@@ -241,7 +241,7 @@ class _HomeViewState extends State<HomeView> {
                     children: [
                       Container(
                         height: 90,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           borderRadius: BorderRadius.only(
                             bottomRight: Radius.circular(50),
                           ),
@@ -251,9 +251,7 @@ class _HomeViewState extends State<HomeView> {
                           children: [
                             Center(
                               child: Text(
-                                'Hi, ' +
-                                    controller.customerModel.value.fullName
-                                        .toString(),
+                                'Hi, ${controller.customerModel.value.fullName}',
                                 style: const TextStyle(
                                   fontFamily: AppThemData.bold,
                                   fontSize: 18,
@@ -291,9 +289,12 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                                 Text(
                                   Constant.amountShow(
-                                    amount: controller.customerModel.value.walletAmount.toString() ?? '0',
+                                    amount: controller
+                                            .customerModel.value.walletAmount
+                                            ?.toString() ??
+                                        '0',
                                   ),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 20,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w900,
@@ -305,7 +306,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
                         //apply padding to all four sides
                         child: Text(
                           'Information'.tr,
@@ -335,7 +336,7 @@ class _HomeViewState extends State<HomeView> {
                               (item) => Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Card(
-                                  margin: EdgeInsets.only(
+                                  margin: const EdgeInsets.only(
                                     top: 10.0,
                                     bottom: 10.0,
                                   ),
@@ -345,7 +346,7 @@ class _HomeViewState extends State<HomeView> {
                                     borderRadius: BorderRadius.circular(30.0),
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
+                                    borderRadius: const BorderRadius.all(
                                       Radius.circular(30.0),
                                     ),
                                     child: Stack(
@@ -371,21 +372,21 @@ class _HomeViewState extends State<HomeView> {
                           return Container(
                             width: 10.0,
                             height: 10.0,
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                               vertical: 10.0,
                               horizontal: 2.0,
                             ),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: _currentIndex == index
-                                  ? Color.fromRGBO(0, 0, 0, 0.8)
-                                  : Color.fromRGBO(0, 0, 0, 0.3),
+                                  ? const Color.fromRGBO(0, 0, 0, 0.8)
+                                  : const Color.fromRGBO(0, 0, 0, 0.3),
                             ),
                           );
                         }).toList(),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
                         //apply padding to all four sides
                         child: Text(
                           'Information'.tr,
@@ -412,7 +413,7 @@ class _HomeViewState extends State<HomeView> {
                                     borderRadius: BorderRadius.circular(0.0),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsets.only(
+                                    padding: const EdgeInsets.only(
                                       left: 10,
                                       top: 10,
                                       bottom: 10,
@@ -432,7 +433,7 @@ class _HomeViewState extends State<HomeView> {
                                             color: Colors.black,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         Text(
@@ -446,20 +447,22 @@ class _HomeViewState extends State<HomeView> {
                                             color: Colors.grey,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(date,
-                                                maxLines: 1,
-                                                textAlign: TextAlign.left,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontStyle: FontStyle.normal,
-                                                    color: Colors.blueGrey),),
+                                            Text(
+                                              date,
+                                              maxLines: 1,
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontStyle: FontStyle.normal,
+                                                  color: Colors.blueGrey),
+                                            ),
                                           ],
                                         )
                                       ],

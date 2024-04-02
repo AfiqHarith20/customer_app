@@ -16,5 +16,5 @@ class CollectionName {
   static const String carousel = "carousel";
   static const String seasonPass = "season_pass";
   static const String privatePass = "private_park";
-
+  static const String pendingPass = "pending_pass";
 }

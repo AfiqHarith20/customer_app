@@ -54,6 +54,7 @@ dependencies:
     sdk: flutter
   skeletonizer: ^1.1.1
   custom_sliding_segmented_control: ^1.8.1
+  flutter_image_compress: ^2.2.0
 
 dev_dependencies:
   flutter_lints: ^2.0.3

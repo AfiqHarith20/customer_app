@@ -1,6 +1,7 @@
 const Map<String, String> enUS = {
   "CouponCode": "CouponCode",
-  "Do you need some space for \nparking your vehicle": "Do you need some space for \nparking your vehicle",
+  "Do you need some space for \nparking your vehicle":
+      "Do you need some space for \nparking your vehicle",
   "Save": "Save",
   "Your Parking Reservations": "Your Parking Reservations",
   "Keep track of your upcoming and past parking reservations with ease. Your parking history, all in one place.":
@@ -68,8 +69,10 @@ const Map<String, String> enUS = {
   "Refer Friends": "Refer Friends",
   "Friends Join": "Friends Join",
   "Earn Rewards": "Earn Rewards",
-  "Share your unique referral link or code with friends.": "Share your unique referral link or code with friends.",
-  "Friends sign up for the app using your referral link or code.": "Friends sign up for the app using your referral link or code.",
+  "Share your unique referral link or code with friends.":
+      "Share your unique referral link or code with friends.",
+  "Friends sign up for the app using your referral link or code.":
+      "Friends sign up for the app using your referral link or code.",
   "You and your friends earn rewards, such as discounts or credits, when they make their first booking or transaction using the app.":
       "You and your friends earn rewards, such as discounts or credits, when they make their first booking or transaction using the app.",
   "Refer Now": "Refer Now",
@@ -116,11 +119,15 @@ const Map<String, String> enUS = {
   "Are you sure you want to Delete Account? All Information will be deleted of your account.":
       "Are you sure you want to Delete Account? All Information will be deleted of your account.",
   "Discover Convenient Parking": "Discover Convenient Parking",
-  "Explore nearby parking spaces with ease and find the perfect spot for your vehicle.": "Explore nearby parking spaces with ease and find the perfect spot for your vehicle.",
+  "Explore nearby parking spaces with ease and find the perfect spot for your vehicle.":
+      "Explore nearby parking spaces with ease and find the perfect spot for your vehicle.",
   "Wallet Management": "Wallet Management",
-  "Easily manage your wallet, add funds, and track transactions for quick payments": "Easily manage your wallet, add funds, and track transactions for quick payments",
-  "Elevate Your Parking Experience with NAZIFA PARKING": "Elevate Your Parking Experience with NAZIFA PARKING",
-  "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING": "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING",
+  "Easily manage your wallet, add funds, and track transactions for quick payments":
+      "Easily manage your wallet, add funds, and track transactions for quick payments",
+  "Elevate Your Parking Experience with NAZIFA PARKING":
+      "Elevate Your Parking Experience with NAZIFA PARKING",
+  "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING":
+      "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING",
   "Log in with Mobile Number": "Log in with Mobile Number",
   "Effortless Parking": "Effortless Parking",
   "Season Pass": "Season Pass",
@@ -131,7 +138,8 @@ const Map<String, String> enUS = {
   "Availability:": "Availability:",
   "Purchase": "Purchase",
   "Quick Mobile Login": "Quick Mobile Login",
-  "Access your account with ease by simply logging in with your mobile number.": "Access your account with ease by simply logging in with your mobile number.",
+  "Access your account with ease by simply logging in with your mobile number.":
+      "Access your account with ease by simply logging in with your mobile number.",
   "Log in": "Log in",
   "My Season Pass": "My Season Pass",
   "Let's Start": "Let's Start",
@@ -176,9 +184,11 @@ const Map<String, String> enUS = {
   "Enter Company Registration No.": "Enter Company Registration No.",
   "Address": "Address",
   "Enter Address": "Enter Address",
-  "Monitor your wallet activity effortlessly. View transactions, add funds, and stay in control of your parking payments": "Monitor your wallet activity effortlessly. View transactions, add funds, and stay in control of your parking payments",
+  "Monitor your wallet activity effortlessly. View transactions, add funds, and stay in control of your parking payments":
+      "Monitor your wallet activity effortlessly. View transactions, add funds, and stay in control of your parking payments",
   "Secure Verification": "Secure Verification",
-  "Ensure security with a one-time password (OTP) verification step for your account.": "Ensure security with a one-time password (OTP) verification step for your account.",
+  "Ensure security with a one-time password (OTP) verification step for your account.":
+      "Ensure security with a one-time password (OTP) verification step for your account.",
   "Verify": "Verify",
   "Didn’t get OTP?": "Didn’t get OTP?",
   " Resend": " Resend",
@@ -189,5 +199,7 @@ const Map<String, String> enUS = {
   "Notifications": "Notifications",
   "Select Bank": "Select Bank",
   "Proceed": "Proceed",
-  "Online Banking": "Online Banking"
+  "Online Banking": "Online Banking",
+  "Lot Image": "Lot Image",
+  "Submit": "Submit"
 };

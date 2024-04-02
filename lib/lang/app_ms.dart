@@ -1,6 +1,7 @@
 const Map<String, String> msMY = {
   "CouponCode": "KodKupon",
-  "Do you need some space for \nparking your vehicle": "Adakah anda memerlukan ruang untuk \nmeletakkan kenderaan anda",
+  "Do you need some space for \nparking your vehicle":
+      "Adakah anda memerlukan ruang untuk \nmeletakkan kenderaan anda",
   "Save": "Simpan",
   "Your Parking Reservations": "Tempahan Parkir Anda",
   "Keep track of your upcoming and past parking reservations with ease. Your parking history, all in one place.":
@@ -68,8 +69,10 @@ const Map<String, String> msMY = {
   "Refer Friends": "Rujuk Kawan",
   "Friends Join": "Kawan Turut Serta",
   "Earn Rewards": "Ganjaran Diperolehi",
-  "Share your unique referral link or code with friends.": "Kongsi pautan atau kod rujukan unik anda dengan rakan-rakan.",
-  "Friends sign up for the app using your referral link or code.": "Rakan mendaftar untuk aplikasi menggunakan pautan rujukan atau kod anda.",
+  "Share your unique referral link or code with friends.":
+      "Kongsi pautan atau kod rujukan unik anda dengan rakan-rakan.",
+  "Friends sign up for the app using your referral link or code.":
+      "Rakan mendaftar untuk aplikasi menggunakan pautan rujukan atau kod anda.",
   "You and your friends earn rewards, such as discounts or credits, when they make their first booking or transaction using the app.":
       "Anda dan rakan anda memperoleh ganjaran, seperti diskaun atau kredit, apabila mereka membuat tempahan atau transaksi pertama mereka menggunakan aplikasi itu.",
   "Refer Now": "Rujuk Sekarang",
@@ -116,11 +119,15 @@ const Map<String, String> msMY = {
   "Are you sure you want to Delete Account? All Information will be deleted of your account.":
       "Adakah anda pasti mahu Padam Akaun? Semua Maklumat akan dipadamkan daripada akaun anda.",
   "Discover Convenient Parking": "Temui Parkir Dengan Mudah",
-  "Explore nearby parking spaces with ease and find the perfect spot for your vehicle.": "Terokai parkir berhampiran dengan mudah dan cari tempat yang sesuai untuk kenderaan anda.",
+  "Explore nearby parking spaces with ease and find the perfect spot for your vehicle.":
+      "Terokai parkir berhampiran dengan mudah dan cari tempat yang sesuai untuk kenderaan anda.",
   "Wallet Management": "Pengurusan Wallet",
-  "Easily manage your wallet, add funds, and track transactions for quick payments": "Urus wallet anda dengan mudah, tambah dana dan jejak transaksi untuk pembayaran pantas",
-  "Elevate Your Parking Experience with NAZIFA PARKING": "Tingkatkan Pengalaman Parkir Anda dengan NAZIFA PARKING",
-  "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING": "Nikmati pengalaman parkir yang lancar dan bebas tekanan dengan NAZIFA PARKING",
+  "Easily manage your wallet, add funds, and track transactions for quick payments":
+      "Urus wallet anda dengan mudah, tambah dana dan jejak transaksi untuk pembayaran pantas",
+  "Elevate Your Parking Experience with NAZIFA PARKING":
+      "Tingkatkan Pengalaman Parkir Anda dengan NAZIFA PARKING",
+  "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING":
+      "Nikmati pengalaman parkir yang lancar dan bebas tekanan dengan NAZIFA PARKING",
   "Log in with Mobile Number": "Log masuk dengan Nombor Telefon",
   "Effortless Parking": "Parkir Lebih Mudah",
   "Season Pass": "Pas Bermusim",
@@ -131,7 +138,8 @@ const Map<String, String> msMY = {
   "Availability:": "Ketersediaan:",
   "Purchase": "Belian",
   "Quick Mobile Login": "Log Masuk Mudah Alih Pantas",
-  "Access your account with ease by simply logging in with your mobile number.": "Akses akaun anda dengan mudah dengan hanya log masuk menggunakan nombor telefon anda.",
+  "Access your account with ease by simply logging in with your mobile number.":
+      "Akses akaun anda dengan mudah dengan hanya log masuk menggunakan nombor telefon anda.",
   "Log in": "Log masuk",
   "My Season Pass": "Pas Saya",
   "Let's Start": "Mari Mulakan",
@@ -176,9 +184,11 @@ const Map<String, String> msMY = {
   "Enter Company Registration No.": "Masukkan No. Pendaftaran Syarikat",
   "Address": "Alamat",
   "Enter Address": "Masukkan Alamat",
-  "Monitor your wallet activity effortlessly. View transactions, add funds, and stay in control of your parking payments": "Pantau aktiviti wallet anda dengan mudah. Lihat urus niaga, tambah nilai dan kekal mengawal pembayaran parkir anda",
+  "Monitor your wallet activity effortlessly. View transactions, add funds, and stay in control of your parking payments":
+      "Pantau aktiviti wallet anda dengan mudah. Lihat urus niaga, tambah nilai dan kekal mengawal pembayaran parkir anda",
   "Secure Verification": "Pengesahan Selamat",
-  "Ensure security with a one-time password (OTP) verification step for your account.": "Pastikan keselamatan dengan langkah pengesahan kata laluan (OTP) sekali untuk akaun anda.",
+  "Ensure security with a one-time password (OTP) verification step for your account.":
+      "Pastikan keselamatan dengan langkah pengesahan kata laluan (OTP) sekali untuk akaun anda.",
   "Verify": "Sahkan",
   "Didn’t get OTP?": "Tidak mendapat OTP?",
   " Resend": " Hantar semula",
@@ -189,5 +199,7 @@ const Map<String, String> msMY = {
   "Notifications": "Notifikasi",
   "Select Bank": "Pilih Bank",
   "Proceed": "Teruskan",
-  "Online Banking": "Perbankan atas talian"
+  "Online Banking": "Perbankan atas talian",
+  "Lot Image": "Gambar Lot",
+  "Submit": "Hantar"
 };

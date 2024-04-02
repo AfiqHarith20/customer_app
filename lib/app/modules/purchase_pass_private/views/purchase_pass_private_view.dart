@@ -179,30 +179,16 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Lot Image",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            "Lot Image".tr,
+                            // style: const TextStyle(
+                            //   fontSize: 16,
+                            //   fontWeight: FontWeight.bold,
+                            // ),
                           ),
                         ),
-                        // TextButton(
-                        //   onPressed: () {
-                        //     controller.onImageButtonPressed(
-                        //       ImageSource.gallery,
-                        //       context: context,
-                        //     );
-                        //   },
-                        //   child: const Icon(
-                        //     Icons.add,
-                        //     size: 100,
-                        //     color: Colors.grey,
-                        //   ),
-                        // ),
-                        // const SizedBox(height: 8),
                         Obx(() {
                           var imageFiles = controller.imageFiles;
                           return SizedBox(
@@ -322,21 +308,34 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
           bottomNavigationBar: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: ButtonThem.buildButton(
-                  context,
-                  title: "Buy".tr,
-                  txtColor: Colors.black,
-                  bgColor: AppColors.yellow04,
-                  onPress: () async {
-                    if (controller.formKey.value.currentState!.validate()) {
-                      await controller.addSeasonPassData();
-                      Get.toNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
-                        "purchasePassModel": controller.purchasePassModel.value
-                      });
-                    }
-                  },
-                )),
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ButtonThem.buildButton(
+                context,
+                title: "Submit".tr,
+                txtColor: Colors.black,
+                bgColor: AppColors.yellow04,
+                onPress: () async {
+                  if (controller.formKey.value.currentState!.validate()) {
+                    await controller.addPrivatePassData();
+                    // Show popup notification
+                    Get.showSnackbar(
+                      const GetSnackBar(
+                        title: "Success",
+                        message:
+                            "Your request has been sent with status 'Pending'",
+                        backgroundColor: Colors.green,
+                        duration: Duration(
+                            seconds: 3), // Adjust the duration as needed
+                        snackPosition: SnackPosition
+                            .BOTTOM, // Set snackbar position to bottom
+                      ),
+                    );
+                    // Navigate to dashboard page
+                    Get.toNamed(Routes.DASHBOARD_SCREEN);
+                  }
+                },
+              ),
+            ),
           ),
         );
       },
@@ -352,8 +351,8 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.photo_camera),
-                title: Text('Camera'),
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
                 onTap: () {
                   Navigator.pop(context);
                   controller.onImageButtonPressed(
@@ -363,8 +362,8 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Gallery'),
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
                 onTap: () {
                   Navigator.pop(context);
                   controller.onImageButtonPressed(
