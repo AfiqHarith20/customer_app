@@ -1,15 +1,13 @@
-
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-class Server{
+class Server {
   static String? accessToken;
 
-  postRequest({String? endPoint}) async {
-
+  postRequest({String? endPoint, dynamic body}) async {
     HttpClient client = HttpClient();
     try {
-      return await http.post(Uri.parse(endPoint!));
+      return await http.post(Uri.parse(endPoint!), body: body);
     } catch (error) {
       return null;
     } finally {

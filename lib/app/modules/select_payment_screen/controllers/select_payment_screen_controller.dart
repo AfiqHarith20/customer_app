@@ -6,6 +6,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/booking_model.dart';
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
+import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_model.dart';
 import 'package:customer_app/app/models/owner_model.dart';
@@ -40,11 +41,13 @@ class SelectPaymentScreenController extends GetxController {
   Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
+  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
   RxString selectedPaymentMethod = "".obs;
   RxBool isPaymentCompleted = true.obs;
   RxBool isLoading = true.obs;
   AuthResultModel authResultModel = AuthResultModel();
   Server server = Server();
+  late TabController tabController;
 
   @override
   void onInit() {
@@ -53,11 +56,15 @@ class SelectPaymentScreenController extends GetxController {
   }
 
   getArgument() async {
+    final bankName = Get.arguments?['bankName'] ?? "Default Bank Name";
     dynamic argumentData = Get.arguments;
-    if (argumentData != null) {
+    if (argumentData != null && argumentData['purchasePassModel'] != null) {
       purchasePassModel.value = argumentData['purchasePassModel'];
-      // couponAmount = bookingModel.value.coupon!.amount ?? '0.0';
       getPaymentData();
+    } else {
+      // Handle the case where purchasePassModel is null
+      // For example, show an error message or navigate back
+      ShowToastDialog.showToast("Error: Purchase pass data is missing");
     }
   }
 
@@ -66,7 +73,8 @@ class SelectPaymentScreenController extends GetxController {
     await FireStoreUtils().getPayment().then((value) {
       if (value != null) {
         paymentModel.value = value;
-        Stripe.publishableKey = paymentModel.value.strip!.clientpublishableKey.toString();
+        Stripe.publishableKey =
+            paymentModel.value.strip!.clientpublishableKey.toString();
         log(paymentModel.value.strip!.clientpublishableKey.toString());
         Stripe.merchantIdentifier = 'NAZIFA Customer';
         Stripe.instance.applySettings();
@@ -74,7 +82,8 @@ class SelectPaymentScreenController extends GetxController {
       }
     });
 
-    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid()).then((value) {
+    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+        .then((value) {
       if (value != null) {
         customerModel.value = value;
       }
@@ -107,38 +116,91 @@ class SelectPaymentScreenController extends GetxController {
     });
   }
 
-  void commercepayMakePayment({required String amount}) async{
-    log(double.parse(amount).toStringAsFixed(0));
-    isLoading.value = true;
-    try
-    {
-      DateTime now = DateTime.now();
-      DateTime expired = DateTime.parse(Preferences.getString("TokenExpiry"));
-      var accessToken = Preferences.getString("AccessToken");
+  void onlinePayment({
+    required String customerId,
+    required String selectedBankName,
+    required String providerChannelId,
+    required String selectedPassId,
+    required String fullName,
+    required String email,
+    required String address,
+    required String identificationNo,
+    required String mobileNumber,
+    required String vehicleNo,
+    required String lotNo,
+    required String companyRegistrationNo,
+    required String companyName,
+    required double totalPrice,
+    required String userName,
+    required String identificationType,
+    String channelId = '2', // Default value for channelId
+  }) async {
+    try {
+      // Construct the JSON body using data from various sources
+      final body = {
+        'accessToken': selectedBankName,
+        'customerId': customerId,
+        'channelId': channelId,
+        'providerChannelId': providerChannelId,
+        'amount': totalPrice,
+        'address': address,
+        'companyName': companyName,
+        'companyRegistrationNo': companyRegistrationNo,
+        'endDate': 'end_date', // Placeholder value for endDate
+        'startDate': 'start_date', // Placeholder value for startDate
+        'name': fullName,
+        'email': email,
+        'mobileNumber': mobileNumber,
+        'username': userName,
+        'identificationNo': identificationNo,
+        'identificationType': identificationType,
+        'lotNo': lotNo,
+        'vehicleNo': vehicleNo,
+        'passId': selectedPassId,
+      };
 
-      //if(expired.isBefore(now)){
-        await server
-            .postRequest(endPoint: APIList.auth)
-            .then((response) {
-          if (response != null && response.statusCode == 200) {
-            final jsonResponse = json.decode(response.body);
-            authResultModel = AuthResultModel.fromJson(jsonResponse);
-            Preferences.setString("AccessToken", authResultModel.accessToken.toString());
-            DateTime time = DateTime.now();
-            time.add(Duration(seconds: authResultModel.expireInSeconds as int));
-            Preferences.setString("TokenExpiry", time.toString());
-          } else {
+      // Send the POST request with the constructed body
+      final response = await server.postRequest(
+        endPoint: APIList.payment,
+        body: body,
+      );
 
-          }
-        });
-      //}
-    }
-    catch (e, s) {
+      if (response != null && response.statusCode == 200) {
+        // Handle response data as needed
+      } else {
+        throw Exception('Failed to load data from API');
+      }
+    } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("exception:$e \n$s");
+    } finally {
+      isLoading.value = false;
     }
-    finally
-    {
+  }
+
+  void commercepayMakePayment({required String amount}) async {
+    log(double.parse(amount).toStringAsFixed(0));
+    isLoading.value = true;
+    try {
+      await server.postRequest(endPoint: APIList.auth).then((response) {
+        if (response != null && response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body);
+          authResultModel = AuthResultModel.fromJson(jsonResponse);
+          // Set the access token
+          Preferences.setString(
+              "AccessToken", authResultModel.accessToken.toString());
+          // Print the access token
+          print("Access Token: ${authResultModel.accessToken}");
+
+          DateTime time = DateTime.now();
+          time.add(Duration(seconds: authResultModel.expireInSeconds as int));
+          Preferences.setString("TokenExpiry", time.toString());
+        } else {}
+      });
+    } catch (e, s) {
+      log("$e \n$s");
+      ShowToastDialog.showToast("exception:$e \n$s");
+    } finally {
       isLoading.value = false;
     }
   }
@@ -146,10 +208,12 @@ class SelectPaymentScreenController extends GetxController {
   Future<void> stripeMakePayment({required String amount}) async {
     log(double.parse(amount).toStringAsFixed(0));
     try {
-      Map<String, dynamic>? paymentIntentData = await createStripeIntent(amount: amount);
+      Map<String, dynamic>? paymentIntentData =
+          await createStripeIntent(amount: amount);
       if (paymentIntentData!.containsKey("error")) {
         Get.back();
-        ShowToastDialog.showToast("Something went wrong, please contact admin.");
+        ShowToastDialog.showToast(
+            "Something went wrong, please contact admin.");
       } else {
         await Stripe.instance.initPaymentSheet(
             paymentSheetParameters: SetupPaymentSheetParameters(
@@ -207,8 +271,13 @@ class SelectPaymentScreenController extends GetxController {
       };
       log(paymentModel.value.strip!.stripeSecret.toString());
       var stripeSecret = paymentModel.value.strip!.stripeSecret;
-      var response = await http.post(Uri.parse('https://api.stripe.com/v1/payment_intents'),
-          body: body, headers: {'Authorization': 'Bearer $stripeSecret', 'Content-Type': 'application/x-www-form-urlencoded'});
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            'Authorization': 'Bearer $stripeSecret',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          });
 
       return jsonDecode(response.body);
     } catch (e) {
@@ -220,7 +289,8 @@ class SelectPaymentScreenController extends GetxController {
 
   void initPayPal() async {
     //set debugMode for error logging
-    FlutterPaypalNative.isDebugMode = paymentModel.value.paypal!.isSandbox == true ? true : false;
+    FlutterPaypalNative.isDebugMode =
+        paymentModel.value.paypal!.isSandbox == true ? true : false;
 
     //initiate payPal plugin
     await _flutterPaypalNativePlugin.init(
@@ -229,7 +299,9 @@ class SelectPaymentScreenController extends GetxController {
       //client id from developer dashboard
       clientID: paymentModel.value.paypal!.paypalClient.toString(),
       //sandbox, staging, live etc
-      payPalEnvironment: paymentModel.value.paypal!.isSandbox == true ? FPayPalEnvironment.sandbox : FPayPalEnvironment.live,
+      payPalEnvironment: paymentModel.value.paypal!.isSandbox == true
+          ? FPayPalEnvironment.sandbox
+          : FPayPalEnvironment.live,
       //what currency do you plan to use? default is US dollars
       currencyCode: FPayPalCurrencyCode.usd,
       //action paynow?
@@ -248,7 +320,8 @@ class SelectPaymentScreenController extends GetxController {
           //remove all items from queue
           _flutterPaypalNativePlugin.removeAllPurchaseItems();
           String visitor = data.cart?.shippingAddress?.firstName ?? 'Visitor';
-          String address = data.cart?.shippingAddress?.line1 ?? 'Unknown Address';
+          String address =
+              data.cart?.shippingAddress?.line1 ?? 'Unknown Address';
           ShowToastDialog.showToast("Payment Successfully");
           completeOrder();
         },
@@ -258,7 +331,8 @@ class SelectPaymentScreenController extends GetxController {
         },
         onShippingChange: (data) {
           //the user updated the shipping address
-          ShowToastDialog.showToast("shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}");
+          ShowToastDialog.showToast(
+              "shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}");
         },
       ),
     );
@@ -270,6 +344,7 @@ class SelectPaymentScreenController extends GetxController {
       _flutterPaypalNativePlugin.addPurchaseUnit(
         FPayPalPurchaseUnit(
           amount: double.parse(amount),
+
           ///please use your own algorithm for referenceId. Maybe ProductID?
           referenceId: FPayPalStrHelper.getRandomString(16),
         ),

@@ -190,7 +190,12 @@ class AppPages {
         transitionDuration: const Duration(milliseconds: 250)),
     GetPage(
         name: _Paths.SELECT_PAYMENT_SCREEN,
-        page: () => const SelectPaymentScreenView(),
+        page: () => SelectPaymentScreenView(
+              passName: Get.arguments["passName"] ?? '',
+              passPrice: Get.arguments["passPrice"] ?? '',
+              passValidity: Get.arguments["passValidity"] ?? '',
+              selectedBankName: Get.arguments["bankName"] ?? '',
+            ),
         binding: SelectPaymentScreenBinding(),
         transition: Transition.rightToLeftWithFade,
         transitionDuration: const Duration(milliseconds: 250)),
@@ -250,9 +255,10 @@ class AppPages {
       binding: PurchasePassBinding(),
     ),
     GetPage(
-      name: _Paths.PURCHASE_PASS_PRIVATE, 
-      page: () => PurchasePassPrivateView(), 
-      binding: PurchasePassPrivateBinding(),),
+      name: _Paths.PURCHASE_PASS_PRIVATE,
+      page: () => PurchasePassPrivateView(),
+      binding: PurchasePassPrivateBinding(),
+    ),
     GetPage(
       name: _Paths.MY_SEASON_PASS,
       page: () => const MySeasonPassView(),

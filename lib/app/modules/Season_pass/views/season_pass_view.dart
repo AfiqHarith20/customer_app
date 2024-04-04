@@ -22,41 +22,41 @@ class SeasonPassView extends GetView<SeasonPassController> {
   @override
   Widget build(BuildContext context) {
     return GetX<SeasonPassController>(
-        init: SeasonPassController(),
-        builder: (controller) {
-          return Scaffold(
-            backgroundColor: AppColors.lightGrey02,
-            appBar: UiInterface().customAppBar(
-              backgroundColor: AppColors.white,
-              context,
-              "Season Pass".tr,
-              // actions: [
-              //   Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: InkWell(
-              //       onTap: () {
-              //         Get.toNamed(Routes.MY_SEASON_PASS);
-              //       },
-              //       child: Container(
-              //         height: 40,
-              //         width: 100,
-              //         decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(20)),
-              //         child: const Center(
-              //           child: Text(
-              //             "My Pass",
-              //             style: TextStyle(
-              //               fontSize: 13,
-              //               fontFamily: AppThemData.bold,
-              //               color: AppColors.darkGrey08,
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   )
-              // ],
-            ),
-                   body: controller.isLoading.value
+      init: SeasonPassController(),
+      builder: (controller) {
+        return Scaffold(
+          backgroundColor: AppColors.lightGrey02,
+          appBar: UiInterface().customAppBar(
+            backgroundColor: AppColors.white,
+            context,
+            "Season Pass".tr,
+            // actions: [
+            //   Padding(
+            //     padding: const EdgeInsets.all(8.0),
+            //     child: InkWell(
+            //       onTap: () {
+            //         Get.toNamed(Routes.MY_SEASON_PASS);
+            //       },
+            //       child: Container(
+            //         height: 40,
+            //         width: 100,
+            //         decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(20)),
+            //         child: const Center(
+            //           child: Text(
+            //             "My Pass",
+            //             style: TextStyle(
+            //               fontSize: 13,
+            //               fontFamily: AppThemData.bold,
+            //               color: AppColors.darkGrey08,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   )
+            // ],
+          ),
+          body: controller.isLoading.value
               ? Constant.loader()
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +64,8 @@ class SeasonPassView extends GetView<SeasonPassController> {
                     // Custom sliding segmented control
                     _buildCustomSliding(controller),
                     // Content based on selected segment
-                    _buildContent(controller.seasonPassList, controller.privatePassList),
+                    _buildContent(
+                        controller.seasonPassList, controller.privatePassList),
                   ],
                 ),
         );
@@ -75,29 +76,29 @@ class SeasonPassView extends GetView<SeasonPassController> {
   Widget _buildCustomSliding(SeasonPassController controller) {
     return Center(
       child: SlidingSwitch(
-                      value: controller.selectedSegment == 0 ? true : false,
-                      width: 350,
-                      onChanged: (bool value) {
-                        controller.changeSegment(value);
-                      },
-                      height: 40,
-                      animationDuration: const Duration(milliseconds: 400),
-                      onTap: () {},
-                      onDoubleTap: () {},
-                      onSwipe: () {},
-                      textOff: "Season Pass".tr,
-                      textOn: "Special Lot".tr,
-                      colorOn: Colors.black,
-                      colorOff: Colors.black,
-                      background: Colors.amber,
-                      buttonColor: const Color(0xfff7f5f7),
-                      inactiveColor: const Color(0xff636f7b),
-                    ),
-      
+        value: controller.selectedSegment == 0 ? true : false,
+        width: 350,
+        onChanged: (bool value) {
+          controller.changeSegment(value);
+        },
+        height: 40,
+        animationDuration: const Duration(milliseconds: 400),
+        onTap: () {},
+        onDoubleTap: () {},
+        onSwipe: () {},
+        textOff: "Season Pass".tr,
+        textOn: "Special Lot".tr,
+        colorOn: Colors.black,
+        colorOff: Colors.black,
+        background: Colors.amber,
+        buttonColor: const Color(0xfff7f5f7),
+        inactiveColor: const Color(0xff636f7b),
+      ),
     );
   }
 
-  Widget _buildContent(List<SeasonPassModel> seasonPassList, List<PrivatePassModel> privatePassList) {
+  Widget _buildContent(List<SeasonPassModel> seasonPassList,
+      List<PrivatePassModel> privatePassList) {
     return Expanded(
       child: Obx(() {
         if (controller.selectedSegment.value == false) {
@@ -146,7 +147,9 @@ class SeasonPassView extends GetView<SeasonPassController> {
                 leading: Container(
                   height: 56,
                   width: 56,
-                  decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(200)),
+                  decoration: BoxDecoration(
+                      color: AppColors.yellow04,
+                      borderRadius: BorderRadius.circular(200)),
                   child: Center(
                     child: SvgPicture.asset(
                       'assets/icons/ic_pass.svg',
@@ -179,16 +182,20 @@ class SeasonPassView extends GetView<SeasonPassController> {
               onTap: () {
                 // Adjust navigation based on the pass type
                 if (passModel is SeasonPassModel) {
-                  Get.toNamed(Routes.PURCHASE_PASS, arguments: {"seasonPassModel": passModel});
+                  Get.toNamed(Routes.PURCHASE_PASS,
+                      arguments: {"seasonPassModel": passModel});
                 } else if (passModel is PrivatePassModel) {
-                  Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {"privatePassModel": passModel});
+                  Get.toNamed(Routes.PURCHASE_PASS_PRIVATE,
+                      arguments: {"privatePassModel": passModel});
                 }
               },
               child: Container(
                 margin: const EdgeInsets.only(left: 15, right: 15, top: 10),
                 height: 56,
                 width: double.infinity,
-                decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(200)),
+                decoration: BoxDecoration(
+                    color: AppColors.yellow04,
+                    borderRadius: BorderRadius.circular(200)),
                 child: Center(
                   child: Text(
                     passModel is SeasonPassModel ? "Buy".tr : "Buy".tr,

@@ -35,7 +35,8 @@ class PurchasePassView extends GetView<PurchasePassController> {
               child: Form(
                 key: controller.formKey.value,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -100,7 +101,9 @@ class PurchasePassView extends GetView<PurchasePassController> {
                             "assets/icons/ic_user.svg",
                           ),
                         ),
-                        validator: (value) => value != null && value.isNotEmpty ? null : 'Name required'.tr,
+                        validator: (value) => value != null && value.isNotEmpty
+                            ? null
+                            : 'Name required'.tr,
                         title: "Full Name*".tr,
                         hintText: "Enter Full Name".tr,
                         controller: controller.fullNameController.value,
@@ -114,7 +117,9 @@ class PurchasePassView extends GetView<PurchasePassController> {
                           ),
                         ),
                         title: "Email*".tr,
-                        validator: (value) => value != null && value.isNotEmpty ? null : 'Email required'.tr,
+                        validator: (value) => value != null && value.isNotEmpty
+                            ? null
+                            : 'Email required'.tr,
                         hintText: "Enter Full Email".tr,
                         controller: controller.emailController.value,
                         onPress: () {},
@@ -127,7 +132,9 @@ class PurchasePassView extends GetView<PurchasePassController> {
                           ),
                         ),
                         title: "Identification Card No.*".tr,
-                        validator: (value) => value != null && value.isNotEmpty ? null : "Identification Card No. required".tr,
+                        validator: (value) => value != null && value.isNotEmpty
+                            ? null
+                            : "Identification Card No. required".tr,
                         hintText: "Enter Identification Card No.*".tr,
                         controller: controller.identificationNoController.value,
                         onPress: () {},
@@ -150,7 +157,9 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         ],
                         title: "Plate No.*".tr,
                         hintText: "Enter Plate No.".tr,
-                        validator: (value) => value != null && value.isNotEmpty ? null : 'Plate No. required'.tr,
+                        validator: (value) => value != null && value.isNotEmpty
+                            ? null
+                            : 'Plate No. required'.tr,
                         controller: controller.vehicleNoController.value,
                         onPress: () {},
                       ),
@@ -161,7 +170,6 @@ class PurchasePassView extends GetView<PurchasePassController> {
                             "assets/icons/ic_note.svg",
                           ),
                         ),
-
                         title: "Lot No.".tr,
                         hintText: "Enter Lot No.".tr,
                         controller: controller.lotNoController.value,
@@ -188,7 +196,8 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         ),
                         title: "Company Registration No.".tr,
                         hintText: "Enter Company Registration No.".tr,
-                        controller: controller.companyRegistrationNoController.value,
+                        controller:
+                            controller.companyRegistrationNoController.value,
                         onPress: () {},
                       ),
                       TextFieldWidgetPrefix(
@@ -220,7 +229,16 @@ class PurchasePassView extends GetView<PurchasePassController> {
                     onPress: () async {
                       if (controller.formKey.value.currentState!.validate()) {
                         await controller.addSeasonPassData();
-                        Get.toNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {"purchasePassModel": controller.purchasePassModel.value});
+                        Get.toNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
+                          "purchasePassModel":
+                              controller.purchasePassModel.value,
+                          "passName": controller.purchasePassModel.value
+                              .seasonPassModel?.passName,
+                          "passPrice": controller
+                              .purchasePassModel.value.seasonPassModel?.price,
+                          "passValidity": controller.purchasePassModel.value
+                              .seasonPassModel?.validity,
+                        });
                       }
                     },
                   )),

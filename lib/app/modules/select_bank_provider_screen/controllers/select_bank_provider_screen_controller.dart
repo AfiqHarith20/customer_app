@@ -22,17 +22,16 @@ class SelectBankProviderScreenController extends GetxController {
   void onInit() {
     commercepayProviderBank();
     super.onInit();
-
   }
 
   void commercepayProviderBank() async {
-    try
-    {
+    try {
       await server
-          .getRequest(endPoint: APIList.provider.toString() + Preferences.getString("AccessToken"))
+          .getRequest(
+              endPoint: APIList.provider.toString() +
+                  Preferences.getString("AccessToken"))
           .then((response) {
         if (response != null && response.statusCode == 200) {
-
           List<dynamic> test = json.decode(response.body);
           test.forEach((element) {
             ProviderChannelModel bankItem = ProviderChannelModel(
@@ -41,23 +40,19 @@ class SelectBankProviderScreenController extends GetxController {
                 displayName: element["displayName"],
                 imageUrl: element["imageUrl"],
                 status: element["status"]);
-            if(element["name"] != ""){
+            if (element["name"] != "") {
               providerList.add(bankItem);
             }
-
           });
           //print("result $providerList");
         } else {
           throw Exception('Failed to load data from API');
         }
       });
-    }
-    catch (e, s) {
+    } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("exception:$e \n$s");
-    }
-    finally
-    {
+    } finally {
       isLoading.value = false;
     }
   }
