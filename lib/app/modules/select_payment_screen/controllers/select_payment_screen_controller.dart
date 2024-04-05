@@ -3,21 +3,13 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:customer_app/app/models/booking_model.dart';
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_model.dart';
-import 'package:customer_app/app/models/owner_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
-import 'package:customer_app/app/models/wallet_transaction_model.dart';
-import 'package:customer_app/app/models/watchman_model.dart';
-import 'package:customer_app/app/modules/dashboard_screen/controllers/dashboard_screen_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
-import 'package:customer_app/constant/constant.dart';
-import 'package:customer_app/constant/send_notification.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/utils/api-list.dart';
@@ -114,68 +106,6 @@ class SelectPaymentScreenController extends GetxController {
       Get.toNamed(Routes.DASHBOARD_SCREEN);
       ShowToastDialog.showToast("Season pass purchase successfully");
     });
-  }
-
-  void onlinePayment({
-    required String customerId,
-    required String selectedBankName,
-    required String providerChannelId,
-    required String selectedPassId,
-    required String fullName,
-    required String email,
-    required String address,
-    required String identificationNo,
-    required String mobileNumber,
-    required String vehicleNo,
-    required String lotNo,
-    required String companyRegistrationNo,
-    required String companyName,
-    required double totalPrice,
-    required String userName,
-    required String identificationType,
-    String channelId = '2', // Default value for channelId
-  }) async {
-    try {
-      // Construct the JSON body using data from various sources
-      final body = {
-        'accessToken': selectedBankName,
-        'customerId': customerId,
-        'channelId': channelId,
-        'providerChannelId': providerChannelId,
-        'amount': totalPrice,
-        'address': address,
-        'companyName': companyName,
-        'companyRegistrationNo': companyRegistrationNo,
-        'endDate': 'end_date', // Placeholder value for endDate
-        'startDate': 'start_date', // Placeholder value for startDate
-        'name': fullName,
-        'email': email,
-        'mobileNumber': mobileNumber,
-        'username': userName,
-        'identificationNo': identificationNo,
-        'identificationType': identificationType,
-        'lotNo': lotNo,
-        'vehicleNo': vehicleNo,
-        'passId': selectedPassId,
-      };
-
-      // Send the POST request with the constructed body
-      final response = await server.postRequest(
-        endPoint: APIList.payment,
-        body: body,
-      );
-
-      if (response != null && response.statusCode == 200) {
-        // Handle response data as needed
-      } else {
-        throw Exception('Failed to load data from API');
-      }
-    } catch (e, s) {
-      log("$e \n$s");
-      ShowToastDialog.showToast("exception:$e \n$s");
-    } finally {
-      isLoading.value = false;
-    }
   }
 
   void commercepayMakePayment({required String amount}) async {

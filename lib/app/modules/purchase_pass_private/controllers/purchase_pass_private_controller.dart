@@ -68,7 +68,7 @@ class PurchasePassPrivateController extends GetxController {
     if (argumentData != null) {
       PrivatePassModel temp = argumentData['privatePassModel'];
       selectedPrivatePass.value =
-          privatePassList.where((p0) => p0.id == temp.id).first;
+          privatePassList.where((p0) => p0.passId == temp.passId).first;
     }
     update();
   }

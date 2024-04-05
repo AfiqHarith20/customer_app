@@ -4,8 +4,8 @@ class OnlinePaymentModel {
   String? accessToken;
   String? customerId;
   String? channelId;
-  String? providerChannelId;
-  String? amount;
+  String? selectedBankId;
+  double? totalPrice;
   String? address;
   String? companyName;
   String? companyRegistrationNo;
@@ -25,8 +25,8 @@ class OnlinePaymentModel {
     this.accessToken,
     this.customerId,
     this.channelId,
-    this.providerChannelId,
-    this.amount,
+    this.selectedBankId,
+    this.totalPrice,
     this.address,
     this.companyName,
     this.companyRegistrationNo,
@@ -49,8 +49,8 @@ class OnlinePaymentModel {
     accessToken = json['accessToken'];
     customerId = json['customerId'];
     channelId = json['channelId'];
-    providerChannelId = json['providerChannelId'];
-    amount = json['amount'];
+    selectedBankId = json['providerChannelId'];
+    totalPrice = json['amount'];
     address = json['address'];
     companyName = json['companyName'];
     companyRegistrationNo = json['companyRegistrationNo'];
@@ -72,8 +72,8 @@ class OnlinePaymentModel {
     data['accessToken'] = accessToken;
     data['customerId'] = customerId;
     data['channelId'] = channelId;
-    data['providerChannelId'] = providerChannelId;
-    data['amount'] = amount;
+    data['providerChannelId'] = selectedBankId;
+    data['amount'] = totalPrice;
     data['address'] = address;
     data['companyName'] = companyName;
     data['companyRegistrationNo'] = companyRegistrationNo;

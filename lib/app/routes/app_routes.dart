@@ -43,6 +43,7 @@ abstract class Routes {
   static const RECEIPT_SCREEN = _Paths.RECEIPT_SCREEN;
   static const NOTIFICATION_SCREEN = _Paths.NOTIFICATION_SCREEN;
   static const SELECT_BANK_PROVIDER_SCREEN = _Paths.SELECT_BANK_PROVIDER_SCREEN;
+  static const WEBVIEW_SCREEN = _Paths.WEBVIEW_SCREEN;
 }
 
 abstract class _Paths {
@@ -85,4 +86,5 @@ abstract class _Paths {
   static const RECEIPT_SCREEN = '/receipt-screen';
   static const NOTIFICATION_SCREEN = '/notification-screen';
   static const SELECT_BANK_PROVIDER_SCREEN = '/select-bank-provider-screen';
+  static const WEBVIEW_SCREEN = '/webview_screen';
 }

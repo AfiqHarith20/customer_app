@@ -6,6 +6,8 @@ import 'package:customer_app/app/modules/search_summon_screen/bindings/search_su
 import 'package:customer_app/app/modules/search_summon_screen/views/search_summon_screen_view.dart';
 import 'package:customer_app/app/modules/select_bank_provider_screen/bindings/select_bank_provider_screen_binding.dart';
 import 'package:customer_app/app/modules/select_bank_provider_screen/views/select_bank_provider_screen_view.dart';
+import 'package:customer_app/app/modules/webview/bindings/webview_screen_binding.dart';
+import 'package:customer_app/app/modules/webview/views/webview_screen_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/MySeason_Pass/bindings/my_season_pass_binding.dart';
@@ -283,6 +285,11 @@ class AppPages {
       name: _Paths.SELECT_BANK_PROVIDER_SCREEN,
       page: () => const SelectBankProviderScreenView(),
       binding: SelectBankProviderScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.WEBVIEW_SCREEN,
+      page: () => const WebviewScreen(),
+      binding: WebviewScreenBinding(),
     ),
   ];
 }

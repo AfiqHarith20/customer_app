@@ -1,5 +1,5 @@
 class SeasonPassModel {
-  String? id;
+  String? passid;
   String? passName;
   String? validity;
   String? price;
@@ -7,10 +7,17 @@ class SeasonPassModel {
   bool? availability;
   bool? status;
 
-  SeasonPassModel({this.id, this.passName, this.validity, this.price, this.userType, this.availability, this.status});
+  SeasonPassModel(
+      {this.passid,
+      this.passName,
+      this.validity,
+      this.price,
+      this.userType,
+      this.availability,
+      this.status});
 
   SeasonPassModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    passid = json['id'];
     passName = json['passName'];
     validity = json['validity'];
     price = json['price'];
@@ -21,7 +28,7 @@ class SeasonPassModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['id'] = passid;
     data['passName'] = passName;
     data['validity'] = validity;
     data['price'] = price;

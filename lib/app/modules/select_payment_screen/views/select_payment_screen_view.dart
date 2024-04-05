@@ -1,8 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable
 
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/app/widget/svg_image_widget.dart';
 import 'package:customer_app/constant/constant.dart';
@@ -12,6 +11,7 @@ import 'package:customer_app/themes/app_them_data.dart';
 import 'package:customer_app/themes/button_theme.dart';
 import 'package:customer_app/themes/common_ui.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
+import 'package:customer_app/utils/server.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,10 +41,12 @@ class SelectPaymentScreenView extends StatefulWidget {
 class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
     with SingleTickerProviderStateMixin {
   late SelectPaymentScreenController controller;
+  late OnlinePaymentModel onlinePaymentModel = OnlinePaymentModel();
 
   @override
   void initState() {
     super.initState();
+    onlinePaymentModel = OnlinePaymentModel();
     controller = Get.put(SelectPaymentScreenController());
     controller.onInit(); // Call onInit manually
   }
@@ -190,12 +192,33 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                 // Check the selected payment method
                 if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.commercePay!.name) {
-                  // Call the controller method to make the commerce pay payment
-                  controller.commercepayMakePayment(
-                    amount: double.parse(
-                      controller
-                          .purchasePassModel.value.seasonPassModel!.price!,
-                    ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+                  onlinePaymentModel = OnlinePaymentModel(
+                    accessToken: widget.accessToken,
+                    customerId: widget.customerId,
+                    channelId: '2',
+                    selectedBankId: widget.selectedBankId,
+                    totalPrice: widget.totalPrice,
+                    address: widget.address,
+                    companyName: widget.companyName,
+                    companyRegistrationNo: widget.companyRegistrationNo,
+                    endDate: widget.endDate,
+                    startDate: widget.startDate,
+                    fullName: widget.fullName,
+                    email: widget.email,
+                    mobileNumber: widget.mobileNumber,
+                    userName: widget.userName,
+                    identificationNo: widget.identificationNo,
+                    identificationType: widget.identificationType,
+                    vehicleNo: widget.vehicleNo,
+                    lotNo: widget.lotNo,
+                    passId: widget.passId,
+                  );
+                  print('Online Payment Data: $onlinePaymentModel');
+                  Get.toNamed(
+                    Routes.WEBVIEW_SCREEN,
+                    arguments: {
+                      'onlinePaymentModel': onlinePaymentModel,
+                    },
                   );
                 } else if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.strip!.name) {
@@ -234,7 +257,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                       paymentType: controller.selectedPaymentMethod.value,
                       transactionId: controller.purchasePassModel.value.id,
                       parkingId: controller
-                          .purchasePassModel.value.seasonPassModel!.id!
+                          .purchasePassModel.value.seasonPassModel!.passid!
                           .toString(),
                       note: "Season pass ".tr,
                       type: "customer",
@@ -261,14 +284,6 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                     ShowToastDialog.showToast("Wallet Amount Insufficient".tr);
                   }
                 }
-                // Call the controller method to handle online payment
-                controller.onlinePayment(
-                  selectedBankName: widget.selectedBankName,
-                  providerChannelId: widget
-                      .selectedBankId, // Assuming you have selectedBankId available
-                  selectedPassId: widget
-                      .selectedPassId, // Assuming you have selectedPassId available
-                );
               },
             ),
           ),
