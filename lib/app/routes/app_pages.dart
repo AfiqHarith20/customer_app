@@ -197,6 +197,26 @@ class AppPages {
               passPrice: Get.arguments["passPrice"] ?? '',
               passValidity: Get.arguments["passValidity"] ?? '',
               selectedBankName: Get.arguments["bankName"] ?? '',
+              selectedBankId: Get.arguments["selectedBankId"] ?? '',
+              // accessToken: Get.arguments["accessToken"] ?? '',
+              // customerId: Get.arguments["customerId"] ?? '',
+
+              // totalPrice: double.parse(Get.arguments["totalPrice"] ?? '0.0'),
+              // address: Get.arguments["address"] ?? '',
+              // companyName: Get.arguments["companyName"] ?? '',
+              // companyRegistrationNo:
+              //     Get.arguments["companyRegistrationNo"] ?? '',
+              // endDate: Get.arguments["endDate"] ?? '',
+              // startDate: Get.arguments["startDate"] ?? '',
+              // fullName: Get.arguments["name"] ?? '',
+              // email: Get.arguments["email"] ?? '',
+              // mobileNumber: Get.arguments["mobileNumber"] ?? '',
+              // userName: Get.arguments["username"] ?? '',
+              // identificationNo: Get.arguments["identificationNumber"] ?? '',
+              // identificationType: Get.arguments["identificationType"] ?? '',
+              // vehicleNo: Get.arguments["vehicleNo"] ?? '',
+              // lotNo: Get.arguments["lotNo"] ?? '',
+              selectedPassId: Get.arguments["passId"] ?? '',
             ),
         binding: SelectPaymentScreenBinding(),
         transition: Transition.rightToLeftWithFade,
@@ -268,7 +288,9 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.SEARCH_SUMMON_SCREEN,
-      page: () => const SearchSummonScreenView(),
+      page: () => SearchSummonScreenView(
+        controller: Get.arguments['controller'] ?? '',
+      ),
       binding: SearchSummonScreenBinding(),
     ),
     GetPage(

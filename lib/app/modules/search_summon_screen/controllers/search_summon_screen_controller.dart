@@ -1,14 +1,21 @@
+import 'dart:convert';
 
-
+import 'package:customer_app/app/models/commercepay/auth_model.dart';
+import 'package:customer_app/utils/api-list.dart';
+import 'package:customer_app/utils/server.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../../utils/fire_store_utils.dart';
 import '../../../models/compound_model.dart';
 import '../../../models/wallet_transaction_model.dart';
 
 class SearchSummonScreenController extends GetxController {
-  RxList compoundList = <CompoundModel>[].obs;
+  RxList<CompoundModel> compoundList = <CompoundModel>[].obs;
+  RxBool isLoading = true.obs;
+  Server server = Server();
+  final AuthModel authModel = AuthModel();
 
   @override
   void onInit() {
@@ -23,7 +30,7 @@ class SearchSummonScreenController extends GetxController {
   getTraction() async {
     await FireStoreUtils.getWalletTransaction().then((value) {
       if (value != null) {
-        compoundList.value = value;
+        compoundList.value = value.cast<CompoundModel>();
       }
     });
   }
@@ -36,5 +43,81 @@ class SearchSummonScreenController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<Map<String, dynamic>> searchCompound({
+    required String id,
+    required String pass,
+    required String requestMethod,
+    required String compoundNum,
+    required String carNum,
+  }) async {
+    // Construct the request URL
+    String url = APIList.searchCompound!;
+
+    // Construct the request body
+    Map<String, String> requestBody = {
+      'id': id,
+      'pass': pass,
+      'request_method': requestMethod,
+      if (requestMethod == 'compound') 'compound_num': compoundNum,
+      if (requestMethod == 'car') 'car_num': carNum,
+    };
+    // print('Request body: $requestBody');
+
+    // Set up the headers
+    Map<String, String> headers = {
+      'Authorization':
+          'Basic M=Lu5k%r8uw!6yBq^T924bdjE_piB3DU2^d9eB39^7u9^GdAKe_IG5KbK&V2vt5=KpxkB',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+
+    try {
+      // Make the POST request
+      http.Response response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: requestBody,
+      );
+
+      // Check if the request was successful (status code 200)
+      if (response.statusCode == 200) {
+        // Parse the response JSON
+        Map<String, dynamic> responseData = jsonDecode(response.body);
+        return responseData;
+      } else {
+        // Request failed with a non-200 status code
+        throw Exception('Failed to load data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Request failed due to an error
+      throw Exception('Failed to load data: $e');
+    }
+  }
+
+  // Add a new method to search for compounds based on the request method and search text
+  Future<void> searchCompounds({
+    required String requestMethod,
+    required String searchText,
+  }) async {
+    try {
+      Map<String, dynamic> searchResult = await searchCompound(
+        id: 'vendor_mptemerloh',
+        pass:
+            'M=Lu5k%r8uw!6yBq^T924bdjE_piB3DU2^d9eB39^7u9^GdAKe_IG5KbK&V2vt5=KpxkB',
+        requestMethod: requestMethod,
+        compoundNum: requestMethod == 'compound' ? searchText : '',
+        carNum: requestMethod == 'car' ? searchText : '',
+      );
+
+      // Handle the search result here
+      print(searchResult);
+
+      // Update the compoundList with the search result
+      compoundList.value = searchResult['data'];
+    } catch (e) {
+      // Handle any errors that occur during the search
+      print('Error searching: $e');
+    }
   }
 }

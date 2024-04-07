@@ -140,7 +140,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                               itemWidget(
                                   subText: Constant.timestampToDate(controller
                                       .mySeasonPassList[index].endDate!),
-                                  title: 'Validity:'.tr,
+                                  title: '${'Validity'.tr}:',
                                   svgImage: 'assets/icons/ic_timer.svg'),
                               itemWidget(
                                   subText:
@@ -190,12 +190,17 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                 color: AppColors.darkGrey09,
               )),
           const Spacer(),
-          Text(subText.tr,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Text(
+              subText.tr,
               style: const TextStyle(
-                fontSize: 16,
-                fontFamily: AppThemData.medium,
-                color: AppColors.labelColorLightPrimary,
-              )),
+                fontSize: 14,
+                color: Colors.black,
+              ),
+            ),
+          ),
         ],
       ).marginOnly(left: 10, right: 10),
     );

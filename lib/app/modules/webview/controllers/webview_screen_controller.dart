@@ -168,7 +168,7 @@ class WebviewScreenController extends GetxController {
       'identificationType': onlinePaymentData.identificationType ?? '',
       'lotNo': onlinePaymentData.lotNo ?? '',
       'vehicleNo': onlinePaymentData.vehicleNo ?? '',
-      'passId': onlinePaymentData.passId ?? '',
+      'passId': onlinePaymentData.selectedPassId ?? '',
     };
     // Print the request body
     print('Request Body: $body');

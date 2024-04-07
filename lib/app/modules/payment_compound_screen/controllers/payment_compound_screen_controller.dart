@@ -1,12 +1,9 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
-import 'package:customer_app/app/models/my_purchase_pass_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
@@ -28,9 +25,11 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../utils/server.dart';
+import '../../../models/my_payment_compound_model.dart';
 
-class SelectPaymentScreenController extends GetxController {
-  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
+class PaymentCompoundScreenController extends GetxController {
+  Rx<MyPaymentCompoundModel> paymentCompoundModel =
+      MyPaymentCompoundModel().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
   Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
@@ -39,25 +38,6 @@ class SelectPaymentScreenController extends GetxController {
   RxBool isLoading = true.obs;
   AuthResultModel authResultModel = AuthResultModel();
   Server server = Server();
-
-  @override
-  void onInit() {
-    getArgument();
-    super.onInit();
-  }
-
-  getArgument() async {
-    final bankName = Get.arguments?['bankName'] ?? "Default Bank Name";
-    dynamic argumentData = Get.arguments;
-    if (argumentData != null && argumentData['purchasePassModel'] != null) {
-      purchasePassModel.value = argumentData['purchasePassModel'];
-      getPaymentData();
-    } else {
-      // Handle the case where purchasePassModel is null
-      // For example, show an error message or navigate back
-      ShowToastDialog.showToast("Error: Purchase pass data is missing");
-    }
-  }
 
   getPaymentData() async {
     isLoading.value = true;
@@ -84,23 +64,10 @@ class SelectPaymentScreenController extends GetxController {
     update();
   }
 
-  // double calculateAmount() {
-  //   RxString taxAmount = "0.0".obs;
-  //   if (bookingModel.value.taxList != null) {
-  //     for (var element in bookingModel.value.taxList!) {
-  //       taxAmount.value = (double.parse(taxAmount.value) +
-  //               Constant().calculateTax(
-  //                   amount: (double.parse(bookingModel.value.subTotal.toString()) - double.parse(couponAmount.toString())).toString(),
-  //                   taxModel: element))
-  //           .toStringAsFixed(Constant.currencyModel!.decimalDigits!);
-  //     }
-  //   }
-  //   return (double.parse(bookingModel.value.subTotal.toString()) - double.parse(couponAmount.toString())) + double.parse(taxAmount.value);
-  // }
-  //
   completeOrder() async {
-    purchasePassModel.value.paymentType = selectedPaymentMethod.value;
-    await FireStoreUtils.setPurchasePass(purchasePassModel.value).then((value) {
+    paymentCompoundModel.value.paymentType = selectedPaymentMethod.value;
+    await FireStoreUtils.setPayCompound(paymentCompoundModel.value)
+        .then((value) {
       Get.back();
       Get.toNamed(Routes.DASHBOARD_SCREEN);
       ShowToastDialog.showToast("Season pass purchase successfully");

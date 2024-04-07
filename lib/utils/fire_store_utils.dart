@@ -29,6 +29,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 import '../app/models/carousel_model.dart';
+import '../app/models/my_payment_compound_model.dart';
 import '../app/models/my_purchase_pass_model.dart';
 import '../app/models/season_pass_model.dart';
 
@@ -668,6 +669,22 @@ class FireStoreUtils {
       isAdded = true;
     }).catchError((error) {
       log("Failed to update user: $error");
+      isAdded = false;
+    });
+    return isAdded;
+  }
+
+  static Future<bool?> setPayCompound(
+      MyPaymentCompoundModel paymentCompoundModel) async {
+    bool isAdded = false;
+    await fireStore
+        .collection(CollectionName.purchasePass)
+        .doc(paymentCompoundModel.id)
+        .set(paymentCompoundModel.toJson())
+        .then((value) {
+      isAdded = true;
+    }).catchError((error) {
+      log("Failed to update pay compound: $error");
       isAdded = false;
     });
     return isAdded;

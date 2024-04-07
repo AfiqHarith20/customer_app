@@ -106,7 +106,7 @@ const Map<String, String> enUS = {
   "Coupon code is Invalid": "Coupon code is Invalid",
   "Parking Cost": "Parking Cost",
   "Apply Coupon Code": "Apply Coupon Code",
-  "Payment Method": "Payment Method",
+  "Checkout": "Checkout",
   "Pay Now": "Pay Now",
   "Wallet Amount Insufficient": "Wallet Amount Insufficient",
   "No Active Parking Found": "No Active Parking Found",
@@ -201,5 +201,13 @@ const Map<String, String> enUS = {
   "Proceed": "Proceed",
   "Online Banking": "Online Banking",
   "Lot Image": "Lot Image",
-  "Submit": "Submit"
+  "Submit": "Submit",
+  "Pass Name": "Pass Name",
+  "Payment Methods": "Payment Methods",
+  "Pass Details": "Pass Details",
+  "Payment Information": "Payment Information",
+  "Sub Total": "Sub Total",
+  "Tax": "Tax",
+  "Enter Plate number": "Enter Plate number",
+  "Enter compound number": "Enter compound number",
 };

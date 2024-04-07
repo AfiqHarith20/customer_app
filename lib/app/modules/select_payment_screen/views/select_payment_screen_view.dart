@@ -23,14 +23,49 @@ class SelectPaymentScreenView extends StatefulWidget {
   final String passPrice;
   final String passValidity;
   late String selectedBankName;
-  late String selectedBankId;
-  late String selectedPassId;
+  final String selectedBankId;
+  final String selectedPassId;
+  // final String accessToken;
+  // final String customerId;
+  // final double totalPrice;
+  // final String address;
+  // final String companyName;
+  // final String companyRegistrationNo;
+  // final Timestamp endDate;
+  // final Timestamp startDate;
+  // final String fullName;
+  // final String email;
+  // final String mobileNumber;
+  // final String userName;
+  // final String identificationNo;
+  // final String identificationType;
+  // final String vehicleNo;
+  // final String lotNo;
   SelectPaymentScreenView({
     Key? key,
     required this.passName,
     required this.passPrice,
     required this.passValidity,
     required this.selectedBankName,
+    required this.selectedBankId,
+    required this.selectedPassId,
+    // required this.accessToken,
+    // required this.customerId,
+    // required this.totalPrice,
+    // required this.address,
+    // required this.companyName,
+    // required this.companyRegistrationNo,
+    // required this.endDate,
+    // required this.startDate,
+    // required this.fullName,
+    // required this.email,
+    // required this.mobileNumber,
+    // required this.userName,
+    // required this.identificationNo,
+    // required this.vehicleNo,
+    // required this.identificationType,
+
+    // required this.lotNo,
   }) : super(key: key);
 
   @override
@@ -59,7 +94,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
         return Scaffold(
           appBar: UiInterface().customAppBar(
             context,
-            "Payment Method".tr,
+            "Checkout".tr,
             backgroundColor: AppColors.white,
           ),
           body: controller.isLoading.value
@@ -77,21 +112,21 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Pass Details",
-                            style: TextStyle(
+                          Text(
+                            "Pass Details".tr,
+                            style: const TextStyle(
                               fontSize: 20,
                               fontFamily: AppThemData.semiBold,
                               color: AppColors.darkGrey08,
                             ),
                           ),
                           const SizedBox(height: 20),
-                          _buildDetailRow("Pass Name", widget.passName),
+                          _buildDetailRow("Pass Name".tr, widget.passName),
                           _buildDetailRow(
-                            "Price",
+                            "Price".tr,
                             "RM ${widget.passPrice}",
                           ),
-                          _buildDetailRow("Validity", widget.passValidity),
+                          _buildDetailRow("Validity".tr, widget.passValidity),
                         ],
                       ),
                       const Divider(
@@ -102,11 +137,11 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                       // PaymentMethodsSections(
                       //   controller: controller,
                       // ),
-                      const Row(
+                      Row(
                         children: [
                           Text(
-                            "Payment Methods",
-                            style: TextStyle(
+                            "Payment Methods".tr,
+                            style: const TextStyle(
                               fontSize: 20,
                               fontFamily: AppThemData.semiBold,
                               color: AppColors.darkGrey08,
@@ -192,34 +227,35 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                 // Check the selected payment method
                 if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.commercePay!.name) {
-                  onlinePaymentModel = OnlinePaymentModel(
-                    accessToken: widget.accessToken,
-                    customerId: widget.customerId,
-                    channelId: '2',
-                    selectedBankId: widget.selectedBankId,
-                    totalPrice: widget.totalPrice,
-                    address: widget.address,
-                    companyName: widget.companyName,
-                    companyRegistrationNo: widget.companyRegistrationNo,
-                    endDate: widget.endDate,
-                    startDate: widget.startDate,
-                    fullName: widget.fullName,
-                    email: widget.email,
-                    mobileNumber: widget.mobileNumber,
-                    userName: widget.userName,
-                    identificationNo: widget.identificationNo,
-                    identificationType: widget.identificationType,
-                    vehicleNo: widget.vehicleNo,
-                    lotNo: widget.lotNo,
-                    passId: widget.passId,
-                  );
-                  print('Online Payment Data: $onlinePaymentModel');
-                  Get.toNamed(
-                    Routes.WEBVIEW_SCREEN,
-                    arguments: {
-                      'onlinePaymentModel': onlinePaymentModel,
-                    },
-                  );
+                  // onlinePaymentModel = OnlinePaymentModel(
+                  // accessToken: widget.accessToken,
+                  // customerId: widget.customerId,
+                  // channelId: '2',
+                  // selectedBankId: widget.selectedBankId,
+                  // totalPrice: widget.totalPrice,
+                  // address: widget.address,
+                  // companyName: widget.companyName,
+                  // companyRegistrationNo: widget.companyRegistrationNo,
+                  // endDate: widget.endDate,
+                  // startDate: widget.startDate,
+                  // fullName: widget.fullName,
+                  // email: widget.email,
+                  // mobileNumber: widget.mobileNumber,
+                  // userName: widget.userName,
+                  // identificationNo: widget.identificationNo,
+                  // identificationType: widget.identificationType,
+                  // vehicleNo: widget.vehicleNo,
+                  // lotNo: widget.lotNo,
+                  //   selectedPassId: widget.selectedPassId,
+                  // );
+                  // print('Online Payment Data: $onlinePaymentModel');
+                  // Get.toNamed(
+                  //   Routes.WEBVIEW_SCREEN,
+                  //   arguments: {
+                  //     'onlinePaymentModel': onlinePaymentModel,
+                  //   },
+                  // );
+                  controller.completeOrder();
                 } else if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.strip!.name) {
                   // Call the controller method to make the stripe payment
@@ -294,15 +330,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
 }
 
 Widget _buildPaymentInformation(String passPrice) {
-  double price = 0.0;
-  try {
-    price = double.parse(passPrice);
-  } catch (e) {
-    // Handle the error gracefully
-    print('Error parsing passPrice: $e');
-    // You can provide a default value or display an error message to the user
-    return const Text('Invalid price', style: TextStyle(color: Colors.red));
-  }
+  // Convert passPrice to a double
+  double price = double.parse(passPrice);
 
   // Calculate tax (6% of pass price)
   double tax = 0.06 * price;
@@ -314,19 +343,20 @@ Widget _buildPaymentInformation(String passPrice) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Divider(color: Colors.black),
-      const Text(
-        "Payment Information",
-        style: TextStyle(
+      Text(
+        "Payment Information".tr,
+        style: const TextStyle(
           fontSize: 20,
           fontFamily: AppThemData.semiBold,
           color: AppColors.darkGrey08,
         ),
       ),
       const SizedBox(height: 20),
-      _buildDetailRow("Sub Total", "RM $passPrice"),
-      _buildDetailRow("Tax (6%)", "RM ${tax.toStringAsFixed(2)}"),
+      _buildDetailRow("Sub Total".tr,
+          "RM ${price.toStringAsFixed(2)}"), // Convert price to string
+      _buildDetailRow("${"Tax ".tr}(6%)", "RM ${tax.toStringAsFixed(2)}"),
       const Divider(),
-      _buildTotalRow("Total Amount", "RM ${totalPrice.toStringAsFixed(2)}"),
+      _buildTotalRow("Total Amount".tr, "RM ${totalPrice.toStringAsFixed(2)}"),
     ],
   );
 }

@@ -2,53 +2,53 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CompoundModel {
   String? amount;
-  Timestamp? createdDate;
+  Timestamp? dateTime;
   String? id;
   String? userId;
-  String? transactionId;
-  String? paymentType;
-  String? note;
-  String? parkingId;
-  String? type;
-  bool? isCredit;
+  String? compoundNo;
+  String? status;
+  String? vehicleNo;
+  String? offence;
+  String? kodHasil;
+  String? msg;
 
   CompoundModel(
       {this.amount,
-        this.createdDate,
-        this.parkingId,
-        this.id,
-        this.userId,
-        this.transactionId,
-        this.paymentType,
-        this.note,
-        this.type,
-        this.isCredit});
+      this.dateTime,
+      this.offence,
+      this.id,
+      this.userId,
+      this.compoundNo,
+      this.status,
+      this.vehicleNo,
+      this.kodHasil,
+      this.msg});
 
   CompoundModel.fromJson(Map<String, dynamic> json) {
     amount = json['amount'];
-    createdDate = json['createdDate'];
+    dateTime = json['datetime'];
     id = json['id'];
     userId = json['userId'];
-    parkingId = json['parkingId'];
-    transactionId = json['transactionId'];
-    paymentType = json['paymentType'];
-    note = json['note'];
-    isCredit = json['isCredit'];
-    type = json['type'];
+    compoundNo = json['compound_num'];
+    status = json['status'];
+    vehicleNo = json['vehicle_num'];
+    kodHasil = json['kod_hasil'];
+    offence = json['offence'];
+    msg = json['msg'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['amount'] = amount;
-    data['createdDate'] = createdDate;
+    data['datetime'] = dateTime;
     data['id'] = id;
-    data['parkingId'] = parkingId;
+    data['compound_num'] = compoundNo;
     data['userId'] = userId;
-    data['transactionId'] = transactionId;
-    data['paymentType'] = paymentType;
-    data['note'] = note;
-    data['isCredit'] = isCredit;
-    data['type'] = type;
+    data['status'] = status;
+    data['vehicle_num'] = vehicleNo;
+    data['kod_hasil'] = kodHasil;
+    data['offence'] = offence;
+    data['msg'] = msg;
     return data;
   }
 }

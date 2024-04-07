@@ -19,7 +19,7 @@ class OnlinePaymentModel {
   String? identificationType;
   String? vehicleNo;
   String? lotNo;
-  String? passId;
+  String? selectedPassId;
 
   OnlinePaymentModel({
     this.accessToken,
@@ -40,7 +40,7 @@ class OnlinePaymentModel {
     this.identificationType,
     this.vehicleNo,
     this.lotNo,
-    this.passId,
+    this.selectedPassId,
   });
 
   OnlinePaymentModel? onlinePaymentModel;
@@ -64,7 +64,7 @@ class OnlinePaymentModel {
     identificationType = json['identificationType'];
     lotNo = json['lotNo'];
     vehicleNo = json['vehicleNo'];
-    passId = json['passId'];
+    selectedPassId = json['passId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -87,7 +87,7 @@ class OnlinePaymentModel {
     data['identificationType'] = identificationType;
     data['lotNo'] = lotNo;
     data['vehicleNo'] = vehicleNo;
-    data['passId'] = passId;
+    data['passId'] = selectedPassId;
     return data;
   }
 }

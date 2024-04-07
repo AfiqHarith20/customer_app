@@ -177,7 +177,8 @@ class SeasonPassView extends GetView<SeasonPassController> {
             ),
             Divider(height: 2, color: AppColors.darkGrey02.withOpacity(0.5)),
             const SizedBox(height: 10),
-            itemWidget(subText: '${passModel.validity}', title: "Validity:"),
+            itemWidget(
+                subText: '${passModel.validity}', title: '${"Validity".tr}:'),
             InkWell(
               onTap: () {
                 // Adjust navigation based on the pass type
