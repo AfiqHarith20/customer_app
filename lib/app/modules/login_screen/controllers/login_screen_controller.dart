@@ -55,14 +55,16 @@ class LoginScreenController extends GetxController {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn().catchError((error) {
+      final GoogleSignInAccount? googleUser =
+          await GoogleSignIn().signIn().catchError((error) {
         ShowToastDialog.closeLoader();
         ShowToastDialog.showToast("something_went_wrong".tr);
         return null;
       });
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -80,47 +82,69 @@ class LoginScreenController extends GetxController {
   }
 
   loginWithGoogle() async {
-    ShowToastDialog.showLoader("Please Wait..".tr);
-    await signInWithGoogle().then((value) {
-      ShowToastDialog.closeLoader();
-      if (value != null) {
-        if (value.additionalUserInfo!.isNewUser) {
-          CustomerModel customerModel = CustomerModel();
-          customerModel.id = value.user!.uid;
-          customerModel.email = value.user!.email;
-          customerModel.fullName = value.user!.displayName;
-          customerModel.profilePic = value.user!.photoURL;
-          customerModel.loginType = Constant.googleLoginType;
-          print("------::::::::::::::::::----------");
-          ShowToastDialog.closeLoader();
-          Get.toNamed(Routes.INFORMATION_SCREEN, arguments: {"customerModel": customerModel});
-        } else {
-          FireStoreUtils.userExistOrNot(value.user!.uid).then((userExit) async {
-            ShowToastDialog.closeLoader();
-            if (userExit == true) {
-              print("------:::::::::1:::::::::----------");
-              CustomerModel? customerModel = await FireStoreUtils.getUserProfile(value.user!.uid);
-              if (customerModel != null) {
-                if (customerModel.active == true) {
-                  Get.offAllNamed(Routes.DASHBOARD_SCREEN);
-                } else {
-                  ShowToastDialog.showToast("Unable to Log In?  Please Contact the Admin for Assistance");
-                }
-              }
-            } else {
-              CustomerModel customerModel = CustomerModel();
-              customerModel.id = value.user!.uid;
-              customerModel.email = value.user!.email;
-              customerModel.fullName = value.user!.displayName;
-              customerModel.profilePic = value.user!.photoURL;
-              customerModel.loginType = Constant.googleLoginType;
+    try {
+      // Show loader dialog
+      ShowToastDialog.showLoader("Please Wait..".tr);
 
-              Get.toNamed(Routes.INFORMATION_SCREEN, arguments: {"customerModel": customerModel});
-            }
-          });
+      // Sign in with Google
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        // Google sign-in canceled or failed
+        print('Google sign-in canceled or failed');
+        ShowToastDialog.closeLoader();
+        return;
+      }
+      GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Sign in with Firebase using the credential
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Close loader dialog
+      ShowToastDialog.closeLoader();
+
+      // Handle user based on whether they are new or existing
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        // New user: navigate to information screen to complete registration
+        CustomerModel customerModel = CustomerModel(
+          id: userCredential.user!.uid,
+          email: userCredential.user!.email,
+          fullName: userCredential.user!.displayName,
+          profilePic: userCredential.user!.photoURL,
+          loginType: Constant.googleLoginType,
+        );
+        Get.toNamed(Routes.INFORMATION_SCREEN,
+            arguments: {"customerModel": customerModel});
+      } else {
+        // Existing user: check if user exists in Firestore
+        bool userExists =
+            await FireStoreUtils.userExistOrNot(userCredential.user!.uid);
+        if (userExists) {
+          // User exists in Firestore, navigate to dashboard screen
+          Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+        } else {
+          // User does not exist in Firestore, navigate to information screen to complete registration
+          CustomerModel customerModel = CustomerModel(
+            id: userCredential.user!.uid,
+            email: userCredential.user!.email,
+            fullName: userCredential.user!.displayName,
+            profilePic: userCredential.user!.photoURL,
+            loginType: Constant.googleLoginType,
+          );
+          Get.toNamed(Routes.INFORMATION_SCREEN,
+              arguments: {"customerModel": customerModel});
         }
       }
-    });
+    } catch (e) {
+      // Handle any errors
+      print("Error signing in with Google: $e");
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast("Something went wrong. Please try again.");
+    }
   }
 
   Future<UserCredential?> signInWithApple() async {
@@ -158,9 +182,11 @@ class LoginScreenController extends GetxController {
   }
 
   String generateNonce([int length = 32]) {
-    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
     final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
   }
 
   /// Returns the sha256 hash of [input] in hex notation.
@@ -183,18 +209,21 @@ class LoginScreenController extends GetxController {
           customerModel.loginType = Constant.appleLoginType;
 
           ShowToastDialog.closeLoader();
-          Get.toNamed(Routes.INFORMATION_SCREEN, arguments: {"customerModel": customerModel});
+          Get.toNamed(Routes.INFORMATION_SCREEN,
+              arguments: {"customerModel": customerModel});
         } else {
           FireStoreUtils.userExistOrNot(value.user!.uid).then((userExit) async {
             ShowToastDialog.closeLoader();
 
             if (userExit == true) {
-              CustomerModel? customerModel = await FireStoreUtils.getUserProfile(value.user!.uid);
+              CustomerModel? customerModel =
+                  await FireStoreUtils.getUserProfile(value.user!.uid);
               if (customerModel != null) {
                 if (customerModel.active == true) {
                   Get.offAllNamed(Routes.DASHBOARD_SCREEN);
                 } else {
-                  ShowToastDialog.showToast("Unable to Log In?  Please Contact the Admin for Assistance");
+                  ShowToastDialog.showToast(
+                      "Unable to Log In?  Please Contact the Admin for Assistance");
                 }
               }
             } else {
@@ -204,7 +233,8 @@ class LoginScreenController extends GetxController {
               customerModel.profilePic = value.user!.photoURL;
               customerModel.loginType = Constant.googleLoginType;
 
-              Get.toNamed(Routes.INFORMATION_SCREEN, arguments: {"customerModel": customerModel});
+              Get.toNamed(Routes.INFORMATION_SCREEN,
+                  arguments: {"customerModel": customerModel});
             }
           });
         }

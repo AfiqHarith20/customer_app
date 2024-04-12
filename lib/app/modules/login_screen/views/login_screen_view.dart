@@ -31,7 +31,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
                   ),
                   Text(
                     "Quick Mobile Login".tr,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 20,
                         color: AppColors.darkGrey10,
                         fontFamily: AppThemData.bold),
@@ -40,8 +40,9 @@ class LoginScreenView extends GetView<LoginScreenController> {
                     height: 6,
                   ),
                   Text(
-                    "Access your account with ease by simply logging in with your mobile number.".tr,
-                    style: TextStyle(
+                    "Access your account with ease by simply logging in with your mobile number."
+                        .tr,
+                    style: const TextStyle(
                         color: AppColors.lightGrey10,
                         fontFamily: AppThemData.regular),
                   ),
