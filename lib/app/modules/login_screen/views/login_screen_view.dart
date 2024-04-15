@@ -1,5 +1,7 @@
 import 'dart:io';
-import 'package:customer_app/app/widget/mobile_number_textfield.dart';
+import 'package:customer_app/app/routes/app_pages.dart';
+import 'package:customer_app/app/widget/email_textfield.dart';
+import 'package:customer_app/app/widget/password_textfield.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
 import 'package:customer_app/themes/button_theme.dart';
@@ -20,7 +22,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
         ),
         body: SingleChildScrollView(
           child: Form(
-            key: controller.formKey.value,
+            key: controller.loginformKey.value,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
@@ -49,10 +51,17 @@ class LoginScreenView extends GetView<LoginScreenController> {
                   const SizedBox(
                     height: 32,
                   ),
-                  MobileNumberTextField(
-                    title: "Mobile Number".tr,
-                    controller: controller.phoneNumberController.value,
-                    countryCode: controller.countryCode.value,
+                  EmailTextField(
+                    title: "Email".tr,
+                    controller: controller.emailController.value,
+                    onPress: () {},
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  PasswordTextField(
+                    title: "Password".tr,
+                    controller: controller.passwordController.value,
                     onPress: () {},
                   ),
                   const SizedBox(
@@ -66,13 +75,43 @@ class LoginScreenView extends GetView<LoginScreenController> {
                     txtColor: AppColors.lightGrey01,
                     bgColor: AppColors.darkGrey10,
                     onPress: () {
-                      if (controller.formKey.value.currentState!.validate()) {
-                        controller.sendCode();
+                      if (controller.loginformKey.value.currentState!
+                          .validate()) {
+                        controller.sendSignIn();
                       }
                     },
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account?".tr,
+                        style: const TextStyle(
+                          color: Colors.black45,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.REGISTER_SCREEN);
+                        },
+                        child: Text(
+                          "Sign Up".tr,
+                          style: TextStyle(
+                            color: Colors.blue[900],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   Row(
                     children: [

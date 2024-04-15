@@ -25,22 +25,22 @@ class SelectPaymentScreenView extends StatefulWidget {
   late String selectedBankName;
   final String selectedBankId;
   final String selectedPassId;
-  // final String accessToken;
-  // final String customerId;
-  // final double totalPrice;
-  // final String address;
-  // final String companyName;
-  // final String companyRegistrationNo;
-  // final Timestamp endDate;
-  // final Timestamp startDate;
-  // final String fullName;
-  // final String email;
-  // final String mobileNumber;
-  // final String userName;
-  // final String identificationNo;
-  // final String identificationType;
-  // final String vehicleNo;
-  // final String lotNo;
+  final String accessToken;
+  final String customerId;
+  final double totalPrice;
+  final String address;
+  final String companyName;
+  final String companyRegistrationNo;
+  final String endDate;
+  final String startDate;
+  final String fullName;
+  final String email;
+  final String mobileNumber;
+  final String userName;
+  final String identificationNo;
+  final String identificationType;
+  final String vehicleNo;
+  final String lotNo;
   SelectPaymentScreenView({
     Key? key,
     required this.passName,
@@ -49,23 +49,22 @@ class SelectPaymentScreenView extends StatefulWidget {
     required this.selectedBankName,
     required this.selectedBankId,
     required this.selectedPassId,
-    // required this.accessToken,
-    // required this.customerId,
-    // required this.totalPrice,
-    // required this.address,
-    // required this.companyName,
-    // required this.companyRegistrationNo,
-    // required this.endDate,
-    // required this.startDate,
-    // required this.fullName,
-    // required this.email,
-    // required this.mobileNumber,
-    // required this.userName,
-    // required this.identificationNo,
-    // required this.vehicleNo,
-    // required this.identificationType,
-
-    // required this.lotNo,
+    required this.accessToken,
+    required this.customerId,
+    required this.totalPrice,
+    required this.address,
+    required this.companyName,
+    required this.companyRegistrationNo,
+    required this.endDate,
+    required this.startDate,
+    required this.fullName,
+    required this.email,
+    required this.mobileNumber,
+    required this.userName,
+    required this.identificationNo,
+    required this.vehicleNo,
+    required this.identificationType,
+    required this.lotNo,
   }) : super(key: key);
 
   @override
@@ -77,6 +76,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
     with SingleTickerProviderStateMixin {
   late SelectPaymentScreenController controller;
   late OnlinePaymentModel onlinePaymentModel = OnlinePaymentModel();
+  late Function() addSeasonPassData;
+  late String selectedBankId;
 
   @override
   void initState() {
@@ -84,6 +85,10 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
     onlinePaymentModel = OnlinePaymentModel();
     controller = Get.put(SelectPaymentScreenController());
     controller.onInit(); // Call onInit manually
+
+    // Retrieve arguments and assign addSeasonPassData
+    final Map<String, dynamic> args = Get.arguments;
+    addSeasonPassData = args["addSeasonPassData"];
   }
 
   @override
@@ -223,39 +228,57 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                 if (!controller.isPaymentCompleted.value) {
                   return;
                 }
-
                 // Check the selected payment method
                 if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.commercePay!.name) {
-                  // onlinePaymentModel = OnlinePaymentModel(
-                  // accessToken: widget.accessToken,
-                  // customerId: widget.customerId,
-                  // channelId: '2',
-                  // selectedBankId: widget.selectedBankId,
-                  // totalPrice: widget.totalPrice,
-                  // address: widget.address,
-                  // companyName: widget.companyName,
-                  // companyRegistrationNo: widget.companyRegistrationNo,
-                  // endDate: widget.endDate,
-                  // startDate: widget.startDate,
-                  // fullName: widget.fullName,
-                  // email: widget.email,
-                  // mobileNumber: widget.mobileNumber,
-                  // userName: widget.userName,
-                  // identificationNo: widget.identificationNo,
-                  // identificationType: widget.identificationType,
-                  // vehicleNo: widget.vehicleNo,
-                  // lotNo: widget.lotNo,
-                  //   selectedPassId: widget.selectedPassId,
+                  final passData = await addSeasonPassData();
+                  final passPrice = controller
+                      .purchasePassModel.value.seasonPassModel!.price!;
+                  // Obtain the access token after selecting the bank
+                  await controller.commercepayMakePayment(
+                    amount: double.parse(passPrice).toStringAsFixed(
+                      Constant.currencyModel!.decimalDigits!,
+                    ),
+                  );
+
+                  // String? accessToken = await controller.commercepayMakePayment(
+                  //   amount: double.parse(passPrice).toStringAsFixed(
+                  //     Constant.currencyModel!.decimalDigits!,
+                  //   ),
                   // );
-                  // print('Online Payment Data: $onlinePaymentModel');
-                  // Get.toNamed(
-                  //   Routes.WEBVIEW_SCREEN,
-                  //   arguments: {
-                  //     'onlinePaymentModel': onlinePaymentModel,
-                  //   },
-                  // );
-                  controller.completeOrder();
+
+                  // Retrieve the access token from the controller
+                  String? accessToken = controller.authResultModel.accessToken;
+
+                  onlinePaymentModel = OnlinePaymentModel(
+                    accessToken: accessToken,
+                    customerId: passData['customerId'],
+                    selectedBankId: passData['selectedBankId'],
+                    totalPrice: passData['totalPrice'],
+                    address: passData['address'],
+                    companyName: passData['companyName'],
+                    companyRegistrationNo: passData['companyRegistrationNo'],
+                    endDate: passData['endDate'],
+                    startDate: passData['startDate'],
+                    fullName: passData['fullName'],
+                    email: passData['email'],
+                    mobileNumber: passData['mobileNumber'],
+                    userName: passData['email'],
+                    identificationNo: passData['identificationNo'],
+                    identificationType: '2',
+                    vehicleNo: passData['vehicleNo'],
+                    lotNo: passData['lotNo'],
+                    selectedPassId: passData['passid'],
+                    channelId: '2',
+                  );
+                  print('Online Payment Data: $onlinePaymentModel');
+                  Get.toNamed(
+                    Routes.WEBVIEW_SCREEN,
+                    arguments: {
+                      'onlinePaymentModel': onlinePaymentModel,
+                    },
+                  );
+                  // controller.completeOrder();
                 } else if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.strip!.name) {
                   // Call the controller method to make the stripe payment
@@ -413,8 +436,8 @@ Widget paymentOnlineDecoration({
   required SelectPaymentScreenController controller,
   required String value,
   required String image,
-  required String? selectedBankName, // Change to required parameter
-  required Function(String?) updateSelectedBankName, // Add callback parameter
+  required String? selectedBankName,
+  required Function(String?) updateSelectedBankName,
 }) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 16),
@@ -422,32 +445,19 @@ Widget paymentOnlineDecoration({
       onTap: () async {
         controller.selectedPaymentMethod.value = value.toString();
         if (value == "Online Banking") {
-          // Get the price of the selected pass
           final passPrice =
               controller.purchasePassModel.value.seasonPassModel!.price!;
-
-          // Make payment based on the selected method
           controller.commercepayMakePayment(
             amount: double.parse(passPrice)
                 .toStringAsFixed(Constant.currencyModel!.decimalDigits!),
           );
 
-          // Navigate to SelectBankProviderScreen
           final result = await Get.toNamed(Routes.SELECT_BANK_PROVIDER_SCREEN);
           if (result != null && result is Map<String, dynamic>) {
-            final selectedBankId = result['bankId'];
-            final bankName = result['bankName'];
-            // Update the selected bank name using the callback function
-            updateSelectedBankName(bankName); // Call the callback function
-            // Do something with the selected bank data
-            print('Selected Bank ID: $selectedBankId');
-            print('Selected Bank Name: $bankName');
-          }
-
-          // Check if result is not null and print the selected bank data
-          if (result != null && result is Map<String, dynamic>) {
-            print('Selected Bank: $selectedBankName');
-            // You can perform any action with the selected bank data here
+            updateSelectedBankName(
+                result['bankName']); // Call the callback function
+            print('Selected Bank ID: ${result['bankId']}');
+            print('Selected Bank Name: ${result['bankName']}');
           }
         }
       },
@@ -477,9 +487,7 @@ Widget paymentOnlineDecoration({
                   ),
                 ),
                 Text(
-                  selectedBankName != null &&
-                          selectedBankName
-                              .isNotEmpty // Check if selectedBankName is not null and not empty
+                  selectedBankName != null && selectedBankName.isNotEmpty
                       ? selectedBankName
                       : "Select Bank".tr,
                   style: const TextStyle(

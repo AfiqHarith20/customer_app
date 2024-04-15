@@ -19,7 +19,8 @@ class InformationScreenController extends GetxController {
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
   RxString countryCode = "+60".obs;
-  Rx<TextEditingController> referralCodeController = TextEditingController().obs;
+  Rx<TextEditingController> referralCodeController =
+      TextEditingController().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
 
   RxList<String> genderList = ["Male", "Female"].obs;
@@ -41,11 +42,16 @@ class InformationScreenController extends GetxController {
       customerModel.value = argumentData['customerModel'];
       loginType.value = customerModel.value.loginType.toString();
       if (loginType.value == Constant.phoneLoginType) {
-        phoneNumberController.value.text = customerModel.value.phoneNumber.toString();
+        phoneNumberController.value.text =
+            customerModel.value.phoneNumber.toString();
         countryCode.value = customerModel.value.countryCode.toString();
       } else {
         emailController.value.text = customerModel.value.email.toString();
-        fullNameController.value.text = customerModel.value.fullName.toString();
+        // Check if fullName is not null before assigning
+        if (customerModel.value.fullName != null) {
+          fullNameController.value.text =
+              customerModel.value.fullName.toString();
+        }
       }
     }
     update();
@@ -53,7 +59,8 @@ class InformationScreenController extends GetxController {
 
   createAccount() async {
     String fcmToken = await NotificationService.getToken();
-    String firstTwoChar = fullNameController.value.text.substring(0, 2).toUpperCase();
+    String firstTwoChar =
+        fullNameController.value.text.substring(0, 2).toUpperCase();
 
     if (profileImage.value.isNotEmpty) {
       profileImage.value = await Constant.uploadUserImageToFireStorage(
@@ -64,7 +71,9 @@ class InformationScreenController extends GetxController {
     }
 
     if (referralCodeController.value.text.isNotEmpty) {
-      await FireStoreUtils.checkReferralCodeValidOrNot(referralCodeController.value.text).then((value) async {
+      await FireStoreUtils.checkReferralCodeValidOrNot(
+              referralCodeController.value.text)
+          .then((value) async {
         if (value == true) {
           ShowToastDialog.showLoader("please_wait".tr);
           CustomerModel customerModelData = customerModel.value;
@@ -78,14 +87,20 @@ class InformationScreenController extends GetxController {
           customerModelData.createdAt = Timestamp.now();
           Constant.customerName = customerModelData.fullName!;
 
-          FireStoreUtils.getReferralUserByCode(referralCodeController.value.text).then((value) async {
+          FireStoreUtils.getReferralUserByCode(
+                  referralCodeController.value.text)
+              .then((value) async {
             if (value != null) {
-              ReferralModel ownReferralModel =
-                  ReferralModel(id: FireStoreUtils.getCurrentUid(), referralBy: value.id, referralCode: Constant.getReferralCode(firstTwoChar));
+              ReferralModel ownReferralModel = ReferralModel(
+                  id: FireStoreUtils.getCurrentUid(),
+                  referralBy: value.id,
+                  referralCode: Constant.getReferralCode(firstTwoChar));
               await FireStoreUtils.referralAdd(ownReferralModel);
             } else {
-              ReferralModel referralModel =
-                  ReferralModel(id: FireStoreUtils.getCurrentUid(), referralBy: "", referralCode: Constant.getReferralCode(firstTwoChar));
+              ReferralModel referralModel = ReferralModel(
+                  id: FireStoreUtils.getCurrentUid(),
+                  referralBy: "",
+                  referralCode: Constant.getReferralCode(firstTwoChar));
               await FireStoreUtils.referralAdd(referralModel);
             }
           });
@@ -113,7 +128,10 @@ class InformationScreenController extends GetxController {
       customerModelData.createdAt = Timestamp.now();
       Constant.customerName = customerModelData.fullName!;
 
-      ReferralModel referralModel = ReferralModel(id: FireStoreUtils.getCurrentUid(), referralBy: "", referralCode: Constant.getReferralCode(firstTwoChar));
+      ReferralModel referralModel = ReferralModel(
+          id: FireStoreUtils.getCurrentUid(),
+          referralBy: "",
+          referralCode: Constant.getReferralCode(firstTwoChar));
       await FireStoreUtils.referralAdd(referralModel);
 
       await FireStoreUtils.updateUser(customerModelData).then((value) {

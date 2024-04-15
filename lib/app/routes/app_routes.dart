@@ -10,6 +10,7 @@ abstract class Routes {
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const INTRO_SCREEN = _Paths.INTRO_SCREEN;
   static const LOGIN_SCREEN = _Paths.LOGIN_SCREEN;
+  static const REGISTER_SCREEN = _Paths.REGISTER_SCREEN;
   static const WELCOME_SCREEN = _Paths.WELCOME_SCREEN;
   static const INFORMATION_SCREEN = _Paths.INFORMATION_SCREEN;
   static const OTP_SCREEN = _Paths.OTP_SCREEN;
@@ -53,6 +54,7 @@ abstract class _Paths {
   static const SPLASH_SCREEN = '/splash-screen';
   static const INTRO_SCREEN = '/intro-screen';
   static const LOGIN_SCREEN = '/login-screen';
+  static const REGISTER_SCREEN = '/register-screen';
   static const WELCOME_SCREEN = '/welcome-screen';
   static const INFORMATION_SCREEN = '/information-screen';
   static const OTP_SCREEN = '/otp-screen';

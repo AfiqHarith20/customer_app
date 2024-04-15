@@ -75,7 +75,8 @@ class PurchasePassController extends GetxController {
     });
   }
 
-  addSeasonPassData() async {
+  Future<Map<String, dynamic>> addSeasonPassData() async {
+    // Populate purchasePassModel
     purchasePassModel.value.id = Constant.getUuid();
     purchasePassModel.value.customerId = FireStoreUtils.getCurrentUid();
     purchasePassModel.value.seasonPassModel = selectedSessionPass.value;
@@ -93,10 +94,28 @@ class PurchasePassController extends GetxController {
     purchasePassModel.value.countryCode = countryCode.reactive.toString();
     purchasePassModel.value.startDate = Timestamp.now();
     purchasePassModel.value.createAt = Timestamp.now();
-    purchasePassModel.value.endDate = Timestamp.fromDate(DateTime.timestamp()
-        .add(Duration(
-            days:
-                checkDuration(selectedSessionPass.value.validity.toString()))));
+    purchasePassModel.value.endDate = Timestamp.fromDate(
+      DateTime.timestamp().add(
+        Duration(
+            days: checkDuration(selectedSessionPass.value.validity.toString())),
+      ),
+    );
+
+    // Create and return a map with required data
+    return {
+      'customerId': purchasePassModel.value.customerId,
+      'address': purchasePassModel.value.address,
+      'companyName': purchasePassModel.value.companyName,
+      'companyRegistrationNo': purchasePassModel.value.companyRegistrationNo,
+      'endDate': purchasePassModel.value.endDate,
+      'startDate': purchasePassModel.value.startDate,
+      'fullName': purchasePassModel.value.fullName,
+      'email': purchasePassModel.value.email,
+      'mobileNumber': purchasePassModel.value.mobileNumber,
+      'identificationNo': purchasePassModel.value.identificationNo,
+      'vehicleNo': purchasePassModel.value.vehicleNo,
+      'lotNo': purchasePassModel.value.lotNo,
+    };
   }
 
   checkDuration(String time) {

@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_return_type_for_catch_error
+// ignore_for_file: invalid_return_type_for_catch_error, invalid_use_of_protected_member
 
 import 'dart:convert';
 import 'dart:math';
@@ -17,9 +17,63 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginScreenController extends GetxController {
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
+  Rx<TextEditingController> emailController = TextEditingController().obs;
+  Rx<TextEditingController> passwordController = TextEditingController().obs;
   RxString countryCode = "+60".obs;
 
-  Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
+  Rx<GlobalKey<FormState>> loginformKey = GlobalKey<FormState>().obs;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void dispose() {
+    // Clean up resources here
+    emailController.value.dispose();
+    passwordController.value.dispose();
+    loginformKey.value.currentState?.dispose();
+    // Dispose any other resources
+
+    super.dispose();
+  }
+
+  sendSignIn() async {
+    ShowToastDialog.showLoader("please_wait".tr);
+    String email = emailController.value.text;
+    String password = passwordController.value.text;
+
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      // Close loader dialog
+      ShowToastDialog.closeLoader();
+
+      // Existing user: check if user exists in Firestore
+      bool userExists =
+          await FireStoreUtils.userExistOrNot(userCredential.user!.uid);
+      if (userExists) {
+        // User exists in Firestore, navigate to dashboard screen
+        Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+      } else {
+        UserCredential userCredential = await _auth
+            .createUserWithEmailAndPassword(email: email, password: password);
+        // User does not exist in Firestore, navigate to information screen to complete registration
+        CustomerModel customerModel = CustomerModel(
+          id: userCredential.user!.uid,
+          email: userCredential.user!.email,
+          // fullName: userCredential.user!.displayName,
+          profilePic: userCredential.user!.photoURL,
+          loginType: Constant.emailpassLoginType,
+        );
+        Get.toNamed(Routes.INFORMATION_SCREEN,
+            arguments: {"customerModel": customerModel});
+      }
+    } catch (e) {
+      // Handle sign-up failure
+      print("Sign-in failed: $e");
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast("Something went wrong. Please try again.");
+    }
+  }
 
   sendCode() async {
     ShowToastDialog.showLoader("please_wait".tr);
@@ -96,8 +150,8 @@ class LoginScreenController extends GetxController {
       }
       GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
       AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       // Sign in with Firebase using the credential

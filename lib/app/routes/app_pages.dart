@@ -2,6 +2,8 @@ import 'package:customer_app/app/modules/notification_screen/views/notification_
 import 'package:customer_app/app/modules/purchase_pass_private/bindings/purchase_pass_private_binding.dart';
 import 'package:customer_app/app/modules/purchase_pass_private/views/purchase_pass_private_view.dart';
 import 'package:customer_app/app/modules/qrcode_screen/views/qrcode_screen_view.dart';
+import 'package:customer_app/app/modules/register_screen/bindings/register_screen_binding.dart';
+import 'package:customer_app/app/modules/register_screen/views/register_screen_view.dart';
 import 'package:customer_app/app/modules/search_summon_screen/bindings/search_summon_screen_binding.dart';
 import 'package:customer_app/app/modules/search_summon_screen/views/search_summon_screen_view.dart';
 import 'package:customer_app/app/modules/select_bank_provider_screen/bindings/select_bank_provider_screen_binding.dart';
@@ -107,6 +109,12 @@ class AppPages {
         transition: Transition.rightToLeftWithFade,
         transitionDuration: const Duration(milliseconds: 250)),
     GetPage(
+        name: _Paths.REGISTER_SCREEN,
+        page: () => const RegisterScreenView(),
+        binding: RegisterScreenBinding(),
+        transition: Transition.rightToLeftWithFade,
+        transitionDuration: const Duration(milliseconds: 250)),
+    GetPage(
       name: _Paths.WELCOME_SCREEN,
       page: () => const WelcomeScreenView(),
       binding: WelcomeScreenBinding(),
@@ -198,24 +206,23 @@ class AppPages {
               passValidity: Get.arguments["passValidity"] ?? '',
               selectedBankName: Get.arguments["bankName"] ?? '',
               selectedBankId: Get.arguments["selectedBankId"] ?? '',
-              // accessToken: Get.arguments["accessToken"] ?? '',
-              // customerId: Get.arguments["customerId"] ?? '',
-
-              // totalPrice: double.parse(Get.arguments["totalPrice"] ?? '0.0'),
-              // address: Get.arguments["address"] ?? '',
-              // companyName: Get.arguments["companyName"] ?? '',
-              // companyRegistrationNo:
-              //     Get.arguments["companyRegistrationNo"] ?? '',
-              // endDate: Get.arguments["endDate"] ?? '',
-              // startDate: Get.arguments["startDate"] ?? '',
-              // fullName: Get.arguments["name"] ?? '',
-              // email: Get.arguments["email"] ?? '',
-              // mobileNumber: Get.arguments["mobileNumber"] ?? '',
-              // userName: Get.arguments["username"] ?? '',
-              // identificationNo: Get.arguments["identificationNumber"] ?? '',
-              // identificationType: Get.arguments["identificationType"] ?? '',
-              // vehicleNo: Get.arguments["vehicleNo"] ?? '',
-              // lotNo: Get.arguments["lotNo"] ?? '',
+              accessToken: Get.arguments["accessToken"] ?? '',
+              customerId: Get.arguments["customerId"] ?? '',
+              totalPrice: double.parse(Get.arguments["totalPrice"] ?? '0.0'),
+              address: Get.arguments["address"] ?? '',
+              companyName: Get.arguments["companyName"] ?? '',
+              companyRegistrationNo:
+                  Get.arguments["companyRegistrationNo"] ?? '',
+              endDate: Get.arguments["endDate"] ?? '',
+              startDate: Get.arguments["startDate"] ?? '',
+              fullName: Get.arguments["name"] ?? '',
+              email: Get.arguments["email"] ?? '',
+              mobileNumber: Get.arguments["mobileNumber"] ?? '',
+              userName: Get.arguments["username"] ?? '',
+              identificationNo: Get.arguments["identificationNumber"] ?? '',
+              identificationType: Get.arguments["identificationType"] ?? '',
+              vehicleNo: Get.arguments["vehicleNo"] ?? '',
+              lotNo: Get.arguments["lotNo"] ?? '',
               selectedPassId: Get.arguments["passId"] ?? '',
             ),
         binding: SelectPaymentScreenBinding(),

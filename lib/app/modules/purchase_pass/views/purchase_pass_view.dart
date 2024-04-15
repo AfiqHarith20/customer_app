@@ -230,6 +230,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                       if (controller.formKey.value.currentState!.validate()) {
                         await controller.addSeasonPassData();
                         Get.toNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
+                          "addSeasonPassData": controller.addSeasonPassData,
                           "purchasePassModel":
                               controller.purchasePassModel.value,
                           "passName": controller.purchasePassModel.value

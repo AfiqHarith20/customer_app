@@ -107,7 +107,7 @@ class SelectPaymentScreenController extends GetxController {
     });
   }
 
-  void commercepayMakePayment({required String amount}) async {
+  Future<String?> commercepayMakePayment({required String amount}) async {
     log(double.parse(amount).toStringAsFixed(0));
     isLoading.value = true;
     try {
@@ -116,22 +116,30 @@ class SelectPaymentScreenController extends GetxController {
           final jsonResponse = json.decode(response.body);
           authResultModel = AuthResultModel.fromJson(jsonResponse);
           // Set the access token
-          Preferences.setString(
-              "AccessToken", authResultModel.accessToken.toString());
+          String accessToken = authResultModel.accessToken.toString();
           // Print the access token
-          print("Access Token: ${authResultModel.accessToken}");
+          print("Access Token: $accessToken");
 
           DateTime time = DateTime.now();
           time.add(Duration(seconds: authResultModel.expireInSeconds as int));
           Preferences.setString("TokenExpiry", time.toString());
-        } else {}
+
+          // Return the access token
+          return accessToken;
+        } else {
+          // Return null if there's an error
+          return null;
+        }
       });
     } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("exception:$e \n$s");
+      // Return null if there's an error
+      return null;
     } finally {
       isLoading.value = false;
     }
+    return null;
   }
 
   Future<void> stripeMakePayment({required String amount}) async {

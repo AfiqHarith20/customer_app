@@ -43,9 +43,34 @@ class OnlinePaymentModel {
     this.selectedPassId,
   });
 
+  @override
+  String toString() {
+    return '''{
+  "accessToken": "$accessToken",
+  "customerId": "$customerId",
+  "channelId": "$channelId",
+  "providerChannelId": "$selectedBankId",
+  "amount": "${totalPrice?.toStringAsFixed(2)}",
+  "address": "$address",
+  "companyName": "$companyName",
+  "companyRegistrationNo": "$companyRegistrationNo",
+  "endDate": "${endDate?.toString()}",
+  "startDate": "${startDate?.toString()}",
+  "fullName": "$fullName",
+  "email": "$email",
+  "mobileNo": "$mobileNumber",
+  "username": "$userName",
+  "identificationNumber": "$identificationNo",
+  "identificationType": "$identificationType",
+  "lotNo": "$lotNo",
+  "vehicleNo": "$vehicleNo",
+  "passid": "$selectedPassId"
+}''';
+  }
+
   OnlinePaymentModel? onlinePaymentModel;
 
-  OnlinePaymentModel.romJson(Map<String, dynamic> json) {
+  OnlinePaymentModel.fromJson(Map<String, dynamic> json) {
     accessToken = json['accessToken'];
     customerId = json['customerId'];
     channelId = json['channelId'];
@@ -54,8 +79,12 @@ class OnlinePaymentModel {
     address = json['address'];
     companyName = json['companyName'];
     companyRegistrationNo = json['companyRegistrationNo'];
-    endDate = json['endDate'];
-    startDate = json['startDate'];
+    endDate = (json['endDate'] != null
+        ? Timestamp.fromMillisecondsSinceEpoch(int.parse(json['endDate']))
+        : null);
+    startDate = (json['startDate'] != null
+        ? Timestamp.fromMillisecondsSinceEpoch(int.parse(json['startDate']))
+        : null);
     fullName = json['name'];
     email = json['email'];
     mobileNumber = json['mobileNo'];

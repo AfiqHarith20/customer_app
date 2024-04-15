@@ -1,4 +1,5 @@
 const Map<String, String> enUS = {
+  "Register_New_Account": "Register New Account",
   "CouponCode": "CouponCode",
   "Do you need some space for \nparking your vehicle":
       "Do you need some space for \nparking your vehicle",
@@ -37,6 +38,10 @@ const Map<String, String> enUS = {
   "Log Out": "Log Out",
   "Log Out Confirmation": "Log Out Confirmation",
   "Cancel": "Cancel",
+  "Email required": "Email required",
+  "Enter Email": "Enter Email",
+  "Password required": "Password required",
+  "Enter Password": "Enter Password",
   "Full Name": "Full Name",
   "Enter Full Name": "Enter Full Name",
   "Enter Email Address": "Enter Email Address",
@@ -141,6 +146,9 @@ const Map<String, String> enUS = {
   "Access your account with ease by simply logging in with your mobile number.":
       "Access your account with ease by simply logging in with your mobile number.",
   "Log in": "Log in",
+  "Sign Up": "Sign Up",
+  "Already have an account?": "Already have an account?",
+  "Don't have an account?": "Don't have an account?",
   "My Season Pass": "My Season Pass",
   "Let's Start": "Let's Start",
   "Next": "Next",

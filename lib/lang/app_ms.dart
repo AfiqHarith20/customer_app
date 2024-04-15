@@ -1,4 +1,5 @@
 const Map<String, String> msMY = {
+  "Register_New_Account": "Daftar Akaun Baru",
   "CouponCode": "KodKupon",
   "Do you need some space for \nparking your vehicle":
       "Adakah anda memerlukan ruang untuk \nmeletakkan kenderaan anda",
@@ -37,6 +38,10 @@ const Map<String, String> msMY = {
   "Log Out": "Log Keluar",
   "Log Out Confirmation": "Pengesahan Log Keluar",
   "Cancel": "Batal",
+  "Email required": "E-mel diperlukan",
+  "Enter Email": "Masukkan E-mel",
+  "Password required": "Kata laluan diperlukan",
+  "Enter Password": "Masukkan Kata Laluan",
   "Full Name": "Nama Penuh",
   "Enter Full Name": "Masukkan Nama Penuh",
   "Enter Email Address": "Masukkan alamat e-mel",
@@ -141,6 +146,9 @@ const Map<String, String> msMY = {
   "Access your account with ease by simply logging in with your mobile number.":
       "Akses akaun anda dengan mudah dengan hanya log masuk menggunakan nombor telefon anda.",
   "Log in": "Log masuk",
+  "Sign Up": "Daftar Baru",
+  "Already have an account?": "Sudah mempunyai akaun?",
+  "Don't have an account?": "Belum mempunyai akaun?",
   "My Season Pass": "Pas Saya",
   "Let's Start": "Mari Mulakan",
   "Next": "Seterusnya",

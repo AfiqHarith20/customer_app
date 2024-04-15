@@ -23,6 +23,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class Constant {
+  static const String emailpassLoginType = 'email/pass';
   static const String googleLoginType = 'google';
   static const String phoneLoginType = 'phone';
   static const String appleLoginType = "apple";
@@ -55,10 +56,13 @@ class Constant {
 
   static String? referralAmount = "0";
 
-  static Future<String> uploadUserImageToFireStorage(File image, String filePath, String fileName) async {
-    Reference upload = FirebaseStorage.instance.ref().child('$filePath/$fileName');
+  static Future<String> uploadUserImageToFireStorage(
+      File image, String filePath, String fileName) async {
+    Reference upload =
+        FirebaseStorage.instance.ref().child('$filePath/$fileName');
     UploadTask uploadTask = upload.putFile(image);
-    var downloadUrl = await (await uploadTask.whenComplete(() {})).ref.getDownloadURL();
+    var downloadUrl =
+        await (await uploadTask.whenComplete(() {})).ref.getDownloadURL();
     return downloadUrl.toString();
   }
 
@@ -69,7 +73,11 @@ class Constant {
 
   static Widget showEmptyView({required String message}) {
     return Center(
-      child: Text(message.tr, style: const TextStyle(fontSize: 18, color: AppColors.darkGrey10, fontFamily: AppThemData.bold)),
+      child: Text(message.tr,
+          style: const TextStyle(
+              fontSize: 18,
+              color: AppColors.darkGrey10,
+              fontFamily: AppThemData.bold)),
     );
   }
 
@@ -94,7 +102,8 @@ class Constant {
   }
 
   bool hasValidUrl(String value) {
-    String pattern = r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
+    String pattern =
+        r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
     RegExp regExp = RegExp(pattern);
     if (value.isEmpty) {
       return false;
@@ -116,9 +125,12 @@ class Constant {
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
   static Future<TimeOfDay?> selectTime(context) async {
@@ -132,11 +144,16 @@ class Constant {
           child: Theme(
             data: Theme.of(context).copyWith(
               timePickerTheme: TimePickerThemeData(
-                dayPeriodColor: MaterialStateColor.resolveWith(
-                    (states) => states.contains(MaterialState.selected) ? AppColors.yellow04 : AppColors.yellow04.withOpacity(0.4)),
-                dayPeriodShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                hourMinuteColor: MaterialStateColor.resolveWith(
-                    (states) => states.contains(MaterialState.selected) ? AppColors.yellow04 : AppColors.yellow04.withOpacity(0.4)),
+                dayPeriodColor: MaterialStateColor.resolveWith((states) =>
+                    states.contains(MaterialState.selected)
+                        ? AppColors.yellow04
+                        : AppColors.yellow04.withOpacity(0.4)),
+                dayPeriodShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                hourMinuteColor: MaterialStateColor.resolveWith((states) =>
+                    states.contains(MaterialState.selected)
+                        ? AppColors.yellow04
+                        : AppColors.yellow04.withOpacity(0.4)),
               ),
               colorScheme: const ColorScheme.light(
                 primary: AppColors.darkGrey10, // header background color
@@ -182,29 +199,37 @@ class Constant {
       if (taxModel.isFix == true) {
         taxAmount = double.parse(taxModel.value.toString());
       } else {
-        taxAmount = (double.parse(amount.toString()) * double.parse(taxModel.value!.toString())) / 100;
+        taxAmount = (double.parse(amount.toString()) *
+                double.parse(taxModel.value!.toString())) /
+            100;
       }
     }
     return taxAmount;
   }
 
-  static double calculateAdminCommission({String? amount, AdminCommission? adminCommission}) {
+  static double calculateAdminCommission(
+      {String? amount, AdminCommission? adminCommission}) {
     double taxAmount = 0.0;
     if (adminCommission != null && adminCommission.active == true) {
       if (adminCommission.isFix == true) {
         taxAmount = double.parse(adminCommission.value.toString());
       } else {
-        taxAmount = (double.parse(amount.toString()) * double.parse(adminCommission.value!.toString())) / 100;
+        taxAmount = (double.parse(amount.toString()) *
+                double.parse(adminCommission.value!.toString())) /
+            100;
       }
     }
     return taxAmount;
   }
 
-  static String calculateReview({required String? reviewCount, required String? reviewSum}) {
+  static String calculateReview(
+      {required String? reviewCount, required String? reviewSum}) {
     if (reviewCount == "0.0" && reviewSum == "0.0") {
       return "0.0";
     }
-    return (double.parse(reviewSum.toString()) / double.parse(reviewCount.toString())).toStringAsFixed(1);
+    return (double.parse(reviewSum.toString()) /
+            double.parse(reviewCount.toString()))
+        .toStringAsFixed(1);
   }
 
   static Future<void> redirectMap(double latitude, double longitude) async {
@@ -212,7 +237,8 @@ class Constant {
     if (Platform.isIOS) {
       mapUrl = 'https://maps.apple.com/?daddr=$latitude,$longitude';
     } else {
-      mapUrl = 'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving';
+      mapUrl =
+          'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving';
     }
 
     if (await canLaunchUrl(Uri.parse(mapUrl))) {
@@ -222,16 +248,21 @@ class Constant {
     }
   }
 
-  static Future<void> redirectCall({required String countryCode, required String phoneNumber}) async {
+  static Future<void> redirectCall(
+      {required String countryCode, required String phoneNumber}) async {
     final Uri url = Uri.parse("tel:$countryCode $phoneNumber");
     if (!await launchUrl(url)) {
-      throw Exception('Could not launch ${Constant.supportEmail.toString()}'.tr);
+      throw Exception(
+          'Could not launch ${Constant.supportEmail.toString()}'.tr);
     }
   }
 
   void launchEmailSupport() async {
     String? encodeQueryParameters(Map<String, String> params) {
-      return params.entries.map((MapEntry<String, String> e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}').join('&');
+      return params.entries
+          .map((MapEntry<String, String> e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .join('&');
     }
 
     if (Constant.supportEmail.isNotEmpty) {

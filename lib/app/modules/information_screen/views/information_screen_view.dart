@@ -39,20 +39,26 @@ class InformationScreenView extends GetView<InformationScreenController> {
           child: Form(
             key: controller.formKey.value,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "Complete Your Profile",
-                    style: TextStyle(fontSize: 20, color: AppColors.darkGrey10, fontFamily: AppThemData.bold),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: AppColors.darkGrey10,
+                        fontFamily: AppThemData.bold),
                   ),
                   const SizedBox(
                     height: 6,
                   ),
                   const Text(
                     "Provide your essential details and add a profile picture to personalize your experience",
-                    style: TextStyle(color: AppColors.lightGrey10, fontFamily: AppThemData.regular),
+                    style: TextStyle(
+                        color: AppColors.lightGrey10,
+                        fontFamily: AppThemData.regular),
                   ),
                   const SizedBox(
                     height: 34,
@@ -86,13 +92,19 @@ class InformationScreenView extends GetView<InformationScreenController> {
                     height: 20,
                   ),
                   TextFieldWidgetPrefix(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter Full Name';
+                      }
+                      return 'Enter Full Name';
+                    },
                     prefix: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: SvgPicture.asset(
                         "assets/icons/ic_user.svg",
                       ),
                     ),
-                    title: "Full Name",
+                    title: "Full Name".tr,
                     hintText: "Enter Full Name",
                     controller: controller.fullNameController.value,
                     onPress: () {},
@@ -118,10 +130,13 @@ class InformationScreenView extends GetView<InformationScreenController> {
                   ),
                   const Text(
                     "Select Gender",
-                    style: TextStyle(fontFamily: AppThemData.regular, color: AppColors.darkGrey06),
+                    style: TextStyle(
+                        fontFamily: AppThemData.regular,
+                        color: AppColors.darkGrey06),
                   ),
                   Row(
-                      children: List.generate(controller.genderList.length, (index) {
+                      children:
+                          List.generate(controller.genderList.length, (index) {
                     return Row(
                       children: [
                         Obx(() => Radio(
@@ -129,12 +144,16 @@ class InformationScreenView extends GetView<InformationScreenController> {
                               value: controller.genderList[index],
                               groupValue: controller.selectedGender.value,
                               onChanged: (value) {
-                                controller.selectedGender.value = value.toString();
+                                controller.selectedGender.value =
+                                    value.toString();
                               },
                             )),
                         Text(
                           controller.genderList[index],
-                          style: const TextStyle(fontFamily: AppThemData.medium, color: AppColors.darkGrey04, fontSize: 15),
+                          style: const TextStyle(
+                              fontFamily: AppThemData.medium,
+                              color: AppColors.darkGrey04,
+                              fontSize: 15),
                         ),
                         const SizedBox(width: 20)
                       ],
@@ -212,7 +231,8 @@ buildBottomSheet(BuildContext context, InformationScreenController controller) {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           IconButton(
-                              onPressed: () => controller.pickFile(source: ImageSource.camera),
+                              onPressed: () => controller.pickFile(
+                                  source: ImageSource.camera),
                               icon: const Icon(
                                 Icons.camera_alt,
                                 size: 32,
@@ -234,7 +254,8 @@ buildBottomSheet(BuildContext context, InformationScreenController controller) {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           IconButton(
-                              onPressed: () => controller.pickFile(source: ImageSource.gallery),
+                              onPressed: () => controller.pickFile(
+                                  source: ImageSource.gallery),
                               icon: const Icon(
                                 Icons.photo_library_sharp,
                                 size: 32,
