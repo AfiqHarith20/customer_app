@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, must_be_immutable
+// ignore_for_file: library_private_types_in_public_api, must_be_immutable, unused_element
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
@@ -14,16 +14,18 @@ import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:customer_app/utils/server.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../routes/app_pages.dart';
 import '../controllers/select_payment_screen_controller.dart';
 
 class SelectPaymentScreenView extends StatefulWidget {
+  final String passId;
   final String passName;
   final String passPrice;
   final String passValidity;
   late String selectedBankName;
-  final String selectedBankId;
+  final String? selectedBankId;
   final String selectedPassId;
   final String accessToken;
   final String customerId;
@@ -43,6 +45,7 @@ class SelectPaymentScreenView extends StatefulWidget {
   final String lotNo;
   SelectPaymentScreenView({
     Key? key,
+    required this.passId,
     required this.passName,
     required this.passPrice,
     required this.passValidity,
@@ -79,6 +82,10 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
   late Function() addSeasonPassData;
   late String selectedBankId;
 
+  String formatDate(DateTime date) {
+    return DateFormat('yyyy/MM/dd').format(date);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -89,6 +96,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
     // Retrieve arguments and assign addSeasonPassData
     final Map<String, dynamic> args = Get.arguments;
     addSeasonPassData = args["addSeasonPassData"];
+
+    selectedBankId = widget.selectedBankId ?? "";
   }
 
   @override
@@ -184,6 +193,13 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                                   bankName!; // Update the selectedBankName state
                             });
                           },
+                          selectedBankId: widget.selectedBankId,
+                          updateSelectedBankId: (bankId) {
+                            setState(() {
+                              selectedBankId =
+                                  bankId ?? ""; // Update selected bank ID
+                            });
+                          },
                         ),
                       ),
                       Visibility(
@@ -241,6 +257,9 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                     ),
                   );
 
+                  // Calculate total price using the passPrice
+                  double totalPrice = calculateTotalPrice(passPrice);
+
                   // String? accessToken = await controller.commercepayMakePayment(
                   //   amount: double.parse(passPrice).toStringAsFixed(
                   //     Constant.currencyModel!.decimalDigits!,
@@ -250,16 +269,25 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   // Retrieve the access token from the controller
                   String? accessToken = controller.authResultModel.accessToken;
 
+                  // Convert Timestamp to DateTime
+                  DateTime? convertTimestampToDateOnly(Timestamp? timestamp) {
+                    if (timestamp == null) return null;
+                    DateTime dateTime = timestamp.toDate();
+                    return DateTime(
+                        dateTime.year, dateTime.month, dateTime.day);
+                  }
+
                   onlinePaymentModel = OnlinePaymentModel(
                     accessToken: accessToken,
                     customerId: passData['customerId'],
-                    selectedBankId: passData['selectedBankId'],
-                    totalPrice: passData['totalPrice'],
+                    selectedBankId: selectedBankId,
+                    totalPrice: totalPrice,
                     address: passData['address'],
                     companyName: passData['companyName'],
                     companyRegistrationNo: passData['companyRegistrationNo'],
-                    endDate: passData['endDate'],
-                    startDate: passData['startDate'],
+                    endDate: convertTimestampToDateOnly(passData['endDate']),
+                    startDate:
+                        convertTimestampToDateOnly(passData['startDate']),
                     fullName: passData['fullName'],
                     email: passData['email'],
                     mobileNumber: passData['mobileNumber'],
@@ -268,7 +296,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                     identificationType: '2',
                     vehicleNo: passData['vehicleNo'],
                     lotNo: passData['lotNo'],
-                    selectedPassId: passData['passid'],
+                    selectedPassId: widget.passId,
                     channelId: '2',
                   );
                   print('Online Payment Data: $onlinePaymentModel');
@@ -384,6 +412,19 @@ Widget _buildPaymentInformation(String passPrice) {
   );
 }
 
+double calculateTotalPrice(String passPrice) {
+  // Convert passPrice to a double
+  double price = double.parse(passPrice);
+
+  // Calculate tax (6% of pass price)
+  double tax = 0.06 * price;
+
+  // Calculate total amount
+  double totalPrice = price + tax;
+
+  return totalPrice;
+}
+
 Widget _buildDetailRow(String label, String value) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -437,7 +478,9 @@ Widget paymentOnlineDecoration({
   required String value,
   required String image,
   required String? selectedBankName,
+  required String? selectedBankId,
   required Function(String?) updateSelectedBankName,
+  required Function(String?) updateSelectedBankId,
 }) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 16),
@@ -451,13 +494,13 @@ Widget paymentOnlineDecoration({
             amount: double.parse(passPrice)
                 .toStringAsFixed(Constant.currencyModel!.decimalDigits!),
           );
-
           final result = await Get.toNamed(Routes.SELECT_BANK_PROVIDER_SCREEN);
           if (result != null && result is Map<String, dynamic>) {
             updateSelectedBankName(
-                result['bankName']); // Call the callback function
-            print('Selected Bank ID: ${result['bankId']}');
+                result['bankName']); // Update selected bank name
+            updateSelectedBankId(result['bankId']); // Update selected bank ID
             print('Selected Bank Name: ${result['bankName']}');
+            print('Selected Bank Id: ${result['bankId']}');
           }
         }
       },
@@ -478,7 +521,7 @@ Widget paymentOnlineDecoration({
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5.0),
                   child: Text(
-                    value == "wallet" ? "My Wallet".tr : "Online Banking".tr,
+                    "Online Banking".tr,
                     style: const TextStyle(
                       fontFamily: AppThemData.semiBold,
                       fontSize: 16,

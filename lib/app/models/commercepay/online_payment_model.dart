@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class OnlinePaymentModel {
   String? accessToken;
@@ -9,8 +10,8 @@ class OnlinePaymentModel {
   String? address;
   String? companyName;
   String? companyRegistrationNo;
-  Timestamp? endDate;
-  Timestamp? startDate;
+  DateTime? endDate;
+  DateTime? startDate;
   String? fullName;
   String? email;
   String? mobileNumber;
@@ -43,8 +44,19 @@ class OnlinePaymentModel {
     this.selectedPassId,
   });
 
+  // Helper method to convert Timestamp to DateTime
+  DateTime? _timestampToDateTime(Timestamp? timestamp) {
+    if (timestamp == null) return null;
+    return timestamp.toDate();
+  }
+
+  // Convert the model to a string representation
   @override
   String toString() {
+    String formattedEndDate =
+        endDate != null ? DateFormat('yyyy/MM/dd').format(endDate!) : '';
+    String formattedStartDate =
+        startDate != null ? DateFormat('yyyy/MM/dd').format(startDate!) : '';
     return '''{
   "accessToken": "$accessToken",
   "customerId": "$customerId",
@@ -54,8 +66,8 @@ class OnlinePaymentModel {
   "address": "$address",
   "companyName": "$companyName",
   "companyRegistrationNo": "$companyRegistrationNo",
-  "endDate": "${endDate?.toString()}",
-  "startDate": "${startDate?.toString()}",
+  "endDate": "${formattedEndDate.toString()}",
+  "startDate": "${formattedStartDate.toString()}",
   "fullName": "$fullName",
   "email": "$email",
   "mobileNo": "$mobileNumber",
@@ -68,8 +80,7 @@ class OnlinePaymentModel {
 }''';
   }
 
-  OnlinePaymentModel? onlinePaymentModel;
-
+  // Convert from JSON
   OnlinePaymentModel.fromJson(Map<String, dynamic> json) {
     accessToken = json['accessToken'];
     customerId = json['customerId'];
@@ -79,12 +90,8 @@ class OnlinePaymentModel {
     address = json['address'];
     companyName = json['companyName'];
     companyRegistrationNo = json['companyRegistrationNo'];
-    endDate = (json['endDate'] != null
-        ? Timestamp.fromMillisecondsSinceEpoch(int.parse(json['endDate']))
-        : null);
-    startDate = (json['startDate'] != null
-        ? Timestamp.fromMillisecondsSinceEpoch(int.parse(json['startDate']))
-        : null);
+    endDate = _timestampToDateTime(json['endDate']);
+    startDate = _timestampToDateTime(json['startDate']);
     fullName = json['name'];
     email = json['email'];
     mobileNumber = json['mobileNo'];
@@ -96,7 +103,12 @@ class OnlinePaymentModel {
     selectedPassId = json['passId'];
   }
 
+  // Convert to JSON
   Map<String, dynamic> toJson() {
+    String formattedEndDate =
+        endDate != null ? DateFormat('yyyy/MM/dd').format(endDate!) : '';
+    String formattedStartDate =
+        startDate != null ? DateFormat('yyyy/MM/dd').format(startDate!) : '';
     final Map<String, dynamic> data = <String, dynamic>{};
     data['accessToken'] = accessToken;
     data['customerId'] = customerId;
@@ -106,8 +118,8 @@ class OnlinePaymentModel {
     data['address'] = address;
     data['companyName'] = companyName;
     data['companyRegistrationNo'] = companyRegistrationNo;
-    data['endDate'] = endDate;
-    data['startDate'] = startDate;
+    data['endDate'] = formattedEndDate;
+    data['startDate'] = formattedStartDate;
     data['name'] = fullName;
     data['email'] = email;
     data['mobileNo'] = mobileNumber;

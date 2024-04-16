@@ -35,10 +35,13 @@ class SelectPaymentScreenController extends GetxController {
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
   Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
   RxString selectedPaymentMethod = "".obs;
+  RxString selectedBankId = "".obs;
   RxBool isPaymentCompleted = true.obs;
   RxBool isLoading = true.obs;
   AuthResultModel authResultModel = AuthResultModel();
   Server server = Server();
+  late String _selectedBankId;
+  String? passId;
 
   @override
   void onInit() {
@@ -49,6 +52,7 @@ class SelectPaymentScreenController extends GetxController {
   getArgument() async {
     final bankName = Get.arguments?['bankName'] ?? "Default Bank Name";
     dynamic argumentData = Get.arguments;
+    passId = argumentData?['passId'];
     if (argumentData != null && argumentData['purchasePassModel'] != null) {
       purchasePassModel.value = argumentData['purchasePassModel'];
       getPaymentData();
@@ -57,6 +61,15 @@ class SelectPaymentScreenController extends GetxController {
       // For example, show an error message or navigate back
       ShowToastDialog.showToast("Error: Purchase pass data is missing");
     }
+  }
+
+  SelectPaymentScreenController({String? selectedBankId}) {
+    _selectedBankId = selectedBankId ?? ""; // Initialize with provided value
+  }
+
+  // Update the selected bank ID
+  void updateSelectedBankId(String bankId) {
+    _selectedBankId = bankId;
   }
 
   getPaymentData() async {
@@ -118,7 +131,7 @@ class SelectPaymentScreenController extends GetxController {
           // Set the access token
           String accessToken = authResultModel.accessToken.toString();
           // Print the access token
-          print("Access Token: $accessToken");
+          // print("Access Token: $accessToken");
 
           DateTime time = DateTime.now();
           time.add(Duration(seconds: authResultModel.expireInSeconds as int));

@@ -233,6 +233,8 @@ class PurchasePassView extends GetView<PurchasePassController> {
                           "addSeasonPassData": controller.addSeasonPassData,
                           "purchasePassModel":
                               controller.purchasePassModel.value,
+                          "passId": controller
+                              .purchasePassModel.value.seasonPassModel?.passid,
                           "passName": controller.purchasePassModel.value
                               .seasonPassModel?.passName,
                           "passPrice": controller

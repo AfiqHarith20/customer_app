@@ -201,6 +201,7 @@ class AppPages {
     GetPage(
         name: _Paths.SELECT_PAYMENT_SCREEN,
         page: () => SelectPaymentScreenView(
+              passId: Get.arguments['passId'] ?? '',
               passName: Get.arguments["passName"] ?? '',
               passPrice: Get.arguments["passPrice"] ?? '',
               passValidity: Get.arguments["passValidity"] ?? '',

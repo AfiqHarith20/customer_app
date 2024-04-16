@@ -39,30 +39,55 @@ class _WebviewScreenState extends State<WebviewScreen> {
             "Online Payment".tr,
             backgroundColor: AppColors.white,
           ),
-          body: controller.isLoading.value
-              ? Constant.loader()
-              : Stack(
-                  children: [
-                    InAppWebView(
-                      initialUrlRequest: URLRequest(
-                        url: WebUri(APIList.payment.toString()),
-                        method: 'POST',
-                        body: utf8.encode(
-                            Uri(queryParameters: controller.getRequestBody())
-                                .query),
-                      ),
-                      onWebViewCreated: (InAppWebViewController controller) {
-                        inAppWebViewController = controller;
-                      },
-                      onProgressChanged:
-                          (InAppWebViewController controller, int progress) {
-                        setState(() {
-                          _progress = progress / 100;
-                        });
-                      },
-                    )
-                  ],
+          body: Stack(
+            children: [
+              InAppWebView(
+                initialUrlRequest: URLRequest(
+                  url: WebUri(APIList.payment.toString()),
+                  method: 'POST',
+                  headers: {
+                    // Set the content type to application/json
+                    'Content-Type': 'application/json',
+                  },
+                  body: utf8.encode(jsonEncode(
+                    // Encode the request body as JSON
+                    controller.getRequestBody(),
+                  )),
                 ),
+                onWebViewCreated: (InAppWebViewController controller) {
+                  inAppWebViewController = controller;
+                },
+                onProgressChanged:
+                    (InAppWebViewController controller, int progress) {
+                  setState(() {
+                    _progress = progress / 100;
+                  });
+                },
+                // Add onLoadStop callback to handle response
+                onLoadStop:
+                    (InAppWebViewController controller, Uri? url) async {
+                  try {
+                    // Evaluate JavaScript to get the response data
+                    final responseData = await controller.evaluateJavascript(
+                        source: "document.documentElement.textContent");
+                    // Parse the response data
+                    final parsedData = jsonDecode(responseData);
+                    // Print the parsed data
+                    print("Response Data: $parsedData");
+                  } catch (e) {
+                    // If an error occurs, print the error
+                    print("Error occurred while loading: $e");
+                  }
+                },
+              ),
+              if (controller.isLoading.value)
+                const Positioned.fill(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );
