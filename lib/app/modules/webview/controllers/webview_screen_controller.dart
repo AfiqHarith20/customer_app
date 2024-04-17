@@ -1,6 +1,8 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, unrelated_type_equality_checks
 
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
@@ -10,7 +12,11 @@ import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/utils/api-list.dart';
 
+import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:http/http.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../utils/server.dart';
 
@@ -21,6 +27,8 @@ class WebviewScreenController extends GetxController {
   Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
   Server server = Server();
   RxBool isLoading = true.obs;
+  RxBool isFormVisible = false.obs;
+  String paymentResponse = '';
 
   @override
   void onInit() {
@@ -52,34 +60,12 @@ class WebviewScreenController extends GetxController {
         String companyRegistrationNo =
             onlinePaymentModel.value.companyRegistrationNo ?? '';
         String companyName = onlinePaymentModel.value.companyName ?? '';
-        double totalPrice = onlinePaymentModel.value.totalPrice ?? 0;
+        String totalPrice = onlinePaymentModel.value.totalPrice.toString();
         String userName = onlinePaymentModel.value.userName ?? '';
         String identificationType =
             onlinePaymentModel.value.identificationType ?? '';
         DateTime? endDate = onlinePaymentModel.value.endDate;
         DateTime? startDate = onlinePaymentModel.value.startDate;
-
-        // Call the onlinePayment method with the extracted data
-        // onlinePayment(
-        //   customerId: customerId,
-        //   accessToken: accessToken,
-        //   selectedBankId: providerChannelId,
-        //   selectedPassId: passId,
-        //   fullName: fullName,
-        //   email: email,
-        //   address: address,
-        //   identificationNo: identificationNo,
-        //   mobileNumber: mobileNumber,
-        //   vehicleNo: vehicleNo,
-        //   lotNo: lotNo,
-        //   companyRegistrationNo: companyRegistrationNo,
-        //   companyName: companyName,
-        //   totalPrice: totalPrice,
-        //   userName: userName,
-        //   identificationType: identificationType,
-        //   endDate: endDate, // Provide a default value if endDate is null
-        //   startDate: startDate, // Provide a default value if startDate is null
-        // );
       }
     } catch (e, s) {
       log("$e \n$s");
@@ -87,63 +73,15 @@ class WebviewScreenController extends GetxController {
     }
   }
 
-  // void onlinePayment() async {
-  //   try {
-  //     // Accessing the onlinePaymentModel directly from the controller
-  //     final onlinePaymentData = onlinePaymentModel.value;
-
-  //     // Construct the JSON body using data from onlinePaymentModel
-  //     final body = {
-  //       'accessToken': onlinePaymentData.accessToken ?? '',
-  //       'customerId': onlinePaymentData.customerId ?? '',
-  //       'channelId': '2', // Default value for channelId
-  //       'providerChannelId': onlinePaymentData.selectedBankId ?? '',
-  //       'amount': onlinePaymentData.totalPrice?.toString() ?? '',
-  //       'address': onlinePaymentData.address ?? '',
-  //       'companyName': onlinePaymentData.companyName ?? '',
-  //       'companyRegistrationNo': onlinePaymentData.companyRegistrationNo ?? '',
-  //       'endDate': onlinePaymentData.endDate?.toString() ?? '',
-  //       'startDate': onlinePaymentData.startDate?.toString() ?? '',
-  //       'name': onlinePaymentData.fullName ?? '',
-  //       'email': onlinePaymentData.email ?? '',
-  //       'mobileNumber': onlinePaymentData.mobileNumber ?? '',
-  //       'username': onlinePaymentData.userName ?? '',
-  //       'identificationNumber': onlinePaymentData.identificationNo ?? '',
-  //       'identificationType': onlinePaymentData.identificationType ?? '',
-  //       'lotNo': onlinePaymentData.lotNo ?? '',
-  //       'vehicleNo': onlinePaymentData.vehicleNo ?? '',
-  //       'passId': onlinePaymentData.selectedPassId ?? '',
-  //     };
-
-  //     // Send the POST request with the constructed body
-  //     final response = await server.postRequest(
-  //       endPoint: APIList.payment,
-  //       body: body,
-  //     );
-
-  //     if (response != null && response.statusCode == 200) {
-  //       // Handle response data as needed
-  //       print("Response: ${response.body}");
-  //     } else {
-  //       throw Exception('Failed to load data from API');
-  //     }
-  //   } catch (e, s) {
-  //     log("$e \n$s");
-  //     ShowToastDialog.showToast("exception:$e \n$s");
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
-
-  Map<String, String> getRequestBody() {
+  String getRequestBody() {
     final onlinePaymentData = onlinePaymentModel.value;
-    final Map<String, String> body = {
+    final body = {
       'accessToken': onlinePaymentData.accessToken ?? '',
       'customerId': onlinePaymentData.customerId ?? '',
-      'channelId':
-          onlinePaymentData.channelId ?? '', // Default value for channelId
+      'channelId': onlinePaymentData.channelId ?? '',
       'providerChannelId': onlinePaymentData.selectedBankId ?? '',
-      'amount': onlinePaymentData.totalPrice?.toString() ?? '',
+      'amount': onlinePaymentData.totalPrice?.toString() ??
+          '', // Convert amount to string explicitly
       'address': onlinePaymentData.address ?? '',
       'companyName': onlinePaymentData.companyName ?? '',
       'companyRegistrationNo': onlinePaymentData.companyRegistrationNo ?? '',
@@ -159,8 +97,37 @@ class WebviewScreenController extends GetxController {
       'vehicleNo': onlinePaymentData.vehicleNo ?? '',
       'passId': onlinePaymentData.selectedPassId ?? '',
     };
-    // Print the request body
-    // print('Request Body: $body');
-    return body;
+    body.forEach((key, value) {
+      // print('$key: $value');
+    });
+
+    // Convert the map to a JSON object
+    final String jsonString = json.encode(body);
+    // print(jsonString);
+
+    return jsonString;
+  }
+
+  Future<void> fetchPayment() async {
+    try {
+      final http.Response response = await http.post(
+          Uri.parse(APIList.payment.toString()),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8'
+          },
+          body: getRequestBody());
+
+      print('Payment Status Code: ${response.statusCode}');
+      print('Payment Body: ${response.body}');
+      print('Payment Headers: ${response.headers}');
+      print("response $response");
+
+      if (response.body == 200) {
+        paymentResponse = response.body;
+      }
+    } catch (e, s) {
+      log("$e \n$s");
+      ShowToastDialog.showToast("Error occurred while making payment: $e");
+    }
   }
 }
