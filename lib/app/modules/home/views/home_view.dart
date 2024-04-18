@@ -389,7 +389,7 @@ class _HomeViewState extends State<HomeView> {
                         padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
                         //apply padding to all four sides
                         child: Text(
-                          'Information'.tr,
+                          'Latest News'.tr,
                           style: const TextStyle(
                             fontFamily: AppThemData.medium,
                             fontWeight: FontWeight.bold,

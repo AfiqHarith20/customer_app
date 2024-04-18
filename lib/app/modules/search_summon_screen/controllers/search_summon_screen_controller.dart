@@ -13,9 +13,19 @@ import '../../../models/wallet_transaction_model.dart';
 
 class SearchSummonScreenController extends GetxController {
   RxList<CompoundModel> compoundList = <CompoundModel>[].obs;
-  RxBool isLoading = true.obs;
   Server server = Server();
   final AuthModel authModel = AuthModel();
+  final _isLoading = false.obs;
+
+  bool get isLoading => _isLoading.value;
+
+  void setLoading(bool value) {
+    _isLoading.value = value;
+  }
+
+  void clearCompoundList() {
+    compoundList.clear();
+  }
 
   @override
   void onInit() {
@@ -43,6 +53,11 @@ class SearchSummonScreenController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  // Method to update compoundList
+  void updateCompoundList(List<CompoundModel> compounds) {
+    compoundList.assignAll(compounds);
   }
 
   Future<Map<String, dynamic>> searchCompound({

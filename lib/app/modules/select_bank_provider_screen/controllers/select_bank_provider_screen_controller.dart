@@ -26,33 +26,55 @@ class SelectBankProviderScreenController extends GetxController {
 
   void commercepayProviderBank() async {
     try {
-      await server
-          .getRequest(
-              endPoint: APIList.provider.toString() +
-                  Preferences.getString("AccessToken"))
-          .then((response) {
-        if (response != null && response.statusCode == 200) {
-          List<dynamic> test = json.decode(response.body);
-          test.forEach((element) {
-            ProviderChannelModel bankItem = ProviderChannelModel(
-                id: element["id"],
-                name: element["name"],
-                displayName: element["displayName"],
-                imageUrl: element["imageUrl"],
-                status: element["status"]);
-            if (element["name"] != "") {
-              providerList.add(bankItem);
-            }
-          });
-          //print("result $providerList");
-        } else {
-          throw Exception('Failed to load data from API');
+      // String accessToken = Preferences.getString("AccessToken");
+      // print("Access Token: $accessToken"); // Print the access token
+      final response = await server.getRequest(
+          endPoint: APIList.provider.toString() +
+              Preferences.getString("AccessToken"));
+
+      if (response.statusCode == 200) {
+        // Log the response body
+        // print("Response body: ${response.body}");
+
+        // Check if response body is empty
+        if (response.body.isEmpty) {
+          throw Exception('Empty response body');
         }
-      });
+
+        // Parse response body as JSON
+        List<dynamic> test = json.decode(response.body);
+
+        // Filter data and handle empty strings
+        test = test
+            .where((element) =>
+                element["id"] != "LOAD001" &&
+                element["name"] != "" &&
+                element["displayName"] != "")
+            .toList();
+
+        for (var element in test) {
+          ProviderChannelModel bankItem = ProviderChannelModel(
+              id: element["id"],
+              name: element["name"],
+              displayName: element["displayName"],
+              imageUrl: element["imageUrl"],
+              status: element["status"]);
+          providerList.add(bankItem);
+        }
+
+        // print("result $providerList");
+      } else {
+        throw Exception(
+            'Failed to load data from API. Status code: ${response.statusCode}, Response body: ${response.body}');
+      }
     } catch (e, s) {
+      // Handle errors
+      // print("Error details: $e");
+      // print("Stack trace: $s");
       log("$e \n$s");
       ShowToastDialog.showToast("exception:$e \n$s");
     } finally {
+      // Update isLoading value
       isLoading.value = false;
     }
   }

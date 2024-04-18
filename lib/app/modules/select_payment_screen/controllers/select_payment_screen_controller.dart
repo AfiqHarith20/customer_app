@@ -121,29 +121,30 @@ class SelectPaymentScreenController extends GetxController {
   }
 
   Future<String?> commercepayMakePayment({required String amount}) async {
-    log(double.parse(amount).toStringAsFixed(0));
     isLoading.value = true;
     try {
-      await server.postRequest(endPoint: APIList.auth).then((response) {
-        if (response != null && response.statusCode == 200) {
-          final jsonResponse = json.decode(response.body);
-          authResultModel = AuthResultModel.fromJson(jsonResponse);
-          // Set the access token
-          String accessToken = authResultModel.accessToken.toString();
-          // Print the access token
-          // print("Access Token: $accessToken");
+      final response = await server.postRequest(endPoint: APIList.auth);
+      if (response != null && response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        authResultModel = AuthResultModel.fromJson(jsonResponse);
+        // Set the access token
+        String accessToken = authResultModel.accessToken.toString();
+        // Print the access token
+        // print("Access Token: $accessToken");
 
-          DateTime time = DateTime.now();
-          time.add(Duration(seconds: authResultModel.expireInSeconds as int));
-          Preferences.setString("TokenExpiry", time.toString());
+        DateTime time = DateTime.now();
+        time.add(Duration(seconds: authResultModel.expireInSeconds as int));
+        Preferences.setString(
+            "AccessToken", accessToken); // Store the access token
 
-          // Return the access token
-          return accessToken;
-        } else {
-          // Return null if there's an error
-          return null;
-        }
-      });
+        Preferences.setString("TokenExpiry", time.toString());
+
+        // Return the access token
+        return accessToken;
+      } else {
+        // Return null if there's an error
+        return null;
+      }
     } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("exception:$e \n$s");
@@ -152,7 +153,6 @@ class SelectPaymentScreenController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-    return null;
   }
 
   Future<void> stripeMakePayment({required String amount}) async {

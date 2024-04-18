@@ -98,6 +98,12 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
     addSeasonPassData = args["addSeasonPassData"];
 
     selectedBankId = widget.selectedBankId ?? "";
+    String accessToken = widget.accessToken; // Access the accessToken here
+    // Check if accessToken is not empty
+    if (accessToken.isNotEmpty) {
+      // Do something with the accessToken
+      print("Access token from select payment screen: $accessToken");
+    }
   }
 
   @override

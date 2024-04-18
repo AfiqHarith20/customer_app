@@ -66,6 +66,7 @@ class WebviewScreenController extends GetxController {
             onlinePaymentModel.value.identificationType ?? '';
         DateTime? endDate = onlinePaymentModel.value.endDate;
         DateTime? startDate = onlinePaymentModel.value.startDate;
+        await fetchPayment();
       }
     } catch (e, s) {
       log("$e \n$s");
@@ -108,26 +109,29 @@ class WebviewScreenController extends GetxController {
     return jsonString;
   }
 
-  Future<void> fetchPayment() async {
+  Future<String> fetchPayment() async {
     try {
-      final http.Response response = await http.post(
-          Uri.parse(APIList.payment.toString()),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8'
-          },
-          body: getRequestBody());
+      print('Fetching payment...');
+      final response = await http.post(
+        Uri.parse(APIList.payment.toString()),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: getRequestBody(),
+      );
 
+      // Process the response here
       print('Payment Status Code: ${response.statusCode}');
       print('Payment Body: ${response.body}');
       print('Payment Headers: ${response.headers}');
-      print("response $response");
 
-      if (response.body == 200) {
-        paymentResponse = response.body;
-      }
+      // Return the response body as a String
+      return response.body;
     } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("Error occurred while making payment: $e");
+      // Return an empty string or handle the error as needed
+      return '';
     }
   }
 }

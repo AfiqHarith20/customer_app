@@ -18,16 +18,12 @@ class WebviewScreen extends StatefulWidget {
 }
 
 class _WebviewScreenState extends State<WebviewScreen> {
-  late InAppWebViewController _webViewController;
-  double progress = 0;
+  double _progress = 0;
   final WebviewScreenController controller =
       Get.find<WebviewScreenController>();
 
   @override
   Widget build(BuildContext context) {
-    // Generate a unique form ID
-    String uniqueFormId = UniqueKey().toString();
-
     return Scaffold(
       appBar: UiInterface().customAppBar(
         context,
@@ -41,28 +37,30 @@ class _WebviewScreenState extends State<WebviewScreen> {
           init: controller,
           builder: (controller) {
             return InAppWebView(
-              initialData: InAppWebViewInitialData(
-                // Provide a simple HTML page with the response body embedded
-                data: '''
-          <html>
-            <head><title>Payment Response</title></head>
-            <body>
-              <form id='$uniqueFormId' action='https://uat.mepsfpx.com.my/FPXMain/seller2DReceiver.jsp' method='POST'>
-                ${this.controller.paymentResponse}
-              </form>
-              <script>
-                document.getElementById('$uniqueFormId').submit();
-              </script>
-            </body>
-          </html>
-          ''',
-                mimeType: 'text/html',
+              initialUrlRequest: URLRequest(
+                // Load empty page initially
+                url: WebUri('about:blank'),
               ),
               onProgressChanged:
                   (InAppWebViewController controller, int progress) {
                 setState(() {
-                  this.progress = progress / 100;
+                  _progress = progress / 100;
                 });
+              },
+              onWebViewCreated: (InAppWebViewController controller) async {
+                // Fetch payment details and get HTML response
+                String htmlResponse = await this.controller.fetchPayment();
+
+                // Load the HTML form content into WebView
+                await controller.loadData(
+                  data: htmlResponse,
+                  // Set base URL for relative paths (optional)
+                  baseUrl: WebUri('https://uat.mepsfpx.com.my/'),
+                  // Set MIME type (optional)
+                  mimeType: 'text/html',
+                  // Set encoding (optional)
+                  encoding: 'utf8',
+                );
               },
             );
           },
