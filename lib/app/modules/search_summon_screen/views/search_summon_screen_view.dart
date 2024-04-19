@@ -27,7 +27,8 @@ class SearchSummonScreenView extends StatefulWidget {
 class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
   late TextEditingController _searchController;
   late String _hintText;
-  String _requestMethod = 'compound'; // Default request method
+  String _requestMethod = 'compound';
+  bool _selectAll = false;
 
   @override
   void initState() {
@@ -109,104 +110,153 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
               ),
             ),
           ),
-          ButtonThem.buildButton(
-            btnHeight: 56,
-            txtSize: 16,
-            context,
-            title: "Search".tr,
-            txtColor: AppColors.lightGrey01,
-            bgColor: AppColors.darkGrey10,
-            onPress: () async {
-              String searchText = _searchController.text;
-              // Set loading state to true immediately after clicking search
-              widget.controller.setLoading(true);
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ButtonThem.buildButton(
+                btnHeight: 40,
+                btnWidthRatio: 0.43,
+                txtSize: 14,
+                context,
+                title: "Search".tr,
+                txtColor: AppColors.lightGrey01,
+                bgColor: AppColors.darkGrey10,
+                onPress: () async {
+                  String searchText = _searchController.text;
+                  // Set loading state to true immediately after clicking search
+                  widget.controller.setLoading(true);
 
-              try {
-                Map<String, dynamic> searchResult =
-                    await SearchSummonScreenController().searchCompound(
-                  id: 'vendor_mptemerloh',
-                  pass:
-                      'M=Lu5k%r8uw!6yBq^T924bdjE_piB3DU2^d9eB39^7u9^GdAKe_IG5KbK&V2vt5=KpxkB',
-                  requestMethod: _requestMethod,
-                  compoundNum: _requestMethod == 'compound' ? searchText : '',
-                  carNum: _requestMethod == 'car' ? searchText : '',
-                );
+                  try {
+                    Map<String, dynamic> searchResult =
+                        await SearchSummonScreenController().searchCompound(
+                      id: 'vendor_mptemerloh',
+                      pass:
+                          'M=Lu5k%r8uw!6yBq^T924bdjE_piB3DU2^d9eB39^7u9^GdAKe_IG5KbK&V2vt5=KpxkB',
+                      requestMethod: _requestMethod,
+                      compoundNum:
+                          _requestMethod == 'compound' ? searchText : '',
+                      carNum: _requestMethod == 'car' ? searchText : '',
+                    );
 
-                // Parse the JSON response into a list of CompoundModel objects
-                List<CompoundModel> compounds = [];
-                List<String> compoundNums = searchResult['compound_num'] != null
-                    ? searchResult['compound_num'].split("::")
-                    : [];
-                List<String> amounts = searchResult['amount'] != null
-                    ? searchResult['amount'].split("::")
-                    : [];
-                List<String> dateTimes = searchResult['datetime'] != null
-                    ? searchResult['datetime'].split("::")
-                    : [];
-                List<String> statuses = searchResult['status'] != null
-                    ? searchResult['status'].split("::")
-                    : [];
-                List<String> offences = searchResult['offence'] != null
-                    ? searchResult['offence'].split("::")
-                    : [];
-                List<String> kodHasils = searchResult['kodHasil'] != null
-                    ? searchResult['kodHasil'].split("::")
-                    : [];
+                    // Parse the JSON response into a list of CompoundModel objects
+                    List<CompoundModel> compounds = [];
+                    List<String> compoundNums =
+                        searchResult['compound_num'] != null
+                            ? searchResult['compound_num'].split("::")
+                            : [];
+                    List<String> amounts = searchResult['amount'] != null
+                        ? searchResult['amount'].split("::")
+                        : [];
+                    List<String> dateTimes = searchResult['datetime'] != null
+                        ? searchResult['datetime'].split("::")
+                        : [];
+                    List<String> statuses = searchResult['status'] != null
+                        ? searchResult['status'].split("::")
+                        : [];
+                    List<String> offences = searchResult['offence'] != null
+                        ? searchResult['offence'].split("::")
+                        : [];
+                    List<String> kodHasils = searchResult['kodHasil'] != null
+                        ? searchResult['kodHasil'].split("::")
+                        : [];
 
-                for (int i = 0; i < compoundNums.length; i++) {
-                  CompoundModel compound = CompoundModel(
-                    compoundNo: compoundNums[i],
-                    amount: amounts.isNotEmpty ? amounts[i] : '',
-                    dateTime: dateTimes.isNotEmpty
-                        ? Timestamp.fromDate(DateTime.parse(dateTimes[i]))
-                        : Timestamp.now(),
-                    status: statuses.isNotEmpty ? statuses[i] : '',
-                    offence: offences.isNotEmpty ? offences[i] : '',
-                    kodHasil: kodHasils.isNotEmpty ? kodHasils[i] : '',
-                  );
-                  compounds.add(compound);
-                }
+                    for (int i = 0; i < compoundNums.length; i++) {
+                      CompoundModel compound = CompoundModel(
+                        compoundNo: compoundNums[i],
+                        amount: amounts.isNotEmpty ? amounts[i] : '',
+                        dateTime: dateTimes.isNotEmpty
+                            ? Timestamp.fromDate(DateTime.parse(dateTimes[i]))
+                            : Timestamp.now(),
+                        status: statuses.isNotEmpty ? statuses[i] : '',
+                        offence: offences.isNotEmpty ? offences[i] : '',
+                        kodHasil: kodHasils.isNotEmpty ? kodHasils[i] : '',
+                      );
+                      compounds.add(compound);
+                    }
 
-                // Update the compoundList in the controller
-                widget.controller.updateCompoundList(compounds);
+                    // Update the compoundList in the controller
+                    widget.controller.updateCompoundList(compounds);
 
-                // Rebuild the widget tree to reflect the changes
-                setState(() {});
+                    // Rebuild the widget tree to reflect the changes
+                    setState(() {});
 
-                // Show a toast message based on the msg field in the response
-                if (searchResult.containsKey('msg') &&
-                    searchResult['msg'] != null &&
-                    searchResult['msg'].isNotEmpty) {
-                  ShowToastDialog.showToast(
-                    searchResult['msg'],
-                  );
-                }
-              } catch (e) {
-                // Handle any errors that occur during the search
-                print('Error searching: $e');
-              } finally {
-                // Set loading state back to false after search completes
-                widget.controller.setLoading(false);
-              }
-            },
+                    // Show a toast message based on the msg field in the response
+                    if (searchResult.containsKey('msg') &&
+                        searchResult['msg'] != null &&
+                        searchResult['msg'].isNotEmpty) {
+                      ShowToastDialog.showToast(
+                        searchResult['msg'],
+                      );
+                    }
+                  } catch (e) {
+                    // Handle any errors that occur during the search
+                    print('Error searching: $e');
+                  } finally {
+                    // Set loading state back to false after search completes
+                    widget.controller.setLoading(false);
+                  }
+                },
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              ButtonThem.buildButton(
+                btnHeight: 40,
+                btnWidthRatio: 0.43,
+                txtSize: 14,
+                context,
+                title: "Scan a Barcode".tr,
+                txtColor: AppColors.lightGrey01,
+                bgColor: AppColors.darkGrey10,
+                onPress: () {
+                  Get.toNamed(Routes.QRCODE_SCREEN);
+                },
+              ),
+            ],
           ),
           const SizedBox(
-            height: 15,
+            height: 10,
           ),
-          ButtonThem.buildButton(
-            btnHeight: 56,
-            txtSize: 16,
-            context,
-            title: "Scan a Barcode".tr,
-            txtColor: Colors.black,
-            bgColor: AppColors.yellow04,
-            onPress: () {
-              Get.toNamed(Routes.QRCODE_SCREEN);
-            },
-          ),
-          const SizedBox(
-            height: 15,
-          ),
+          if (widget.controller.compoundList.isNotEmpty) ...[
+            // Show Select All checkbox and Pay button if there are search results
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Row(
+                  children: [
+                    const Text('Select All'),
+                    Checkbox(
+                      value: _selectAll,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _selectAll = value ?? false;
+                          // Toggle selection for all items in the list
+                          for (var compound in widget.controller.compoundList) {
+                            compound.isSelected = _selectAll;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                ButtonThem.buildButton(
+                  // imageAsset: "assets/images/pay-per-click.png",
+                  btnHeight: 30,
+                  btnWidthRatio: 0.30,
+                  txtSize: 14,
+                  context,
+                  title: "Pay",
+                  txtColor: AppColors.darkGrey10,
+                  bgColor: AppColors.darkGrey01,
+                  onPress: () {
+                    // Implement pay logic here
+                    // Iterate through the compound list and pay selected items
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 2),
+          ],
           Expanded(
             child: widget.controller.isLoading
                 ? const Center(
@@ -215,106 +265,116 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                           AlwaysStoppedAnimation<Color>(AppColors.darkGrey10),
                     ),
                   ) // Show loading indicator
-                : widget.controller.compoundList.isEmpty
-                    ? Constant.showEmptyView(message: "Compound not found".tr)
-                    : ListView.builder(
-                        itemCount: widget.controller.compoundList.length,
-                        itemBuilder: (context, index) {
-                          print('Building item at index: $index');
-                          CompoundModel compoundModel =
-                              widget.controller.compoundList[index];
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 12.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  compoundModel.compoundNo
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                    color: AppColors.darkGrey07,
-                                                    fontFamily:
-                                                        AppThemData.bold,
-                                                    fontSize: 18,
-                                                  ),
+                : ListView.builder(
+                    itemCount: widget.controller.compoundList.length,
+                    itemBuilder: (context, index) {
+                      // print('Building item at index: $index');
+                      CompoundModel compoundModel =
+                          widget.controller.compoundList[index];
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.grey10, // Specify the border color
+                            width: 2.0, // Specify the border width
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            8.0,
+                          ), // Specify the border radius
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                compoundModel.compoundNo
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  color: AppColors.darkGrey07,
+                                                  fontFamily: AppThemData.bold,
+                                                  fontSize: 18,
                                                 ),
-                                                Checkbox(
-                                                  value: true, // Always checked
-                                                  onChanged: (bool? value) {},
-                                                ),
-                                              ],
-                                            ),
-                                            Text(
-                                              Constant.amountShow(
-                                                  amount: compoundModel.amount
-                                                      .toString()),
-                                              style: const TextStyle(
-                                                color: AppColors.darkGrey07,
-                                                fontFamily: AppThemData.medium,
-                                                fontSize: 16,
                                               ),
-                                            ),
-                                            const SizedBox(height: 3),
-                                            Text(
-                                              Constant.timestampToDate(
-                                                  compoundModel.dateTime!),
-                                              style: const TextStyle(
-                                                color: AppColors.darkGrey03,
-                                                fontFamily: AppThemData.medium,
-                                                fontSize: 16,
+                                              Checkbox(
+                                                value: compoundModel.isSelected,
+                                                onChanged: (bool? value) {
+                                                  setState(() {
+                                                    compoundModel.isSelected =
+                                                        value ?? false;
+                                                  });
+                                                },
                                               ),
+                                            ],
+                                          ),
+                                          Text(
+                                            Constant.amountShow(
+                                                amount: compoundModel.amount
+                                                    .toString()),
+                                            style: const TextStyle(
+                                              color: AppColors.darkGrey07,
+                                              fontFamily: AppThemData.medium,
+                                              fontSize: 16,
                                             ),
-                                            const SizedBox(height: 3),
-                                            Text(
-                                              compoundModel.status.toString(),
-                                              style: TextStyle(
-                                                color: compoundModel.status ==
-                                                        'unpaid'
-                                                    ? Colors.red
-                                                    : AppColors.green04,
-                                                fontFamily: AppThemData.medium,
-                                                fontSize: 16,
-                                              ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            Constant.timestampToDate(
+                                                compoundModel.dateTime!),
+                                            style: const TextStyle(
+                                              color: AppColors.darkGrey03,
+                                              fontFamily: AppThemData.medium,
+                                              fontSize: 16,
                                             ),
-                                            const SizedBox(height: 3),
-                                            Text(
-                                              compoundModel.offence.toString(),
-                                              style: const TextStyle(
-                                                color: AppColors.darkGrey03,
-                                                fontFamily: AppThemData.medium,
-                                                fontSize: 12,
-                                              ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            compoundModel.status.toString(),
+                                            style: TextStyle(
+                                              color: compoundModel.status ==
+                                                      'unpaid'
+                                                  ? Colors.red
+                                                  : AppColors.green04,
+                                              fontFamily: AppThemData.medium,
+                                              fontSize: 16,
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            compoundModel.offence.toString(),
+                                            style: const TextStyle(
+                                              color: AppColors.darkGrey03,
+                                              fontFamily: AppThemData.medium,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                    height:
-                                        10), // Add spacing between items if needed
-                                const Divider(), // Add a divider between items if needed
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ), // Add spacing between items if needed
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

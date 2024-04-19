@@ -11,18 +11,21 @@ class CompoundModel {
   String? offence;
   String? kodHasil;
   String? msg;
+  bool? isSelected;
 
-  CompoundModel(
-      {this.amount,
-      this.dateTime,
-      this.offence,
-      this.id,
-      this.userId,
-      this.compoundNo,
-      this.status,
-      this.vehicleNo,
-      this.kodHasil,
-      this.msg});
+  CompoundModel({
+    this.amount,
+    this.dateTime,
+    this.offence,
+    this.id,
+    this.userId,
+    this.compoundNo,
+    this.status,
+    this.vehicleNo,
+    this.kodHasil,
+    this.msg,
+    this.isSelected = false,
+  });
 
   CompoundModel.fromJson(Map<String, dynamic> json) {
     amount = json['amount'];

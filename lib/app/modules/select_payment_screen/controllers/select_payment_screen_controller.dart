@@ -42,9 +42,10 @@ class SelectPaymentScreenController extends GetxController {
   Server server = Server();
   late String _selectedBankId;
   String? passId;
+  String? amount;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     getArgument();
     super.onInit();
   }
@@ -123,14 +124,14 @@ class SelectPaymentScreenController extends GetxController {
   Future<String?> commercepayMakePayment({required String amount}) async {
     isLoading.value = true;
     try {
-      final response = await server.postRequest(endPoint: APIList.auth);
+      final response = await server.getRequest(endPoint: APIList.auth);
       if (response != null && response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         authResultModel = AuthResultModel.fromJson(jsonResponse);
         // Set the access token
         String accessToken = authResultModel.accessToken.toString();
         // Print the access token
-        // print("Access Token: $accessToken");
+        print("Access Token: $accessToken");
 
         DateTime time = DateTime.now();
         time.add(Duration(seconds: authResultModel.expireInSeconds as int));

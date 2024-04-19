@@ -26,12 +26,11 @@ class SelectBankProviderScreenController extends GetxController {
 
   void commercepayProviderBank() async {
     try {
-      // String accessToken = Preferences.getString("AccessToken");
-      // print("Access Token: $accessToken"); // Print the access token
+      String accessToken = Preferences.getString("AccessToken");
+      print("Access Token: $accessToken"); // Print the access token
       final response = await server.getRequest(
           endPoint: APIList.provider.toString() +
               Preferences.getString("AccessToken"));
-
       if (response.statusCode == 200) {
         // Log the response body
         // print("Response body: ${response.body}");
@@ -61,7 +60,6 @@ class SelectBankProviderScreenController extends GetxController {
               status: element["status"]);
           providerList.add(bankItem);
         }
-
         // print("result $providerList");
       } else {
         throw Exception(

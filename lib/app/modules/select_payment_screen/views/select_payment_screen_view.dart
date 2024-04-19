@@ -97,6 +97,13 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
     final Map<String, dynamic> args = Get.arguments;
     addSeasonPassData = args["addSeasonPassData"];
 
+    final passPrice =
+        controller.purchasePassModel.value.seasonPassModel!.price!;
+    controller.commercepayMakePayment(
+      amount: double.parse(passPrice)
+          .toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+    );
+
     selectedBankId = widget.selectedBankId ?? "";
     String accessToken = widget.accessToken; // Access the accessToken here
     // Check if accessToken is not empty
@@ -494,12 +501,6 @@ Widget paymentOnlineDecoration({
       onTap: () async {
         controller.selectedPaymentMethod.value = value.toString();
         if (value == "Online Banking") {
-          final passPrice =
-              controller.purchasePassModel.value.seasonPassModel!.price!;
-          controller.commercepayMakePayment(
-            amount: double.parse(passPrice)
-                .toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-          );
           final result = await Get.toNamed(Routes.SELECT_BANK_PROVIDER_SCREEN);
           if (result != null && result is Map<String, dynamic>) {
             updateSelectedBankName(
