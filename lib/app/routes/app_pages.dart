@@ -1,4 +1,6 @@
 import 'package:customer_app/app/modules/notification_screen/views/notification_screen_view.dart';
+import 'package:customer_app/app/modules/pay_compound_screen/bindings/pay_compound_screen_binding.dart';
+import 'package:customer_app/app/modules/pay_compound_screen/views/pay_compound_screen_view.dart';
 import 'package:customer_app/app/modules/purchase_pass_private/bindings/purchase_pass_private_binding.dart';
 import 'package:customer_app/app/modules/purchase_pass_private/views/purchase_pass_private_view.dart';
 import 'package:customer_app/app/modules/qrcode_screen/views/qrcode_screen_view.dart';
@@ -10,6 +12,8 @@ import 'package:customer_app/app/modules/select_bank_provider_screen/bindings/se
 import 'package:customer_app/app/modules/select_bank_provider_screen/views/select_bank_provider_screen_view.dart';
 import 'package:customer_app/app/modules/webview/bindings/webview_screen_binding.dart';
 import 'package:customer_app/app/modules/webview/views/webview_screen_view.dart';
+import 'package:customer_app/app/modules/webview_compound_screen/bindings/webview_compound_screen_binding.dart';
+import 'package:customer_app/app/modules/webview_compound_screen/views/webview_compound_screen_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/MySeason_Pass/bindings/my_season_pass_binding.dart';
@@ -154,7 +158,20 @@ class AppPages {
         transitionDuration: const Duration(milliseconds: 250)),
     GetPage(
         name: _Paths.WALLET_SCREEN,
-        page: () => const WalletScreenView(),
+        page: () => WalletScreenView(
+              selectedBankId: Get.arguments["selectedBankId"] ?? '',
+              selectedBankName: Get.arguments["selectedBankName"] ?? '',
+              accessToken: Get.arguments["accessToken"] ?? '',
+              customerId: Get.arguments["customerId"] ?? '',
+              amount: Get.arguments["amount"] ?? '0.0',
+              name: Get.arguments["name"] ?? '',
+              mobileNumber: Get.arguments["mobileNumber"] ?? '',
+              username: Get.arguments["username"] ?? '',
+              identificationNumber: Get.arguments["identificationNumber"] ?? '',
+              identificationType: Get.arguments["identificationType"] ?? '',
+              email: Get.arguments["email"] ?? '',
+              channelId: Get.arguments["channelId"] ?? '',
+            ),
         binding: WalletScreenBinding(),
         transition: Transition.rightToLeftWithFade,
         transitionDuration: const Duration(milliseconds: 250)),
@@ -308,7 +325,9 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.NOTIFICATION_SCREEN,
-      page: () => const NotificationScreenView(),
+      page: () => NotificationScreenView(
+          // controller: Get.arguments['controller'] ?? '',
+          ),
       binding: NotificationScreenBinding(),
     ),
     GetPage(
@@ -320,6 +339,32 @@ class AppPages {
       name: _Paths.WEBVIEW_SCREEN,
       page: () => const WebviewScreen(),
       binding: WebviewScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.WEBVIEW_COMPOUND_SCREEN,
+      page: () => const WebviewCompoundScreen(),
+      binding: WebviewCompoundScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAY_COMPOUND,
+      page: () => PayCompoundScreenView(
+        selectedBankName: Get.arguments["bankName"] ?? '',
+        selectedBankId: Get.arguments["selectedBankId"] ?? '',
+        accessToken: Get.arguments["accessToken"] ?? '',
+        customerId: Get.arguments["customerId"] ?? '',
+        amount: Get.arguments["amount"] ?? '0.0',
+        address: Get.arguments["address"] ?? '',
+        name: Get.arguments["name"] ?? '',
+        mobileNumber: Get.arguments["mobileNumber"] ?? '',
+        userName: Get.arguments["username"] ?? '',
+        identificationNo: Get.arguments["identificationNumber"] ?? '',
+        identificationType: Get.arguments["identificationType"] ?? '',
+        vehicleNum: Get.arguments["vehicle_num"] ?? '',
+        email: Get.arguments["email"] ?? '',
+        compoundNo: Get.arguments["compoundNo"] ?? '',
+        kodHasil: Get.arguments["kodHasil"] ?? '',
+      ),
+      binding: PayCompoundScreenBinding(),
     ),
   ];
 }

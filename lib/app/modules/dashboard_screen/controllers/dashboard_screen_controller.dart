@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:customer_app/app/modules/MySeason_Pass/views/my_season_pass_view.dart';
 import 'package:customer_app/app/modules/booking_screen/views/booking_screen_view.dart';
 import 'package:customer_app/app/modules/home/views/home_view.dart';
@@ -19,7 +21,20 @@ class DashboardScreenController extends GetxController {
     const HomeView(),
     const MySeasonPassView(),
     SearchSummonScreenView(controller: SearchSummonScreenController()),
-    const WalletScreenView(),
+    WalletScreenView(
+      selectedBankName: '',
+      accessToken: '',
+      customerId: '',
+      channelId: 0,
+      selectedBankId: '',
+      amount: '',
+      email: '',
+      mobileNumber: '',
+      name: '',
+      username: '',
+      identificationNumber: '',
+      identificationType: 0,
+    ),
     const ProfileScreenView(),
   ];
 

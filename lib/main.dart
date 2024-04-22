@@ -25,7 +25,7 @@ Future<void> main() async {
       fallbackLocale: LocalizationService.locale,
       translations: LocalizationService(),
       builder: EasyLoading.init(),
-      title: "ParkeMe Customer",
+      title: "Nazifa Parking",
       initialRoute: AppPages.INITIAL,
       debugShowCheckedModeBanner: false,
       getPages: AppPages.routes,

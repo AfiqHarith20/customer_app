@@ -90,6 +90,8 @@ const Map<String, String> enUS = {
   "Book Place": "Book Place",
   "Select Date and Time": "Select Date and Time",
   "Date": "Date",
+  "Identification Card No.": "Identification Card No.",
+  "Enter Identification Card No.": "Enter Identification Card No.",
   "Enter Date": "Enter Date",
   "Select Duration": "Select Duration",
   "Start Time": "Start Time",

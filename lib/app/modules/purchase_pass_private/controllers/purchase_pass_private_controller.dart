@@ -28,6 +28,7 @@ class PurchasePassPrivateController extends GetxController {
   Rx<TextEditingController> companyRegistrationNoController =
       TextEditingController().obs;
   Rx<TextEditingController> addressController = TextEditingController().obs;
+  Rx<TextEditingController> referenceController = TextEditingController().obs;
   RxString countryCode = "+60".obs;
   List<String> type = [
     "Pas Mingguan 1",
@@ -50,6 +51,10 @@ class PurchasePassPrivateController extends GetxController {
 
   Rx<CustomerModel> customerModel = CustomerModel().obs;
   XFile? imageFile;
+
+  bool isImageSelected() {
+    return imageFiles.isNotEmpty;
+  }
 
   @override
   void onInit() {
@@ -90,6 +95,7 @@ class PurchasePassPrivateController extends GetxController {
     pendingPassModel.value.customerId = FireStoreUtils.getCurrentUid();
     pendingPassModel.value.privatePassModel = selectedPrivatePass.value;
     pendingPassModel.value.fullName = fullNameController.value.text;
+    pendingPassModel.value.reference = referenceController.value.text;
     pendingPassModel.value.email = emailController.value.text;
     pendingPassModel.value.identificationNo =
         identificationNoController.value.text;

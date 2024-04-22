@@ -56,40 +56,34 @@ class _NotificationScreenViewState extends State<NotificationScreenView> {
       ),
       body: ListView.separated(
         itemCount: notifyList.length,
-        separatorBuilder: (BuildContext context, int index) => Divider(), // Add divider between list items
+        separatorBuilder: (BuildContext context, int index) =>
+            const Divider(), // Add divider between list items
         itemBuilder: (context, index) {
           var notification = notifyList[index];
           return Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  notification['title'],
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  notification['pubDate'],
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
                   notification['category'],
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.blue,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
+                Text(
+                  notification['pubDate'],
+                  style: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
                 Text(
                   notification['des'],
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                   ),
                 ),

@@ -101,6 +101,13 @@ class Constant {
     }
   }
 
+  static String? validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Name is required";
+    }
+    return null; // Return null if validation succeeds
+  }
+
   bool hasValidUrl(String value) {
     String pattern =
         r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
@@ -186,10 +193,14 @@ class Constant {
   }
 
   static String amountShow({required String? amount}) {
-    if (Constant.currencyModel!.symbolAtRight == true) {
-      return "${double.parse(amount.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.currencyModel!.symbol.toString()}";
+    if (amount != null && Constant.currencyModel != null) {
+      if (Constant.currencyModel!.symbolAtRight == true) {
+        return "${double.parse(amount).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.currencyModel!.symbol}";
+      } else {
+        return "${Constant.currencyModel!.symbol} ${double.parse(amount).toStringAsFixed(Constant.currencyModel!.decimalDigits!)}";
+      }
     } else {
-      return "${Constant.currencyModel!.symbol.toString()} ${double.parse(amount.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)}";
+      return "Amount not available"; // Or any other default value or error handling mechanism
     }
   }
 

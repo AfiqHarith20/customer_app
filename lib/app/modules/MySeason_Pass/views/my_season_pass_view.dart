@@ -134,7 +134,9 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                                 height: 5,
                               ),
                               itemWidget(
-                                  subText: '#125673',
+                                  subText: controller
+                                      .mySeasonPassList[index].id!
+                                      .substring(0, 8),
                                   title: 'Serial Number:'.tr,
                                   svgImage: 'assets/icons/ic_hash.svg'),
                               itemWidget(

@@ -1,86 +1,70 @@
-// ignore_for_file: library_private_types_in_public_api, must_be_immutable, unused_element
-
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
+import 'package:customer_app/app/models/compound_model.dart';
+import 'package:customer_app/app/models/my_payment_compound_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
-import 'package:customer_app/app/widget/svg_image_widget.dart';
-import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
-import 'package:customer_app/themes/app_colors.dart';
-import 'package:customer_app/themes/app_them_data.dart';
 import 'package:customer_app/themes/button_theme.dart';
-import 'package:customer_app/themes/common_ui.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
-import 'package:customer_app/utils/server.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 
-import '../../../routes/app_pages.dart';
-import '../controllers/select_payment_screen_controller.dart';
+import 'package:customer_app/app/modules/pay_compound_screen/controllers/pay_compoun_screen_controller.dart';
+import 'package:customer_app/app/routes/app_pages.dart';
+import 'package:customer_app/app/widget/svg_image_widget.dart';
+import 'package:customer_app/constant/constant.dart';
+import 'package:customer_app/themes/common_ui.dart';
 
-class SelectPaymentScreenView extends StatefulWidget {
-  final String passId;
-  final String passName;
-  final String passPrice;
-  final String passValidity;
+import '../../../../themes/app_colors.dart';
+import '../../../../themes/app_them_data.dart';
+
+class PayCompoundScreenView extends StatefulWidget {
+  final String selectedBankId;
   late String selectedBankName;
-  final String? selectedBankId;
-  final String selectedPassId;
   final String accessToken;
+  final String compoundNo;
+  final String vehicleNum;
   final String customerId;
-  final double totalPrice;
-  final String address;
-  final String companyName;
-  final String companyRegistrationNo;
-  final String endDate;
-  final String startDate;
-  final String fullName;
-  final String email;
+  final String amount;
   final String mobileNumber;
+  final String address;
+  final String kodHasil;
+  final String name;
   final String userName;
   final String identificationNo;
   final String identificationType;
-  final String vehicleNo;
-  final String lotNo;
-  SelectPaymentScreenView({
+  final String email;
+  PayCompoundScreenView({
     Key? key,
-    required this.passId,
-    required this.passName,
-    required this.passPrice,
-    required this.passValidity,
-    required this.selectedBankName,
     required this.selectedBankId,
-    required this.selectedPassId,
+    required this.selectedBankName,
     required this.accessToken,
+    required this.compoundNo,
+    required this.vehicleNum,
     required this.customerId,
-    required this.totalPrice,
-    required this.address,
-    required this.companyName,
-    required this.companyRegistrationNo,
-    required this.endDate,
-    required this.startDate,
-    required this.fullName,
-    required this.email,
+    required this.amount,
     required this.mobileNumber,
+    required this.address,
+    required this.kodHasil,
+    required this.name,
     required this.userName,
     required this.identificationNo,
-    required this.vehicleNo,
     required this.identificationType,
-    required this.lotNo,
+    required this.email,
   }) : super(key: key);
 
   @override
-  State<SelectPaymentScreenView> createState() =>
-      _SelectPaymentScreenViewState();
+  State<PayCompoundScreenView> createState() => _PayCompoundScreenViewState();
 }
 
-class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
-    with SingleTickerProviderStateMixin {
-  late SelectPaymentScreenController controller;
-  late OnlinePaymentModel onlinePaymentModel = OnlinePaymentModel();
-  late Function() addSeasonPassData;
+class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
+  late PayCompoundScreenController controller;
   late String selectedBankId;
+  // late Function() compoundModel;
+  late CompoundModel compoundModel;
+  late MyPaymentCompoundModel myPaymentCompoundModel = MyPaymentCompoundModel();
 
   String formatDate(DateTime date) {
     return DateFormat('yyyy/MM/dd').format(date);
@@ -88,35 +72,37 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
 
   @override
   void initState() {
-    super.initState();
-    onlinePaymentModel = OnlinePaymentModel();
-    controller = Get.put(SelectPaymentScreenController());
-    controller.onInit(); // Call onInit manually
+    myPaymentCompoundModel = MyPaymentCompoundModel();
+    controller = Get.put(PayCompoundScreenController());
+    controller.onInit();
+    Map<String, dynamic> arguments = Get.arguments;
+    if (arguments != null && arguments.containsKey("payCompoundModel")) {
+      compoundModel = CompoundModel.fromJson(arguments["payCompoundModel"]);
+      // Now you have access to the compoundModel, you can use it as needed
+      // print('Compound Number: ${compoundModel.compoundNo}');
+      // print('Amount: ${compoundModel.amount}');
+      // print('vehicle no: ${compoundModel.vehicleNum ?? ''}');
+      // TODO: implement initState
+      super.initState();
+      final compoundPrice = controller.compoundModel.value.amount ?? '';
+      controller.commercepayCompoundPayment(
+        amount: compoundPrice,
+      );
 
-    // Retrieve arguments and assign addSeasonPassData
-    final Map<String, dynamic> args = Get.arguments;
-    addSeasonPassData = args["addSeasonPassData"];
-
-    final passPrice =
-        controller.purchasePassModel.value.seasonPassModel!.price!;
-    controller.commercepayMakePayment(
-      amount: double.parse(passPrice)
-          .toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-    );
-
-    selectedBankId = widget.selectedBankId ?? "";
-    String accessToken = widget.accessToken; // Access the accessToken here
-    // Check if accessToken is not empty
-    if (accessToken.isNotEmpty) {
-      // Do something with the accessToken
-      // print("Access token from select payment screen: $accessToken");
+      selectedBankId = widget.selectedBankId ?? "";
+      String accessToken = widget.accessToken; // Access the accessToken here
+      // Check if accessToken is not empty
+      if (accessToken.isNotEmpty) {
+        // Do something with the accessToken
+        // print("Access token from select payment screen: $accessToken");
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetX<SelectPaymentScreenController>(
-      init: SelectPaymentScreenController(),
+    return GetX<PayCompoundScreenController>(
+      init: PayCompoundScreenController(),
       builder: (controller) {
         return Scaffold(
           appBar: UiInterface().customAppBar(
@@ -133,14 +119,11 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   ),
                   child: Column(
                     children: [
-                      // const Divider(
-                      //   color: Colors.black,
-                      // ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Pass Details".tr,
+                            "Compound Details".tr,
                             style: const TextStyle(
                               fontSize: 20,
                               fontFamily: AppThemData.semiBold,
@@ -148,22 +131,24 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                             ),
                           ),
                           const SizedBox(height: 20),
-                          _buildDetailRow("Pass Name".tr, widget.passName),
+                          _buildDetailRow(
+                            "Compound Number".tr,
+                            compoundModel.compoundNo ?? '',
+                          ),
+                          _buildDetailRow(
+                            "Full Name".tr,
+                            controller.customerModel.value.fullName.toString(),
+                          ),
                           _buildDetailRow(
                             "Price".tr,
-                            "RM ${widget.passPrice}",
+                            "RM ${compoundModel.amount ?? ''}",
                           ),
-                          _buildDetailRow("Validity".tr, widget.passValidity),
                         ],
                       ),
                       const Divider(
                         color: Colors.black,
                       ),
                       const SizedBox(height: 10),
-                      // Payment methods
-                      // PaymentMethodsSections(
-                      //   controller: controller,
-                      // ),
                       Row(
                         children: [
                           Text(
@@ -239,11 +224,10 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                         ),
                       ),
                       _buildPaymentInformation(
-                        widget.passPrice,
+                        compoundModel,
                         controller.taxModel.value.value != null
                             ? double.parse(controller.taxModel.value.value!)
                             : 0.0,
-                        controller.taxModel.value.name ?? 'SST',
                       ),
                       const Divider(
                         color: Colors.black,
@@ -268,69 +252,83 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                 // Check the selected payment method
                 if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.commercePay!.name) {
-                  final passData = await addSeasonPassData();
-                  final passPrice = controller
-                      .purchasePassModel.value.seasonPassModel!.price!;
+                  final amount = compoundModel.amount ?? '';
                   // Obtain the access token after selecting the bank
-                  await controller.commercepayMakePayment(
-                    amount: double.parse(passPrice).toStringAsFixed(
+                  await controller.commercepayCompoundPayment(
+                    amount: double.parse(amount).toStringAsFixed(
                       Constant.currencyModel!.decimalDigits!,
                     ),
                   );
 
                   // Calculate total price using the passPrice
                   double totalPrice = calculateTotalPrice(
-                    passPrice,
+                    compoundModel,
                     controller.taxModel.value.value != null
                         ? double.parse(controller.taxModel.value.value!)
                         : 0.0,
                   );
 
-                  // String? accessToken = await controller.commercepayMakePayment(
-                  //   amount: double.parse(passPrice).toStringAsFixed(
+                  // Retrieve the access token from the controller
+                  String? accessToken = controller.authResultModel.accessToken;
+
+                  // String? accessToken =
+                  //     await controller.commercepayCompoundPayment(
+                  //   amount: double.parse(amount).toStringAsFixed(
                   //     Constant.currencyModel!.decimalDigits!,
                   //   ),
                   // );
 
-                  // Retrieve the access token from the controller
-                  String? accessToken = controller.authResultModel.accessToken;
-
                   // Convert Timestamp to DateTime
-                  DateTime? convertTimestampToDateOnly(Timestamp? timestamp) {
-                    if (timestamp == null) return null;
-                    DateTime dateTime = timestamp.toDate();
-                    return DateTime(
-                        dateTime.year, dateTime.month, dateTime.day);
-                  }
+                  // DateTime? convertTimestampToDateOnly(Timestamp? timestamp) {
+                  //   if (timestamp == null) return null;
+                  //   DateTime dateTime = timestamp.toDate();
+                  //   return DateTime(
+                  //       dateTime.year, dateTime.month, dateTime.day);
+                  // }
 
-                  onlinePaymentModel = OnlinePaymentModel(
+                  myPaymentCompoundModel = MyPaymentCompoundModel(
                     accessToken: accessToken,
-                    customerId: passData['customerId'],
+                    customerId: FireStoreUtils.getCurrentUid(),
                     selectedBankId: selectedBankId,
-                    totalPrice: totalPrice,
-                    address: passData['address'],
-                    companyName: passData['companyName'],
-                    companyRegistrationNo: passData['companyRegistrationNo'],
-                    endDate: convertTimestampToDateOnly(passData['endDate']),
-                    startDate:
-                        convertTimestampToDateOnly(passData['startDate']),
-                    fullName: passData['fullName'],
-                    email: passData['email'],
-                    mobileNumber: passData['mobileNumber'],
-                    userName: passData['email'],
-                    identificationNo: passData['identificationNo'],
-                    identificationType: '2',
-                    vehicleNo: passData['vehicleNo'],
-                    lotNo: passData['lotNo'],
-                    selectedPassId: widget.passId,
+                    amount: totalPrice.toStringAsFixed(2),
+                    address: controller.customerModel.value.address.toString(),
+                    name: controller.customerModel.value.fullName.toString(),
+                    email: controller.customerModel.value.email.toString(),
+                    mobileNumber:
+                        controller.customerModel.value.phoneNumber.toString(),
+                    userName: controller.customerModel.value.email.toString(),
+                    identificationNo: controller
+                        .customerModel.value.identificationNo
+                        .toString(),
+                    identificationType: '1',
+                    vehicleNum: compoundModel.vehicleNum ?? '',
                     channelId: '18',
+                    compoundNo: compoundModel.compoundNo ?? '',
+                    kodHasil: compoundModel.kodHasil ?? '',
                   );
-                  print('Online Payment Data: $onlinePaymentModel');
-                  print('customerId ${passData['customerId']}');
+                  // print('Compound payment Data: $myPaymentCompoundModel');
+                  // print('accessToken: ${myPaymentCompoundModel.accessToken}');
+                  // print('customerId: ${myPaymentCompoundModel.customerId}');
+                  // print(
+                  //     'providerChannelId: ${myPaymentCompoundModel.selectedBankId}');
+                  // print('amount: ${myPaymentCompoundModel.amount}');
+                  // print('address: ${myPaymentCompoundModel.address}');
+                  // print('name: ${myPaymentCompoundModel.name}');
+                  // print('email: ${myPaymentCompoundModel.email}');
+                  // print('mobileNumber: ${myPaymentCompoundModel.mobileNumber}');
+                  // print('username: ${myPaymentCompoundModel.userName}');
+                  // print(
+                  //     'identificationNumber: ${myPaymentCompoundModel.identificationNo}');
+                  // print(
+                  //     'identificationType: ${myPaymentCompoundModel.identificationType}');
+                  // print('vehicleNo: ${myPaymentCompoundModel.vehicleNum}');
+                  // print('channelId: ${myPaymentCompoundModel.channelId}');
+                  // print('compoundNo: ${myPaymentCompoundModel.compoundNo}');
+                  // print('kodHasil: ${myPaymentCompoundModel.kodHasil}');
                   Get.toNamed(
-                    Routes.WEBVIEW_SCREEN,
+                    Routes.WEBVIEW_COMPOUND_SCREEN,
                     arguments: {
-                      'onlinePaymentModel': onlinePaymentModel,
+                      'myPaymentCompoundModel': myPaymentCompoundModel,
                     },
                   );
                   // controller.completeOrder();
@@ -339,8 +337,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   // Call the controller method to make the stripe payment
                   controller.stripeMakePayment(
                     amount: double.parse(
-                      controller
-                          .purchasePassModel.value.seasonPassModel!.price!,
+                      controller.myPaymentCompoundModel.value.amount!,
                     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
                   );
                 } else if (controller.selectedPaymentMethod.value ==
@@ -348,8 +345,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   // Call the controller method to handle PayPal payment
                   controller.paypalPaymentSheet(
                     double.parse(
-                      controller
-                          .purchasePassModel.value.seasonPassModel!.price!,
+                      controller.myPaymentCompoundModel.value.amount!,
                     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
                   );
                 } else if (controller.selectedPaymentMethod.value ==
@@ -358,20 +354,18 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   if (double.parse(controller.customerModel.value.walletAmount
                           .toString()) >=
                       double.parse(
-                        controller
-                            .purchasePassModel.value.seasonPassModel!.price!,
+                        controller.myPaymentCompoundModel.value.amount!,
                       )) {
                     // Create a transaction model for wallet deduction
                     WalletTransactionModel transactionModel =
                         WalletTransactionModel(
                       id: Constant.getUuid(),
                       amount:
-                          "-${double.parse(controller.purchasePassModel.value.seasonPassModel!.price!).toString()}",
+                          "-${double.parse(controller.myPaymentCompoundModel.value.amount!).toString()}",
                       createdDate: Timestamp.now(),
                       paymentType: controller.selectedPaymentMethod.value,
-                      transactionId: controller.purchasePassModel.value.id,
-                      parkingId: controller
-                          .purchasePassModel.value.seasonPassModel!.passid!
+                      transactionId: controller.myPaymentCompoundModel.value.id,
+                      parkingId: controller.myPaymentCompoundModel.value.id!
                           .toString(),
                       note: "Season pass ".tr,
                       type: "customer",
@@ -387,7 +381,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                         // Update the user's wallet amount
                         await FireStoreUtils.updateUserWallet(
                           amount:
-                              "-${double.parse(controller.purchasePassModel.value.seasonPassModel!.price!).toString()}",
+                              "-${double.parse(controller.myPaymentCompoundModel.value.amount!).toString()}",
                         ).then((value) {
                           controller.completeOrder();
                         });
@@ -405,53 +399,6 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
       },
     );
   }
-}
-
-Widget _buildPaymentInformation(
-    String passPrice, double taxValue, String taxName) {
-  // Convert passPrice to a double
-  double price = double.parse(passPrice);
-
-  // Calculate tax (based on the fetched tax value)
-  double tax = taxValue * price;
-
-  // Calculate total amount
-  double totalPrice = price + tax;
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Divider(color: Colors.black),
-      Text(
-        "Payment Information".tr,
-        style: const TextStyle(
-          fontSize: 20,
-          fontFamily: AppThemData.semiBold,
-          color: AppColors.darkGrey08,
-        ),
-      ),
-      const SizedBox(height: 20),
-      _buildDetailRow("Sub Total".tr,
-          "RM ${price.toStringAsFixed(2)}"), // Convert price to string
-      _buildDetailRow("$taxName(${(taxValue * 100).toStringAsFixed(0)}%)",
-          "RM ${tax.toStringAsFixed(2)}"),
-      const Divider(),
-      _buildTotalRow("Total Amount".tr, "RM ${totalPrice.toStringAsFixed(2)}"),
-    ],
-  );
-}
-
-double calculateTotalPrice(String passPrice, double taxValue) {
-  // Convert passPrice to a double
-  double price = double.parse(passPrice);
-
-  // Calculate tax (6% of pass price)
-  double tax = taxValue * price;
-
-  // Calculate total amount
-  double totalPrice = price + tax;
-
-  return totalPrice;
 }
 
 Widget _buildDetailRow(String label, String value) {
@@ -478,32 +425,8 @@ Widget _buildDetailRow(String label, String value) {
   );
 }
 
-Widget _buildTotalRow(String label, String value) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        label,
-        style: const TextStyle(
-          fontSize: 16,
-          fontFamily: AppThemData.bold,
-          color: AppColors.darkGrey10,
-        ),
-      ),
-      Text(
-        value,
-        style: const TextStyle(
-          fontSize: 16,
-          fontFamily: AppThemData.bold,
-          color: AppColors.darkGrey10,
-        ),
-      ),
-    ],
-  );
-}
-
 Widget paymentOnlineDecoration({
-  required SelectPaymentScreenController controller,
+  required PayCompoundScreenController controller,
   required String value,
   required String image,
   required String? selectedBankName,
@@ -582,7 +505,7 @@ Widget paymentOnlineDecoration({
 }
 
 Widget paymentDecoration({
-  required SelectPaymentScreenController controller,
+  required PayCompoundScreenController controller,
   required String value,
   required String image,
 }) {
@@ -647,5 +570,75 @@ Widget paymentDecoration({
         ],
       ),
     ),
+  );
+}
+
+Widget _buildPaymentInformation(CompoundModel compoundModel, double taxValue) {
+  // Convert passPrice to a double
+  double price = double.parse(compoundModel.amount ?? '0.0');
+
+  // Calculate tax (based on the fetched tax value)
+  double tax = taxValue * price;
+
+  // Calculate total amount
+  double totalPrice = price + tax;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Divider(color: Colors.black),
+      Text(
+        "Payment Information".tr,
+        style: const TextStyle(
+          fontSize: 20,
+          fontFamily: AppThemData.semiBold,
+          color: AppColors.darkGrey08,
+        ),
+      ),
+      const SizedBox(height: 20),
+      _buildDetailRow("Sub Total".tr,
+          "RM ${price.toStringAsFixed(2)}"), // Convert price to string
+      _buildDetailRow("${"Tax ".tr}(${(taxValue * 100).toStringAsFixed(0)}%)",
+          "RM ${tax.toStringAsFixed(2)}"),
+      const Divider(),
+      _buildTotalRow("Total Amount".tr, "RM ${totalPrice.toStringAsFixed(2)}"),
+    ],
+  );
+}
+
+double calculateTotalPrice(CompoundModel compoundModel, double taxValue) {
+  // Convert passPrice to a double
+  double price = double.parse(compoundModel.amount ?? '0.0');
+
+  // Calculate tax (6% of pass price)
+  double tax = taxValue * price;
+
+  // Calculate total amount
+  double totalPrice = price + tax;
+
+  return totalPrice;
+}
+
+Widget _buildTotalRow(String label, String value) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        label,
+        style: const TextStyle(
+          fontSize: 16,
+          fontFamily: AppThemData.bold,
+          color: AppColors.darkGrey10,
+        ),
+      ),
+      Text(
+        value,
+        style: const TextStyle(
+          fontSize: 16,
+          fontFamily: AppThemData.bold,
+          color: AppColors.darkGrey10,
+        ),
+      ),
+    ],
   );
 }

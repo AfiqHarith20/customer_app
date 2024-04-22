@@ -1,23 +1,18 @@
-// ignore_for_file: depend_on_referenced_packages, unused_field
+// ignore_for_file: unused_field
 
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:customer_app/app/models/commercepay/auth_model.dart';
-import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
-import 'package:customer_app/app/models/customer_model.dart';
-import 'package:customer_app/app/models/my_purchase_pass_model.dart';
+import 'package:customer_app/app/models/compound_model.dart';
+import 'package:customer_app/app/models/my_payment_compound_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
-import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/models/tax_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
-import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:customer_app/utils/preferences.dart';
-import 'package:flutter/material.dart';
+import 'package:customer_app/utils/server.dart';
 import 'package:flutter_paypal_native/flutter_paypal_native.dart';
 import 'package:flutter_paypal_native/models/custom/currency_code.dart';
 import 'package:flutter_paypal_native/models/custom/environment.dart';
@@ -28,15 +23,20 @@ import 'package:flutter_paypal_native/str_helper.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
-import '../../../../utils/server.dart';
+import '../../../../constant/show_toast_dialogue.dart';
+import '../../../models/commercepay/auth_model.dart';
+import '../../../models/customer_model.dart';
+import '../../../models/payment_method_model.dart';
 
-class SelectPaymentScreenController extends GetxController {
-  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
+class PayCompoundScreenController extends GetxController {
+  Rx<CompoundModel> compoundModel = CompoundModel().obs;
+  Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
+      MyPaymentCompoundModel().obs;
+  Rx<TaxModel> taxModel = TaxModel().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
-  Rx<TaxModel> taxModel = TaxModel().obs;
-  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
   RxString selectedPaymentMethod = "".obs;
   RxString selectedBankId = "".obs;
   RxBool isPaymentCompleted = true.obs;
@@ -44,28 +44,23 @@ class SelectPaymentScreenController extends GetxController {
   AuthResultModel authResultModel = AuthResultModel();
   Server server = Server();
   late String _selectedBankId;
-  String? passId;
-  String? amount;
-  RxDouble tax = RxDouble(0.0);
-  String? taxId;
+  Rx<TextEditingController> fullNameController = TextEditingController().obs;
+  Rx<TextEditingController> emailController = TextEditingController().obs;
+  Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
+  Rx<TextEditingController> countryCode = TextEditingController().obs;
 
   @override
   Future<void> onInit() async {
     getArgument();
+    getProfileData();
     super.onInit();
   }
 
-  // Future<TaxModel?> fetchTaxData() async {
-  //   // Ensure that fetchTax() returns a Future<TaxModel?>
-  //   return await fetchTax(id);
-  // }
-
   getArgument() async {
-    final bankName = Get.arguments?['bankName'] ?? "Default Bank Name";
     dynamic argumentData = Get.arguments;
-    passId = argumentData?['passId'];
-    if (argumentData != null && argumentData['purchasePassModel'] != null) {
-      purchasePassModel.value = argumentData['purchasePassModel'];
+    if (argumentData != null &&
+        argumentData['myPaymentCompoundModel'] != null) {
+      myPaymentCompoundModel.value = argumentData['myPaymentCompoundModel'];
       getPaymentData();
     } else {
       // Handle the case where purchasePassModel is null
@@ -74,7 +69,22 @@ class SelectPaymentScreenController extends GetxController {
     }
   }
 
-  SelectPaymentScreenController({String? selectedBankId}) {
+  getProfileData() async {
+    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+        .then((value) {
+      if (value != null) {
+        customerModel.value = value;
+        fullNameController.value.text = customerModel.value.fullName!;
+        emailController.value.text = customerModel.value.email!;
+        countryCode.value.text = customerModel.value.countryCode!;
+        phoneNumberController.value.text = customerModel.value.phoneNumber!;
+
+        isLoading.value = true;
+      }
+    });
+  }
+
+  PayCompoundScreenController({String? selectedBankId}) {
     _selectedBankId = selectedBankId ?? ""; // Initialize with provided value
   }
 
@@ -109,15 +119,16 @@ class SelectPaymentScreenController extends GetxController {
   }
 
   completeOrder() async {
-    purchasePassModel.value.paymentType = selectedPaymentMethod.value;
-    await FireStoreUtils.setPurchasePass(purchasePassModel.value).then((value) {
+    myPaymentCompoundModel.value.paymentType = selectedPaymentMethod.value;
+    await FireStoreUtils.setPaymentCompound(myPaymentCompoundModel.value)
+        .then((value) {
       Get.back();
       Get.toNamed(Routes.DASHBOARD_SCREEN);
       ShowToastDialog.showToast("Season pass purchase successfully");
     });
   }
 
-  Future<String?> commercepayMakePayment({required String amount}) async {
+  Future<String?> commercepayCompoundPayment({required String amount}) async {
     isLoading.value = true;
     try {
       final response = await server.getRequest(endPoint: APIList.auth);

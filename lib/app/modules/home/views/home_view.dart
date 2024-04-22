@@ -188,6 +188,7 @@ class _HomeViewState extends State<HomeView> {
         init: HomeController(),
         builder: (controller) {
           return SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
               child: Scaffold(

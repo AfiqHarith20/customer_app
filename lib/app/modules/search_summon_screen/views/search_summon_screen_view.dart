@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
@@ -28,7 +30,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
   late TextEditingController _searchController;
   late String _hintText;
   String _requestMethod = 'compound';
-  bool _selectAll = false;
+  // bool _selectAll = false;
 
   @override
   void initState() {
@@ -156,9 +158,13 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                     List<String> offences = searchResult['offence'] != null
                         ? searchResult['offence'].split("::")
                         : [];
-                    List<String> kodHasils = searchResult['kodHasil'] != null
-                        ? searchResult['kodHasil'].split("::")
+                    List<String> kodHasils = searchResult['kod_hasil'] != null
+                        ? searchResult['kod_hasil'].split("::")
                         : [];
+                    List<String> vehicleNums =
+                        searchResult['vehicle_num'] != null
+                            ? searchResult['vehicle_num'].split("::")
+                            : [];
 
                     for (int i = 0; i < compoundNums.length; i++) {
                       CompoundModel compound = CompoundModel(
@@ -170,6 +176,8 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                         status: statuses.isNotEmpty ? statuses[i] : '',
                         offence: offences.isNotEmpty ? offences[i] : '',
                         kodHasil: kodHasils.isNotEmpty ? kodHasils[i] : '',
+                        vehicleNum:
+                            vehicleNums.isNotEmpty ? vehicleNums[i] : '',
                       );
                       compounds.add(compound);
                     }
@@ -217,46 +225,46 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
           const SizedBox(
             height: 10,
           ),
-          if (widget.controller.compoundList.isNotEmpty) ...[
-            // Show Select All checkbox and Pay button if there are search results
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  children: [
-                    const Text('Select All'),
-                    Checkbox(
-                      value: _selectAll,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _selectAll = value ?? false;
-                          // Toggle selection for all items in the list
-                          for (var compound in widget.controller.compoundList) {
-                            compound.isSelected = _selectAll;
-                          }
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                ButtonThem.buildButton(
-                  // imageAsset: "assets/images/pay-per-click.png",
-                  btnHeight: 30,
-                  btnWidthRatio: 0.30,
-                  txtSize: 14,
-                  context,
-                  title: "Pay",
-                  txtColor: AppColors.darkGrey10,
-                  bgColor: AppColors.darkGrey01,
-                  onPress: () {
-                    // Implement pay logic here
-                    // Iterate through the compound list and pay selected items
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
-          ],
+          // if (widget.controller.compoundList.isNotEmpty) ...[
+          // Show Select All checkbox and Pay button if there are search results
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //   children: [
+          //     Row(
+          //       children: [
+          //         const Text('Select All'),
+          //         Checkbox(
+          //           value: _selectAll,
+          //           onChanged: (bool? value) {
+          //             setState(() {
+          //               _selectAll = value ?? false;
+          //               // Toggle selection for all items in the list
+          //               for (var compound in widget.controller.compoundList) {
+          //                 compound.isSelected = _selectAll;
+          //               }
+          //             });
+          //           },
+          //         ),
+          //       ],
+          //     ),
+          //     ButtonThem.buildButton(
+          //       // imageAsset: "assets/images/pay-per-click.png",
+          //       btnHeight: 30,
+          //       btnWidthRatio: 0.30,
+          //       txtSize: 14,
+          //       context,
+          //       title: "Pay",
+          //       txtColor: AppColors.darkGrey10,
+          //       bgColor: AppColors.darkGrey01,
+          //       onPress: () {
+          //         // Implement pay logic here
+          //         // Iterate through the compound list and pay selected items
+          //       },
+          //     ),
+          //   ],
+          // ),
+          const SizedBox(height: 2),
+          // ],
           Expanded(
             child: widget.controller.isLoading
                 ? const Center(
@@ -267,109 +275,133 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                   ) // Show loading indicator
                 : ListView.builder(
                     itemCount: widget.controller.compoundList.length,
-                    itemBuilder: (context, index) {
+                    itemBuilder: (controller, index) {
                       // print('Building item at index: $index');
                       CompoundModel compoundModel =
                           widget.controller.compoundList[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: AppColors.grey10, // Specify the border color
-                            width: 2.0, // Specify the border width
+                      return GestureDetector(
+                        onTap: () async {
+                          Get.toNamed(Routes.PAY_COMPOUND, arguments: {
+                            "payCompoundModel": compoundModel.toJson(),
+                            "myPaymentCompoundModel":
+                                widget.controller.myPaymentCompoundModel.value
+                          });
+                          print(
+                              "payCompoundModel JSON: ${compoundModel.toJson()}");
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors
+                                  .lightGrey06, // Specify the border color
+                              width: 3.0, // Specify the border width
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              8.0,
+                            ), // Specify the border radius
                           ),
-                          borderRadius: BorderRadius.circular(
-                            8.0,
-                          ), // Specify the border radius
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 12.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                compoundModel.compoundNo
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                  color: AppColors.darkGrey07,
-                                                  fontFamily: AppThemData.bold,
-                                                  fontSize: 18,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 12.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  compoundModel.compoundNo
+                                                      .toString(),
+                                                  style: const TextStyle(
+                                                    color: AppColors.darkGrey07,
+                                                    fontFamily:
+                                                        AppThemData.bold,
+                                                    fontSize: 18,
+                                                  ),
                                                 ),
+                                                // Checkbox(
+                                                //   value: compoundModel.isSelected,
+                                                //   onChanged: (bool? value) {
+                                                //     setState(() {
+                                                //       compoundModel.isSelected =
+                                                //           value ?? false;
+                                                //     });
+                                                //   },
+                                                // ),
+                                              ],
+                                            ),
+                                            Text(
+                                              Constant.amountShow(
+                                                  amount: compoundModel.amount
+                                                      .toString()),
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey07,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 16,
                                               ),
-                                              Checkbox(
-                                                value: compoundModel.isSelected,
-                                                onChanged: (bool? value) {
-                                                  setState(() {
-                                                    compoundModel.isSelected =
-                                                        value ?? false;
-                                                  });
-                                                },
+                                            ),
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              compoundModel.vehicleNum ?? '',
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey07,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 16,
                                               ),
-                                            ],
-                                          ),
-                                          Text(
-                                            Constant.amountShow(
-                                                amount: compoundModel.amount
-                                                    .toString()),
-                                            style: const TextStyle(
-                                              color: AppColors.darkGrey07,
-                                              fontFamily: AppThemData.medium,
-                                              fontSize: 16,
                                             ),
-                                          ),
-                                          const SizedBox(height: 3),
-                                          Text(
-                                            Constant.timestampToDate(
-                                                compoundModel.dateTime!),
-                                            style: const TextStyle(
-                                              color: AppColors.darkGrey03,
-                                              fontFamily: AppThemData.medium,
-                                              fontSize: 16,
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              Constant.timestampToDate(
+                                                  compoundModel.dateTime!),
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey03,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 16,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 3),
-                                          Text(
-                                            compoundModel.status.toString(),
-                                            style: TextStyle(
-                                              color: compoundModel.status ==
-                                                      'unpaid'
-                                                  ? Colors.red
-                                                  : AppColors.green04,
-                                              fontFamily: AppThemData.medium,
-                                              fontSize: 16,
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              compoundModel.status.toString(),
+                                              style: TextStyle(
+                                                color: compoundModel.status ==
+                                                        'unpaid'
+                                                    ? Colors.red
+                                                    : AppColors.green04,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 16,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 3),
-                                          Text(
-                                            compoundModel.offence.toString(),
-                                            style: const TextStyle(
-                                              color: AppColors.darkGrey03,
-                                              fontFamily: AppThemData.medium,
-                                              fontSize: 12,
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              compoundModel.offence.toString(),
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey03,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 12,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ), // Add spacing between items if needed
-                            ],
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ), // Add spacing between items if needed
+                              ],
+                            ),
                           ),
                         ),
                       );

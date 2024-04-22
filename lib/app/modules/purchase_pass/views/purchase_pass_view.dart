@@ -163,18 +163,18 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         controller: controller.vehicleNoController.value,
                         onPress: () {},
                       ),
-                      TextFieldWidgetPrefix(
-                        prefix: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_note.svg",
-                          ),
-                        ),
-                        title: "Lot No.".tr,
-                        hintText: "Enter Lot No.".tr,
-                        controller: controller.lotNoController.value,
-                        onPress: () {},
-                      ),
+                      // TextFieldWidgetPrefix(
+                      //   prefix: Padding(
+                      //     padding: const EdgeInsets.all(12.0),
+                      //     child: SvgPicture.asset(
+                      //       "assets/icons/ic_note.svg",
+                      //     ),
+                      //   ),
+                      //   title: "Lot No.".tr,
+                      //   hintText: "Enter Lot No.".tr,
+                      //   controller: controller.lotNoController.value,
+                      //   onPress: () {},
+                      // ),
                       TextFieldWidgetPrefix(
                         prefix: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -223,7 +223,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: ButtonThem.buildButton(
                     context,
-                    title: "Buy".tr,
+                    title: "Submit".tr,
                     txtColor: Colors.black,
                     bgColor: AppColors.yellow04,
                     onPress: () async {

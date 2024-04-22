@@ -4,15 +4,20 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
+import 'package:customer_app/app/models/wallet_topup_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/app/modules/profile_screen/controllers/profile_screen_controller.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/app_colors.dart';
+import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
+import 'package:customer_app/utils/preferences.dart';
+import 'package:customer_app/utils/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal_native/flutter_paypal_native.dart';
 import 'package:flutter_paypal_native/models/custom/currency_code.dart';
@@ -27,15 +32,21 @@ import 'package:http/http.dart' as http;
 
 class WalletScreenController extends GetxController {
   Rx<CustomerModel> customerModel = CustomerModel().obs;
+  Rx<WalletTopupModel> walletTopupModel = WalletTopupModel().obs;
   RxBool isLoading = true.obs;
   RxString selectedPaymentMethod = "".obs;
+  RxString selectedBankId = "".obs;
 
   Rx<TextEditingController> amountController = TextEditingController().obs;
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
-
+  AuthResultModel authResultModel = AuthResultModel();
   RxList transactionList = <WalletTransactionModel>[].obs;
+  RxBool isPaymentCompleted = true.obs;
+  late String _selectedBankId;
+  Server server = Server();
 
-  ProfileScreenController profileScreenController = Get.put(ProfileScreenController());
+  ProfileScreenController profileScreenController =
+      Get.put(ProfileScreenController());
 
   @override
   void onInit() {
@@ -50,7 +61,8 @@ class WalletScreenController extends GetxController {
       if (value != null) {
         paymentModel.value = value;
 
-        Stripe.publishableKey = paymentModel.value.strip!.clientpublishableKey.toString();
+        Stripe.publishableKey =
+            paymentModel.value.strip!.clientpublishableKey.toString();
         Stripe.merchantIdentifier = 'NAZIFA Customer';
         Stripe.instance.applySettings();
       }
@@ -58,6 +70,15 @@ class WalletScreenController extends GetxController {
     initPayPal();
     isLoading.value = false;
     update();
+  }
+
+  WalletScreenController({String? selectedBankId}) {
+    _selectedBankId = selectedBankId ?? ""; // Initialize with provided value
+  }
+
+  // Update the selected bank ID
+  void updateSelectedBankId(String bankId) {
+    _selectedBankId = bankId;
   }
 
   walletTopUp() async {
@@ -72,9 +93,12 @@ class WalletScreenController extends GetxController {
         type: "customer",
         note: "Wallet Topup");
 
-    await FireStoreUtils.setWalletTransaction(transactionModel).then((value) async {
+    await FireStoreUtils.setWalletTransaction(transactionModel)
+        .then((value) async {
       if (value == true) {
-        await FireStoreUtils.updateUserWallet(amount: amountController.value.text).then((value) {
+        await FireStoreUtils.updateUserWallet(
+                amount: amountController.value.text)
+            .then((value) {
           getProfileData();
           getTraction();
         });
@@ -93,7 +117,8 @@ class WalletScreenController extends GetxController {
   }
 
   getProfileData() async {
-    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid()).then((value) {
+    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+        .then((value) {
       if (value != null) {
         customerModel.value = value;
       }
@@ -101,12 +126,48 @@ class WalletScreenController extends GetxController {
     });
   }
 
+  Future<String?> commercepayWalletTopup({required String amount}) async {
+    isLoading.value = true;
+    try {
+      final response = await server.getRequest(endPoint: APIList.auth);
+      if (response != null && response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        authResultModel = AuthResultModel.fromJson(jsonResponse);
+        // Set the access token
+        String accessToken = authResultModel.accessToken.toString();
+        // Print the access token
+        // print("Access Token: $accessToken");
+
+        DateTime time = DateTime.now();
+        time.add(Duration(seconds: authResultModel.expireInSeconds as int));
+        Preferences.setString(
+            "AccessToken", accessToken); // Store the access token
+
+        Preferences.setString("TokenExpiry", time.toString());
+
+        // Return the access token
+        return accessToken;
+      } else {
+        // Return null if there's an error
+        return null;
+      }
+    } catch (e, s) {
+      log("$e \n$s");
+      ShowToastDialog.showToast("exception:$e \n$s");
+      // Return null if there's an error
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   //paypal
   final _flutterPaypalNativePlugin = FlutterPaypalNative.instance;
 
   void initPayPal() async {
     //set debugMode for error logging
-    FlutterPaypalNative.isDebugMode = paymentModel.value.paypal!.isSandbox == true ? true : false;
+    FlutterPaypalNative.isDebugMode =
+        paymentModel.value.paypal!.isSandbox == true ? true : false;
 
     log(paymentModel.value.paypal!.paypalClient.toString());
     //initiate payPal plugin
@@ -116,7 +177,9 @@ class WalletScreenController extends GetxController {
       //client id from developer dashboard
       clientID: paymentModel.value.paypal!.paypalClient.toString(),
       //sandbox, staging, live etc
-      payPalEnvironment: paymentModel.value.paypal!.isSandbox == true ? FPayPalEnvironment.sandbox : FPayPalEnvironment.live,
+      payPalEnvironment: paymentModel.value.paypal!.isSandbox == true
+          ? FPayPalEnvironment.sandbox
+          : FPayPalEnvironment.live,
       //what currency do you plan to use? default is US dollars
       currencyCode: FPayPalCurrencyCode.usd,
       //action paynow?
@@ -146,7 +209,8 @@ class WalletScreenController extends GetxController {
         },
         onShippingChange: (data) {
           //the user updated the shipping address
-          ShowToastDialog.showToast("shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}");
+          ShowToastDialog.showToast(
+              "shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}");
         },
       ),
     );
@@ -166,7 +230,7 @@ class WalletScreenController extends GetxController {
         ),
       );
     }
-     //initPayPal();
+    //initPayPal();
     _flutterPaypalNativePlugin.makeOrder(
       action: FPayPalUserAction.payNow,
     );
@@ -176,11 +240,13 @@ class WalletScreenController extends GetxController {
   Future<void> stripeMakePayment({required String amount}) async {
     log(double.parse(amount).toStringAsFixed(0));
     try {
-      Map<String, dynamic>? paymentIntentData = await createStripeIntent(amount: amount);
+      Map<String, dynamic>? paymentIntentData =
+          await createStripeIntent(amount: amount);
       if (paymentIntentData!.containsKey("error")) {
         Get.back();
 
-        ShowToastDialog.showToast("Something went wrong, please contact admin.");
+        ShowToastDialog.showToast(
+            "Something went wrong, please contact admin.");
       } else {
         await Stripe.instance.initPaymentSheet(
             paymentSheetParameters: SetupPaymentSheetParameters(
@@ -239,8 +305,13 @@ class WalletScreenController extends GetxController {
       };
       log(paymentModel.value.strip!.stripeSecret.toString());
       var stripeSecret = paymentModel.value.strip!.stripeSecret;
-      var response = await http.post(Uri.parse('https://api.stripe.com/v1/payment_intents'),
-          body: body, headers: {'Authorization': 'Bearer $stripeSecret', 'Content-Type': 'application/x-www-form-urlencoded'});
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            'Authorization': 'Bearer $stripeSecret',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          });
 
       return jsonDecode(response.body);
     } catch (e) {

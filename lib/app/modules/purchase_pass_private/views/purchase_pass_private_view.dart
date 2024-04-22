@@ -173,6 +173,9 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       ),
                       title: "Lot No.".tr,
                       hintText: "Enter Lot No.".tr,
+                      validator: (value) => value != null && value.isNotEmpty
+                          ? null
+                          : "Lot No. required".tr,
                       controller: controller.lotNoController.value,
                       onPress: () {},
                     ),
@@ -191,71 +194,88 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                         ),
                         Obx(() {
                           var imageFiles = controller.imageFiles;
-                          return SizedBox(
-                            height: 100,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: imageFiles.length + 1,
-                              itemBuilder: (context, index) {
-                                if (index == imageFiles.length) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextButton(
-                                      onPressed: () {
-                                        _showImagePickerOptions(context);
-                                      },
-                                      child: const Icon(
-                                        Icons.add,
-                                        size: 100,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Stack(
-                                      children: [
-                                        SizedBox(
-                                          width: 100,
-                                          height: 100,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              controller.removeImage(index);
-                                            },
-                                            child: Image.file(
-                                              imageFiles[index],
+                          bool hasImage = imageFiles.isNotEmpty;
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 100,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: imageFiles.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == imageFiles.length) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextButton(
+                                          onPressed: () {
+                                            _showImagePickerOptions(context);
+                                          },
+                                          child: const Icon(
+                                            Icons.add,
+                                            size: 100,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Stack(
+                                          children: [
+                                            SizedBox(
                                               width: 100,
                                               height: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 0,
-                                          right: 0,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              controller.removeImage(index);
-                                            },
-                                            child: Container(
-                                              width: 30,
-                                              height: 30,
-                                              color: Colors.transparent,
-                                              child: const Icon(
-                                                Icons.close,
-                                                color: Colors.red,
-                                                size: 20,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  controller.removeImage(index);
+                                                },
+                                                child: Image.file(
+                                                  imageFiles[index],
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                            Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  controller.removeImage(index);
+                                                },
+                                                child: Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  color: Colors.transparent,
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.red,
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                              if (!hasImage) // Show error message if no image is selected
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Text(
+                                    'Please select an image'.tr,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
                                     ),
-                                  );
-                                }
-                              },
-                            ),
+                                  ),
+                                ),
+                            ],
                           );
                         }),
                       ],
@@ -298,6 +318,18 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       title: "Address".tr,
                       hintText: "Enter Address".tr,
                       controller: controller.addressController.value,
+                      onPress: () {},
+                    ),
+                    TextFieldWidgetPrefix(
+                      prefix: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SvgPicture.asset(
+                          "assets/icons/ic_ticket.svg",
+                        ),
+                      ),
+                      title: "Referral".tr,
+                      hintText: "Enter Referral".tr,
+                      controller: controller.referenceController.value,
                       onPress: () {},
                     ),
                   ],

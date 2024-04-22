@@ -15,6 +15,7 @@ import 'package:customer_app/app/models/owner_model.dart';
 import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
+import 'package:customer_app/app/models/wallet_topup_model.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/models/referral_model.dart';
@@ -229,6 +230,27 @@ class FireStoreUtils {
       referralModel = null;
     });
     return referralModel;
+  }
+
+  static Future<TaxModel?> fetchTaxModel(String taxId) async {
+    TaxModel? taxModel;
+
+    try {
+      print('Firestore collection name: ${CollectionName.countryTax}');
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await fireStore
+          .collection(CollectionName.countryTax)
+          .doc(taxId) // Use the provided taxId as the document ID
+          .get();
+
+      if (snapshot.exists) {
+        taxModel = TaxModel.fromJson(snapshot.data()!);
+      }
+    } catch (error) {
+      log("Failed to fetch tax model: $error");
+      return null;
+    }
+
+    return taxModel;
   }
 
   static Future<bool?> setWalletTransaction(
@@ -669,6 +691,37 @@ class FireStoreUtils {
       isAdded = true;
     }).catchError((error) {
       log("Failed to update user: $error");
+      isAdded = false;
+    });
+    return isAdded;
+  }
+
+  static Future<bool?> setPaymentCompound(
+      MyPaymentCompoundModel myPaymentCompoundModel) async {
+    bool isAdded = false;
+    await fireStore
+        .collection(CollectionName.purchasePass)
+        .doc(myPaymentCompoundModel.id)
+        .set(myPaymentCompoundModel.toJson())
+        .then((value) {
+      isAdded = true;
+    }).catchError((error) {
+      log("Failed to update user: $error");
+      isAdded = false;
+    });
+    return isAdded;
+  }
+
+  static Future<bool?> setTopupWallet(WalletTopupModel walletTopupModel) async {
+    bool isAdded = false;
+    await fireStore
+        .collection(CollectionName.purchasePass)
+        .doc(walletTopupModel.id)
+        .set(walletTopupModel.toJson())
+        .then((value) {
+      isAdded = true;
+    }).catchError((error) {
+      log("Failed to update topup wallet: $error");
       isAdded = false;
     });
     return isAdded;

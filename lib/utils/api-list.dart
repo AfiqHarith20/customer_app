@@ -7,11 +7,11 @@ class APIList {
       "${baseUrl!}/api/v1/commercepay/channels?AccessToken=";
   static String? provider =
       "${baseUrl!}/api/v1/commercepay/provider?AccessToken=";
-  static String? payment = "${baseUrl!}/api/v1/commercepay/payment";
+  static String? payment = "${baseUrl!}/api/v1/commercepay/purchase_pass";
+  static String? payCompound = "${baseUrl!}/api/v1/commercepay/pay_compound";
+  static String? walletTopyp = "${baseUrl!}/api/v1/commercepay/wallet_topup";
   static String? query =
       "${baseUrl!}/api/v1/commercepay/query?AccessToken=@token&TransactionId=";
   static String? searchCompound =
       "https://mptemerloh.epa-lits.com.my/search_compound_vendor.php";
-  static String? payCompound =
-      "https://mptemerloh.epa-lits.com.my/payment_import_vendor.php";
 }

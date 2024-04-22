@@ -4,10 +4,10 @@ class CompoundModel {
   String? amount;
   Timestamp? dateTime;
   String? id;
-  String? userId;
+  String? customerId;
   String? compoundNo;
   String? status;
-  String? vehicleNo;
+  String? vehicleNum;
   String? offence;
   String? kodHasil;
   String? msg;
@@ -18,10 +18,10 @@ class CompoundModel {
     this.dateTime,
     this.offence,
     this.id,
-    this.userId,
+    this.customerId,
     this.compoundNo,
     this.status,
-    this.vehicleNo,
+    this.vehicleNum,
     this.kodHasil,
     this.msg,
     this.isSelected = false,
@@ -31,10 +31,10 @@ class CompoundModel {
     amount = json['amount'];
     dateTime = json['datetime'];
     id = json['id'];
-    userId = json['userId'];
+    customerId = json['userId'];
     compoundNo = json['compound_num'];
     status = json['status'];
-    vehicleNo = json['vehicle_num'];
+    vehicleNum = json['vehicle_num']; // Correct key
     kodHasil = json['kod_hasil'];
     offence = json['offence'];
     msg = json['msg'];
@@ -46,9 +46,9 @@ class CompoundModel {
     data['datetime'] = dateTime;
     data['id'] = id;
     data['compound_num'] = compoundNo;
-    data['userId'] = userId;
+    data['userId'] = customerId;
     data['status'] = status;
-    data['vehicle_num'] = vehicleNo;
+    data['vehicle_num'] = vehicleNum;
     data['kod_hasil'] = kodHasil;
     data['offence'] = offence;
     data['msg'] = msg;

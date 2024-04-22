@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
+import 'package:customer_app/app/models/my_payment_compound_model.dart';
 import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/server.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../utils/fire_store_utils.dart';
@@ -13,6 +13,8 @@ import '../../../models/wallet_transaction_model.dart';
 
 class SearchSummonScreenController extends GetxController {
   RxList<CompoundModel> compoundList = <CompoundModel>[].obs;
+  Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
+      MyPaymentCompoundModel().obs;
   Server server = Server();
   final AuthModel authModel = AuthModel();
   final _isLoading = false.obs;
@@ -34,7 +36,9 @@ class SearchSummonScreenController extends GetxController {
   }
 
   getPaymentData() async {
+    setLoading(true); // Set isLoading to true
     await getTraction();
+    setLoading(false); // Set isLoading to false after API call
   }
 
   getTraction() async {
@@ -75,8 +79,8 @@ class SearchSummonScreenController extends GetxController {
       'id': id,
       'pass': pass,
       'request_method': requestMethod,
-      if (requestMethod == 'compound') 'compound_num': compoundNum,
-      if (requestMethod == 'car') 'car_num': carNum,
+      'compound_num': compoundNum,
+      'car_num': carNum,
     };
     // print('Request body: $requestBody');
 
@@ -88,6 +92,7 @@ class SearchSummonScreenController extends GetxController {
     };
 
     try {
+      setLoading(true);
       // Make the POST request
       http.Response response = await http.post(
         Uri.parse(url),
@@ -99,6 +104,8 @@ class SearchSummonScreenController extends GetxController {
       if (response.statusCode == 200) {
         // Parse the response JSON
         Map<String, dynamic> responseData = jsonDecode(response.body);
+        print(responseData);
+        // setLoading(false);
         return responseData;
       } else {
         // Request failed with a non-200 status code
@@ -106,6 +113,7 @@ class SearchSummonScreenController extends GetxController {
       }
     } catch (e) {
       // Request failed due to an error
+      setLoading(false);
       throw Exception('Failed to load data: $e');
     }
   }
@@ -129,7 +137,11 @@ class SearchSummonScreenController extends GetxController {
       print(searchResult);
 
       // Update the compoundList with the search result
-      compoundList.value = searchResult['data'];
+      List<Map<String, dynamic>> compoundDataList =
+          List<Map<String, dynamic>>.from(searchResult['data']);
+      List<CompoundModel> compounds =
+          compoundDataList.map((data) => CompoundModel.fromJson(data)).toList();
+      compoundList.value = compounds;
     } catch (e) {
       // Handle any errors that occur during the search
       print('Error searching: $e');

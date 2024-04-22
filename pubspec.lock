@@ -361,6 +361,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.17"
+  firebase_utils:
+    dependency: "direct main"
+    description:
+      name: firebase_utils
+      sha256: "92ca7d975fc4b49acb6c51b2a9cf81e3dfd1d4047c4a7f089e318e609e34f0c1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   fixnum:
     dependency: transitive
     description:

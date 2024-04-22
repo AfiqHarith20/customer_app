@@ -18,12 +18,22 @@ class InformationScreenController extends GetxController {
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
+  Rx<TextEditingController> identificationNoController =
+      TextEditingController().obs;
   RxString countryCode = "+60".obs;
   Rx<TextEditingController> referralCodeController =
       TextEditingController().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
 
   RxList<String> genderList = ["Male", "Female"].obs;
+  RxList<Map<String, String>> icList = [
+    {"value": "1", "name": "New Identity Number"},
+    {"value": "2", "name": "Old Identity Number"},
+    {"value": "3", "name": "Passport Number"},
+    {"value": "4", "name": "Business Registration"},
+    {"value": "5", "name": "Others"}
+  ].obs;
+  RxString selectedIc = "1".obs; // Default selected value
   RxString selectedGender = "Male".obs;
   RxString profileImage = "".obs;
   RxString loginType = "".obs;
@@ -83,6 +93,9 @@ class InformationScreenController extends GetxController {
           customerModelData.phoneNumber = phoneNumberController.value.text;
           customerModelData.profilePic = profileImage.value;
           customerModelData.gender = selectedGender.value;
+          customerModelData.identificationNo =
+              identificationNoController.value.text;
+          customerModelData.identificationType = selectedIc.value;
           customerModelData.fcmToken = fcmToken;
           customerModelData.createdAt = Timestamp.now();
           Constant.customerName = customerModelData.fullName!;
@@ -122,6 +135,9 @@ class InformationScreenController extends GetxController {
       customerModelData.email = emailController.value.text;
       customerModelData.countryCode = countryCode.value;
       customerModelData.phoneNumber = phoneNumberController.value.text;
+      customerModelData.identificationNo =
+          identificationNoController.value.text;
+      customerModelData.identificationType = selectedIc.value;
       customerModelData.profilePic = profileImage.value;
       customerModelData.gender = selectedGender.value;
       customerModelData.fcmToken = fcmToken;
