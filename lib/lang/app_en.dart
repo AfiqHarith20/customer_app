@@ -221,4 +221,8 @@ const Map<String, String> enUS = {
   "Enter Plate number": "Enter Plate number",
   "Enter compound number": "Enter compound number",
   "Expired In (Day):": "Expired In (Day):",
+  "Company Registration No. required": "Company Registration No. required",
+  "Company Name required": "Company Name required",
+  "Lot No. required": "Lot No. required",
+  "Please upload at least one image": "Please upload at least one image",
 };

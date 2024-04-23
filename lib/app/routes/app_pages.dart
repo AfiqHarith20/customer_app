@@ -3,10 +3,12 @@ import 'package:customer_app/app/modules/pay_compound_screen/bindings/pay_compou
 import 'package:customer_app/app/modules/pay_compound_screen/views/pay_compound_screen_view.dart';
 import 'package:customer_app/app/modules/purchase_pass_private/bindings/purchase_pass_private_binding.dart';
 import 'package:customer_app/app/modules/purchase_pass_private/views/purchase_pass_private_view.dart';
+import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
 import 'package:customer_app/app/modules/qrcode_screen/views/qrcode_screen_view.dart';
 import 'package:customer_app/app/modules/register_screen/bindings/register_screen_binding.dart';
 import 'package:customer_app/app/modules/register_screen/views/register_screen_view.dart';
 import 'package:customer_app/app/modules/search_summon_screen/bindings/search_summon_screen_binding.dart';
+import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
 import 'package:customer_app/app/modules/search_summon_screen/views/search_summon_screen_view.dart';
 import 'package:customer_app/app/modules/select_bank_provider_screen/bindings/select_bank_provider_screen_binding.dart';
 import 'package:customer_app/app/modules/select_bank_provider_screen/views/select_bank_provider_screen_view.dart';
@@ -314,13 +316,18 @@ class AppPages {
     GetPage(
       name: _Paths.SEARCH_SUMMON_SCREEN,
       page: () => SearchSummonScreenView(
-        controller: Get.arguments['controller'] ?? '',
+        controller:
+            Get.arguments['controller'] ?? SearchSummonScreenController(),
       ),
       binding: SearchSummonScreenBinding(),
     ),
     GetPage(
       name: _Paths.QRCODE_SCREEN,
-      page: () => const QRCodeScanScreenView(),
+      page: () => QRCodeScanScreenView(
+        controller: Get.arguments['controller'] ?? QRCodeScanController(),
+        // searchController:
+        //     Get.arguments['searchController'] ?? QRCodeScanController(),
+      ),
       binding: QRCodeScanBinding(),
     ),
     GetPage(

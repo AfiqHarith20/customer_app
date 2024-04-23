@@ -1,11 +1,4 @@
-import 'dart:developer';
-import 'package:customer_app/app/models/location_lat_lng.dart';
-import 'package:customer_app/app/models/parking_model.dart';
-import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
-import 'package:customer_app/utils/utils.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 

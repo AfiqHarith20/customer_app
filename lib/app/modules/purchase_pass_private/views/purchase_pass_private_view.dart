@@ -1,7 +1,12 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
+import 'package:customer_app/app/widget/network_image_widget.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
+import 'package:customer_app/themes/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -125,21 +130,21 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       controller: controller.emailController.value,
                       onPress: () {},
                     ),
-                    TextFieldWidgetPrefix(
-                      prefix: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: SvgPicture.asset(
-                          "assets/icons/ic_hash.svg",
-                        ),
-                      ),
-                      title: "Identification Card No.*".tr,
-                      validator: (value) => value != null && value.isNotEmpty
-                          ? null
-                          : "Identification Card No. required".tr,
-                      hintText: "Enter Identification Card No.*".tr,
-                      controller: controller.identificationNoController.value,
-                      onPress: () {},
-                    ),
+                    // TextFieldWidgetPrefix(
+                    //   prefix: Padding(
+                    //     padding: const EdgeInsets.all(12.0),
+                    //     child: SvgPicture.asset(
+                    //       "assets/icons/ic_hash.svg",
+                    //     ),
+                    //   ),
+                    //   title: "Identification Card No.*".tr,
+                    //   validator: (value) => value != null && value.isNotEmpty
+                    //       ? null
+                    //       : "Identification Card No. required".tr,
+                    //   hintText: "Enter Identification Card No.*".tr,
+                    //   controller: controller.identificationNoController.value,
+                    //   onPress: () {},
+                    // ),
                     MobileNumberTextField(
                       title: "Mobile Number*".tr,
                       controller: controller.phoneNumberController.value,
@@ -158,9 +163,9 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       ],
                       title: "Plate No.*".tr,
                       hintText: "Enter Plate No.".tr,
-                      validator: (value) => value != null && value.isNotEmpty
-                          ? null
-                          : 'Plate No. required'.tr,
+                      // validator: (value) => value != null && value.isNotEmpty
+                      //     ? null
+                      //     : 'Plate No. required'.tr,
                       controller: controller.vehicleNoController.value,
                       onPress: () {},
                       textCapitalization: TextCapitalization.characters,
@@ -193,92 +198,84 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                             // ),
                           ),
                         ),
-                        Obx(() {
-                          var imageFiles = controller.imageFiles;
-                          bool hasImage = imageFiles.isNotEmpty;
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 100,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: imageFiles.length + 1,
-                                  itemBuilder: (context, index) {
-                                    if (index == imageFiles.length) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextButton(
-                                          onPressed: () {
-                                            _showImagePickerOptions(context);
-                                          },
-                                          child: const Icon(
+                        GestureDetector(
+                          onTap: () {
+                            _showImagePickerOptions(context, controller);
+                          },
+                          child: Center(
+                            child: SizedBox(
+                              height: Responsive.width(30, context),
+                              width: Responsive.width(30, context),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color:
+                                          AppColors.darkGrey02.withOpacity(0.5),
+                                    ),
+                                    child: controller.privateParkImage.isEmpty
+                                        ? const Icon(
                                             Icons.add,
-                                            size: 100,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Stack(
-                                          children: [
-                                            SizedBox(
-                                              width: 100,
-                                              height: 100,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  controller.removeImage(index);
-                                                },
+                                            size: 24,
+                                            color: Colors.white,
+                                          )
+                                        : (Constant().hasValidUrl(controller
+                                                .privateParkImage.value))
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: NetworkImageWidget(
+                                                  imageUrl: controller
+                                                      .privateParkImage.value,
+                                                  height: Responsive.width(
+                                                      30, context),
+                                                  width: Responsive.width(
+                                                      30, context),
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              )
+                                            : ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                                 child: Image.file(
-                                                  imageFiles[index],
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
+                                                  File(controller
+                                                      .privateParkImage.value),
+                                                  height: Responsive.width(
+                                                      30, context),
+                                                  width: Responsive.width(
+                                                      30, context),
+                                                  fit: BoxFit.fill,
                                                 ),
                                               ),
-                                            ),
-                                            Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  controller.removeImage(index);
-                                                },
-                                                child: Container(
-                                                  width: 30,
-                                                  height: 30,
-                                                  color: Colors.transparent,
-                                                  child: const Icon(
-                                                    Icons.close,
-                                                    color: Colors.red,
-                                                    size: 20,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                              if (!hasImage) // Show error message if no image is selected
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: Text(
-                                    'Please select an image'.tr,
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 12,
+                                  ),
+                                  const Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Icon(
+                                      Icons.add,
+                                      size: 24,
+                                      color: Colors.black,
                                     ),
                                   ),
-                                ),
-                            ],
-                          );
-                        }),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (controller.imageFiles
+                            .isEmpty) // Show error message if no image is uploaded
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Please upload at least one image'.tr,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                     const SizedBox(
@@ -293,6 +290,9 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       ),
                       title: "Company Name".tr,
                       hintText: "Enter Company Name".tr,
+                      validator: (value) => value != null && value.isNotEmpty
+                          ? null
+                          : 'Company Name required'.tr,
                       controller: controller.companyNameController.value,
                       onPress: () {},
                     ),
@@ -305,6 +305,9 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       ),
                       title: "Company Registration No.".tr,
                       hintText: "Enter Company Registration No.".tr,
+                      validator: (value) => value != null && value.isNotEmpty
+                          ? null
+                          : 'Company Registration No. required'.tr,
                       controller:
                           controller.companyRegistrationNoController.value,
                       onPress: () {},
@@ -375,38 +378,115 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
     );
   }
 
-  void _showImagePickerOptions(BuildContext context) {
-    showModalBottomSheet(
+  _showImagePickerOptions(
+      BuildContext context, PurchasePassPrivateController controller) {
+    bool uploading =
+        false; // Indicator to track whether image upload is in progress
+
+    return showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text('Camera'),
-                onTap: () {
-                  Navigator.pop(context);
-                  controller.onImageButtonPressed(
-                    ImageSource.camera,
-                    context: context,
-                  );
-                },
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SizedBox(
+              height: Responsive.height(22, context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Text(
+                      "please_select".tr,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: AppThemData.semiBold,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                setState(() {
+                                  uploading =
+                                      true; // Set uploading indicator to true
+                                });
+                                await controller.pickFile(
+                                    source: ImageSource.camera);
+                                setState(() {
+                                  uploading =
+                                      false; // Set uploading indicator to false when upload is completed
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.camera_alt,
+                                size: 32,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Text(
+                                "camera".tr,
+                                style: const TextStyle(
+                                    fontFamily: AppThemData.regular),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                setState(() {
+                                  uploading =
+                                      true; // Set uploading indicator to true
+                                });
+                                await controller.pickFile(
+                                    source: ImageSource.gallery);
+                                setState(() {
+                                  uploading =
+                                      false; // Set uploading indicator to false when upload is completed
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.photo_library_sharp,
+                                size: 32,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Text(
+                                "gallery".tr,
+                                style: const TextStyle(
+                                    fontFamily: AppThemData.regular),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  if (uploading) // Show loading indicator if uploading is in progress
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
               ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Gallery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  controller.onImageButtonPressed(
-                    ImageSource.gallery,
-                    context: context,
-                  );
-                },
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

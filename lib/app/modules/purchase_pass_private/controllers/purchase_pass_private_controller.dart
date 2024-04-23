@@ -7,10 +7,12 @@ import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/constant/constant.dart';
+import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,6 +32,7 @@ class PurchasePassPrivateController extends GetxController {
   Rx<TextEditingController> addressController = TextEditingController().obs;
   Rx<TextEditingController> referenceController = TextEditingController().obs;
   RxString countryCode = "+60".obs;
+  RxString privateParkImage = "".obs;
   List<String> type = [
     "Pas Mingguan 1",
     "Pas Mingguan 2",
@@ -44,6 +47,7 @@ class PurchasePassPrivateController extends GetxController {
   final FirebaseAuth auth = FirebaseAuth.instance;
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
   RxList<File> imageFiles = <File>[].obs;
+  final ImagePicker imagePicker = ImagePicker();
 
   void removeImage(int index) {
     imageFiles.removeAt(index);
@@ -76,6 +80,30 @@ class PurchasePassPrivateController extends GetxController {
           privatePassList.where((p0) => p0.passId == temp.passId).first;
     }
     update();
+  }
+
+  Future pickFile({required ImageSource source}) async {
+    try {
+      XFile? image = await imagePicker.pickImage(source: source);
+      if (image == null) return;
+      Get.back();
+      privateParkImage.value = image.path;
+    } on PlatformException catch (e) {
+      ShowToastDialog.showToast("${"failed_to_pick".tr} : \n $e");
+    }
+  }
+
+  uploadPrivatePark() async {
+    ShowToastDialog.showLoader("please_wait".tr);
+    if (privateParkImage.value.isNotEmpty &&
+        Constant().hasValidUrl(privateParkImage.value) == false) {
+      privateParkImage.value =
+          await Constant.uploadPrivateParkImageToFireStorage(
+        File(privateParkImage.value),
+        "privateParkImage/${FireStoreUtils.getCurrentUid()}",
+        File(privateParkImage.value).path.split('/').last,
+      );
+    }
   }
 
   getProfileData() async {

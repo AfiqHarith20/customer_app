@@ -25,9 +25,11 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
         leading: IconButton(
           color: Colors.black,
           onPressed: () {
-            Get.offAndToNamed(
+            Get.offAllNamed(
               Routes.DASHBOARD_SCREEN,
             );
+            DashboardScreenController dashboardController = Get.find();
+            dashboardController.refreshData();
             DashboardScreenController controller =
                 Get.put(DashboardScreenController());
             controller.selectedIndex(2);

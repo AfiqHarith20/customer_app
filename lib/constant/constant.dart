@@ -66,6 +66,16 @@ class Constant {
     return downloadUrl.toString();
   }
 
+  static Future<String> uploadPrivateParkImageToFireStorage(
+      File image, String filePath, String fileName) async {
+    Reference upload =
+        FirebaseStorage.instance.ref().child('$filePath/$fileName');
+    UploadTask uploadTask = upload.putFile(image);
+    var downloadUrl =
+        await (await uploadTask.whenComplete(() {})).ref.getDownloadURL();
+    return downloadUrl.toString();
+  }
+
   static String getReferralCode(String firstTwoChar) {
     var rng = math.Random();
     return firstTwoChar + (rng.nextInt(9000) + 1000).toString();

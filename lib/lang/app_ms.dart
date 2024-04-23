@@ -221,4 +221,9 @@ const Map<String, String> msMY = {
   "Enter Plate number": "Masukkan Nombor Plat",
   "Enter compound number": "Masukkan Nombor Kompoun",
   "Expired In (Day):": "Tamat Dalam (Hari):",
+  "Company Registration No. required": "No. Pendaftaran Syarikat diperlukan",
+  "Company Name required": "Nama Syarikat diperlukan",
+  "Lot No. required": "No. Lot diperlukan",
+  "Please upload at least one image":
+      "Sila masukkan sekurang-kurangnya 1 gambar",
 };

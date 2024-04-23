@@ -15,12 +15,20 @@ import 'package:get/get.dart';
 class DashboardScreenController extends GetxController {
   RxInt selectedIndex = 0.obs;
   late SearchSummonScreenView controller;
+  RxBool isLoading = false.obs;
+  void refreshData() {
+    isLoading = true.obs;
+    // Call update() to force rebuild of dependent widgets
+    update();
+  }
 
   // Define the expected types for each page
   final List<Widget> pageList = [
     const HomeView(),
     const MySeasonPassView(),
-    SearchSummonScreenView(controller: SearchSummonScreenController()),
+    SearchSummonScreenView(
+      controller: SearchSummonScreenController(),
+    ),
     WalletScreenView(
       selectedBankName: '',
       accessToken: '',

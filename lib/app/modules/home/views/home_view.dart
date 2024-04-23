@@ -187,296 +187,299 @@ class _HomeViewState extends State<HomeView> {
     return GetX<HomeController>(
         init: HomeController(),
         builder: (controller) {
-          return SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Scaffold(
-                  backgroundColor: AppColors.lightGrey02,
-                  appBar: AppBar(
-                    elevation: 0,
-                    backgroundColor: AppColors.yellow04,
-                    surfaceTintColor: Colors.transparent,
-                    title: Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
+          return
+              // SingleChildScrollView(
+              //   physics: const ClampingScrollPhysics(),
+              //   child:
+              SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Scaffold(
+                backgroundColor: AppColors.lightGrey02,
+                appBar: AppBar(
+                  elevation: 0,
+                  backgroundColor: AppColors.yellow04,
+                  surfaceTintColor: Colors.transparent,
+                  title: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      children: [
+                        // Image.asset("assets/images/logo.png", height: 45, width: 45),
+                        // const SizedBox(
+                        //   width: 10,
+                        // ),
+                        Text(
+                          'NAZIFA PARKING'.tr,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontFamily: AppThemData.medium,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(Routes.NOTIFICATION_SCREEN);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16.0,
+                          top: 10,
+                        ),
+                        child: SvgPicture.asset(
+                          "assets/icons/ic_bell.svg",
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                  automaticallyImplyLeading: false,
+                ),
+                body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      height: 90,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(50),
+                        ),
+                        color: AppColors.yellow04,
+                      ),
+                      child: Column(
                         children: [
-                          // Image.asset("assets/images/logo.png", height: 45, width: 45),
-                          // const SizedBox(
-                          //   width: 10,
-                          // ),
-                          Text(
-                            'NAZIFA PARKING'.tr,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontFamily: AppThemData.medium,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          Center(
+                            child: Text(
+                              'Hi, ${controller.customerModel.value.fullName}',
+                              style: const TextStyle(
+                                fontFamily: AppThemData.bold,
+                                fontSize: 18,
+                                color: AppColors.darkGrey09,
+                              ),
                             ),
+                          ),
+                          Center(
+                            child: Text(
+                              controller.customerModel.value.countryCode
+                                      .toString() +
+                                  controller.customerModel.value.phoneNumber
+                                      .toString(),
+                              //controller.customerModel.value.email.toString(),
+                              style: const TextStyle(
+                                fontFamily: AppThemData.regular,
+                                color: AppColors.darkGrey06,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/icons/ic_wallet.svg",
+                                height: 25,
+                                width: 25,
+                                color: Colors.black,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                Constant.amountShow(
+                                  amount: controller
+                                          .customerModel.value.walletAmount
+                                          ?.toString() ??
+                                      '0',
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    actions: [
-                      InkWell(
-                        onTap: () {
-                          Get.toNamed(Routes.NOTIFICATION_SCREEN);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16.0,
-                            top: 10,
-                          ),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_bell.svg",
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
-                    automaticallyImplyLeading: false,
-                  ),
-                  body: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        height: 90,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(50),
-                          ),
-                          color: AppColors.yellow04,
-                        ),
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Text(
-                                'Hi, ${controller.customerModel.value.fullName}',
-                                style: const TextStyle(
-                                  fontFamily: AppThemData.bold,
-                                  fontSize: 18,
-                                  color: AppColors.darkGrey09,
-                                ),
-                              ),
-                            ),
-                            Center(
-                              child: Text(
-                                controller.customerModel.value.countryCode
-                                        .toString() +
-                                    controller.customerModel.value.phoneNumber
-                                        .toString(),
-                                //controller.customerModel.value.email.toString(),
-                                style: const TextStyle(
-                                  fontFamily: AppThemData.regular,
-                                  color: AppColors.darkGrey06,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/ic_wallet.svg",
-                                  height: 25,
-                                  width: 25,
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  Constant.amountShow(
-                                    amount: controller
-                                            .customerModel.value.walletAmount
-                                            ?.toString() ??
-                                        '0',
-                                  ),
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                        //apply padding to all four sides
-                        child: Text(
-                          'Information'.tr,
-                          style: const TextStyle(
-                            fontFamily: AppThemData.medium,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      CarouselSlider(
-                        options: CarouselOptions(
-                          autoPlay: true,
-                          enlargeCenterPage: false,
-                          scrollDirection: Axis.horizontal,
-                          height: 250,
-                          onPageChanged: (index, reason) {
-                            setState(
-                              () {
-                                _currentIndex = index;
-                              },
-                            );
-                          },
-                        ),
-                        items: imagesList
-                            .map(
-                              (item) => Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Card(
-                                  margin: const EdgeInsets.only(
-                                    top: 10.0,
-                                    bottom: 10.0,
-                                  ),
-                                  elevation: 6.0,
-                                  shadowColor: Colors.redAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(30.0),
-                                    ),
-                                    child: Stack(
-                                      children: <Widget>[
-                                        Image.network(
-                                          item,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: imagesList.map((urlOfItem) {
-                          int index = imagesList.indexOf(urlOfItem);
-                          return Container(
-                            width: 10.0,
-                            height: 10.0,
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 10.0,
-                              horizontal: 2.0,
-                            ),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _currentIndex == index
-                                  ? const Color.fromRGBO(0, 0, 0, 0.8)
-                                  : const Color.fromRGBO(0, 0, 0, 0.3),
-                            ),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                    //   //apply padding to all four sides
+                    //   child:
+                    //   Text(
+                    //     'Information'.tr,
+                    //     style: const TextStyle(
+                    //       fontFamily: AppThemData.medium,
+                    //       fontWeight: FontWeight.bold,
+                    //       fontSize: 18,
+                    //     ),
+                    //   ),
+                    // ),
+                    CarouselSlider(
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        enlargeCenterPage: false,
+                        scrollDirection: Axis.horizontal,
+                        height: 250,
+                        onPageChanged: (index, reason) {
+                          setState(
+                            () {
+                              _currentIndex = index;
+                            },
                           );
-                        }).toList(),
+                        },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                        //apply padding to all four sides
-                        child: Text(
-                          'Latest News'.tr,
-                          style: const TextStyle(
-                            fontFamily: AppThemData.medium,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      // ListView
-                      Expanded(
-                        child: ListView.builder(
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              final itemData = items[index];
-                              final title = itemData['title'];
-                              final des = itemData['des'];
-                              final date = itemData['pubDate'];
-                              return GestureDetector(
-                                onTap: () {},
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0.0),
+                      items: imagesList
+                          .map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(
+                                margin: const EdgeInsets.only(
+                                  top: 10.0,
+                                  bottom: 10.0,
+                                ),
+                                elevation: 6.0,
+                                shadowColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(30.0),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 10,
-                                      top: 10,
-                                      bottom: 10,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          title,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontStyle: FontStyle.normal,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          des,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontStyle: FontStyle.normal,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              date,
-                                              maxLines: 1,
-                                              textAlign: TextAlign.left,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontStyle: FontStyle.normal,
-                                                  color: Colors.blueGrey),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Image.network(
+                                        item,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              );
-                            }),
-                      )
-                    ],
-                  )),
-            ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: imagesList.map((urlOfItem) {
+                        int index = imagesList.indexOf(urlOfItem);
+                        return Container(
+                          width: 10.0,
+                          height: 10.0,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 2.0,
+                          ),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentIndex == index
+                                ? const Color.fromRGBO(0, 0, 0, 0.8)
+                                : const Color.fromRGBO(0, 0, 0, 0.3),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                      //apply padding to all four sides
+                      child: Text(
+                        'Latest News'.tr,
+                        style: const TextStyle(
+                          fontFamily: AppThemData.medium,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    // ListView
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: items.length,
+                          itemBuilder: (context, index) {
+                            final itemData = items[index];
+                            final title = itemData['title'];
+                            final des = itemData['des'];
+                            final date = itemData['pubDate'];
+                            return GestureDetector(
+                              onTap: () {},
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 10,
+                                    top: 10,
+                                    bottom: 10,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        title,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.left,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontStyle: FontStyle.normal,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        des,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.left,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontStyle: FontStyle.normal,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            date,
+                                            maxLines: 1,
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                fontStyle: FontStyle.normal,
+                                                color: Colors.blueGrey),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                    )
+                  ],
+                )),
           );
+          // );
         });
   }
 }

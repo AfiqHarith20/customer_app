@@ -64,6 +64,15 @@ class SearchSummonScreenController extends GetxController {
     compoundList.assignAll(compounds);
   }
 
+  void handleCompoundNumber(String? compoundNumber) {
+    if (compoundNumber != null && compoundNumber.isNotEmpty) {
+      // Perform any necessary logic with the compound number here
+      print('Compound number from QR code scan: $compoundNumber');
+      // Example: Trigger the searchCompounds method with the compound number
+      searchCompounds(requestMethod: 'compound', searchText: compoundNumber);
+    }
+  }
+
   Future<Map<String, dynamic>> searchCompound({
     required String id,
     required String pass,
@@ -72,6 +81,7 @@ class SearchSummonScreenController extends GetxController {
     required String carNum,
   }) async {
     // Construct the request URL
+    setLoading(true);
     String url = APIList.searchCompound!;
 
     // Construct the request body
@@ -124,6 +134,7 @@ class SearchSummonScreenController extends GetxController {
     required String requestMethod,
     required String searchText,
   }) async {
+    setLoading(true); // Set isLoading to true before making the API call
     try {
       Map<String, dynamic> searchResult = await searchCompound(
         id: 'vendor_mptemerloh',
@@ -146,6 +157,9 @@ class SearchSummonScreenController extends GetxController {
     } catch (e) {
       // Handle any errors that occur during the search
       print('Error searching: $e');
+    } finally {
+      setLoading(
+          false); // Set isLoading to false after the search operation completes
     }
   }
 }
