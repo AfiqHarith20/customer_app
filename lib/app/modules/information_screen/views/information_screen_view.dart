@@ -123,52 +123,52 @@ class InformationScreenView extends GetView<InformationScreenController> {
                     countryCode: controller.countryCode.value,
                     onPress: () {},
                   ),
-                  TextFieldWidgetPrefix(
-                    validator: (value) => null,
-                    prefix: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: SvgPicture.asset(
-                        "assets/icons/ic_privacy.svg",
-                      ),
-                    ),
-                    title: "Identification Card No.".tr,
-                    hintText: "Enter Identification Card No.".tr,
-                    controller: controller.identificationNoController.value,
-                    onPress: () {},
-                  ),
-                  const Text(
-                    "Select Identification Type",
-                    style: TextStyle(
-                      fontFamily: AppThemData.regular,
-                      color: AppColors.darkGrey06,
-                    ),
-                  ),
-                  Column(
-                    children: List.generate(controller.icList.length, (index) {
-                      return Row(
-                        children: [
-                          Obx(() => Radio(
-                                activeColor: AppColors.darkGrey09,
-                                value: controller.icList[index]["value"],
-                                groupValue: controller.selectedIc.value,
-                                onChanged: (value) {
-                                  controller.selectedIc.value =
-                                      value.toString();
-                                },
-                              )),
-                          Text(
-                            controller.icList[index]["name"]!,
-                            style: const TextStyle(
-                              fontFamily: AppThemData.medium,
-                              color: AppColors.darkGrey04,
-                              fontSize: 15,
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                        ],
-                      );
-                    }),
-                  ),
+                  // TextFieldWidgetPrefix(
+                  //   validator: (value) => null,
+                  //   prefix: Padding(
+                  //     padding: const EdgeInsets.all(12.0),
+                  //     child: SvgPicture.asset(
+                  //       "assets/icons/ic_privacy.svg",
+                  //     ),
+                  //   ),
+                  //   title: "Identification Card No.".tr,
+                  //   hintText: "Enter Identification Card No.".tr,
+                  //   controller: controller.identificationNoController.value,
+                  //   onPress: () {},
+                  // ),
+                  // const Text(
+                  //   "Select Identification Type",
+                  //   style: TextStyle(
+                  //     fontFamily: AppThemData.regular,
+                  //     color: AppColors.darkGrey06,
+                  //   ),
+                  // ),
+                  // Column(
+                  //   children: List.generate(controller.icList.length, (index) {
+                  //     return Row(
+                  //       children: [
+                  //         Obx(() => Radio(
+                  //               activeColor: AppColors.darkGrey09,
+                  //               value: controller.icList[index]["value"],
+                  //               groupValue: controller.selectedIc.value,
+                  //               onChanged: (value) {
+                  //                 controller.selectedIc.value =
+                  //                     value.toString();
+                  //               },
+                  //             )),
+                  //         Text(
+                  //           controller.icList[index]["name"]!,
+                  //           style: const TextStyle(
+                  //             fontFamily: AppThemData.medium,
+                  //             color: AppColors.darkGrey04,
+                  //             fontSize: 15,
+                  //           ),
+                  //         ),
+                  //         const SizedBox(width: 20),
+                  //       ],
+                  //     );
+                  //   }),
+                  // ),
                   const Text(
                     "Select Gender",
                     style: TextStyle(

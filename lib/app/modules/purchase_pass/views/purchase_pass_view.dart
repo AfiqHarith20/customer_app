@@ -124,21 +124,21 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         controller: controller.emailController.value,
                         onPress: () {},
                       ),
-                      TextFieldWidgetPrefix(
-                        prefix: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_hash.svg",
-                          ),
-                        ),
-                        title: "Identification Card No.*".tr,
-                        validator: (value) => value != null && value.isNotEmpty
-                            ? null
-                            : "Identification Card No. required".tr,
-                        hintText: "Enter Identification Card No.*".tr,
-                        controller: controller.identificationNoController.value,
-                        onPress: () {},
-                      ),
+                      // TextFieldWidgetPrefix(
+                      //   prefix: Padding(
+                      //     padding: const EdgeInsets.all(12.0),
+                      //     child: SvgPicture.asset(
+                      //       "assets/icons/ic_hash.svg",
+                      //     ),
+                      //   ),
+                      //   title: "Identification Card No.*".tr,
+                      //   validator: (value) => value != null && value.isNotEmpty
+                      //       ? null
+                      //       : "Identification Card No. required".tr,
+                      //   hintText: "Enter Identification Card No.*".tr,
+                      //   controller: controller.identificationNoController.value,
+                      //   onPress: () {},
+                      // ),
                       MobileNumberTextField(
                         title: "Mobile Number*".tr,
                         controller: controller.phoneNumberController.value,
@@ -162,6 +162,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                             : 'Plate No. required'.tr,
                         controller: controller.vehicleNoController.value,
                         onPress: () {},
+                        textCapitalization: TextCapitalization.characters,
                       ),
                       // TextFieldWidgetPrefix(
                       //   prefix: Padding(

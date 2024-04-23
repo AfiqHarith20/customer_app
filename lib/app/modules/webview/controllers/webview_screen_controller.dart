@@ -2,9 +2,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/compound_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
@@ -16,9 +14,6 @@ import 'package:customer_app/utils/api-list.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/response/response.dart';
-import 'package:http/http.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../utils/server.dart';
 
@@ -115,7 +110,7 @@ class WebviewScreenController extends GetxController {
     return jsonString;
   }
 
-  Future<String> fetchPayment() async {
+  Future<WebViewResponse> fetchPayment() async {
     try {
       print('Fetching payment...');
       final response = await http.post(
@@ -126,18 +121,65 @@ class WebviewScreenController extends GetxController {
         body: getRequestBody(),
       );
 
-      // Process the response here
-      print('Payment Status Code: ${response.statusCode}');
-      print('Payment Body: ${response.body}');
-      print('Payment Headers: ${response.headers}');
+      // Check if the response is successful
+      if (response.statusCode == 200) {
+        // Decode the response body
+        final Map<String, dynamic>? responseBody = json.decode(response.body);
 
-      // Return the response body as a String
-      return response.body;
+        // Check if the response body is not null
+        if (responseBody != null) {
+          // Extract redirection type, URL, and client script
+          final int redirectionType = responseBody['redirectionType'];
+          final String redirectUrl = responseBody['redirectUrl'] ?? '';
+          final String clientScript = responseBody['clientScript'] ?? '';
+
+          // Handle redirection based on the type
+          if (redirectionType == 1) {
+            // Redirect using URL
+            print('Redirecting using URL: $redirectUrl');
+            // Handle redirection using URL here
+          } else if (redirectionType == 2) {
+            // Redirect using client script
+            print('Redirecting using client script: $clientScript');
+            // Handle redirection using client script here
+          } else {
+            print('Invalid redirection type');
+            // Handle invalid redirection type here
+          }
+
+          // Return WebViewResponse object
+          return WebViewResponse(
+            redirectionType: redirectionType,
+            redirectUrl: redirectUrl,
+            clientScript: clientScript,
+          );
+        } else {
+          // If response body is null, return an empty WebViewResponse
+          return WebViewResponse(
+            redirectionType: 0,
+            redirectUrl: '',
+            clientScript: '',
+          );
+        }
+      } else {
+        // If response status code is not 200, handle the error
+        print('Error: ${response.statusCode}');
+        // Return an empty WebViewResponse
+        return WebViewResponse(
+          redirectionType: 0,
+          redirectUrl: '',
+          clientScript: '',
+        );
+      }
     } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("Error occurred while making payment: $e");
-      // Return an empty string or handle the error as needed
-      return '';
+      // If an error occurs, return an empty WebViewResponse
+      return WebViewResponse(
+        redirectionType: 0,
+        redirectUrl: '',
+        clientScript: '',
+      );
     }
   }
 
@@ -230,4 +272,16 @@ class WebviewScreenController extends GetxController {
       return '';
     }
   }
+}
+
+class WebViewResponse {
+  final int redirectionType;
+  final String redirectUrl;
+  final String clientScript;
+
+  WebViewResponse({
+    required this.redirectionType,
+    required this.redirectUrl,
+    required this.clientScript,
+  });
 }

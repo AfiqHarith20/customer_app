@@ -134,7 +134,7 @@ const Map<String, String> msMY = {
   "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING":
       "Nikmati pengalaman parkir yang lancar dan bebas tekanan dengan NAZIFA PARKING",
   "Log in with Mobile Number": "Log masuk dengan Nombor Telefon",
-  "Effortless Parking": "CEPAT, MESRA & EFEKTIF",
+  "Effortless Parking": "Cepat, Mesra & Efektif",
   "Season Pass": "Pas Bermusim",
   "My Pass": "Pas Saya",
   "Validity": "Tempoh Sah",
@@ -220,4 +220,5 @@ const Map<String, String> msMY = {
   "Tax": "Cukai",
   "Enter Plate number": "Masukkan Nombor Plat",
   "Enter compound number": "Masukkan Nombor Kompoun",
+  "Expired In (Day):": "Tamat Dalam (Hari):",
 };

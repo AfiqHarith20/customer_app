@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../constant/constant.dart';
 import '../../../../themes/app_colors.dart';
@@ -59,6 +60,11 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                     itemCount: controller.mySeasonPassList.length,
                     physics: const ScrollPhysics(),
                     itemBuilder: (context, index) {
+                      DateTime endDate =
+                          controller.mySeasonPassList[index].endDate!.toDate();
+                      int daysUntilExpired =
+                          endDate.difference(DateTime.now()).inDays;
+
                       return Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
@@ -121,6 +127,9 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                                             color: AppColors.darkGrey08,
                                           ),
                                         ),
+                                      ),
+                                      itemStatusWidget(
+                                        endDate: endDate,
                                       )
                                     ],
                                   ),
@@ -136,13 +145,18 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                               itemWidget(
                                   subText: controller
                                       .mySeasonPassList[index].id!
-                                      .substring(0, 8),
+                                      .substring(0, 8)
+                                      .toUpperCase(),
                                   title: 'Serial Number:'.tr,
                                   svgImage: 'assets/icons/ic_hash.svg'),
                               itemWidget(
                                   subText: Constant.timestampToDate(controller
                                       .mySeasonPassList[index].endDate!),
                                   title: '${'Validity'.tr}:',
+                                  svgImage: 'assets/icons/ic_timer.svg'),
+                              itemExpiredWidget(
+                                  daysUntilExpired: daysUntilExpired,
+                                  title: 'Expired In (Day):'.tr,
                                   svgImage: 'assets/icons/ic_timer.svg'),
                               itemWidget(
                                   subText:
@@ -205,6 +219,73 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
           ),
         ],
       ).marginOnly(left: 10, right: 10),
+    );
+  }
+
+  static Widget itemStatusWidget({
+    required DateTime endDate,
+  }) {
+    bool isActive = DateTime.now().isBefore(endDate);
+    String status = isActive ? 'Active'.tr : 'Expired'.tr;
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            '($status)',
+            style: TextStyle(
+              fontSize: 16,
+              color: isActive ? Colors.green : Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget itemExpiredWidget({
+    required int daysUntilExpired,
+    required String svgImage,
+    required String title,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(9.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const SizedBox(
+            width: 9,
+          ),
+          SvgPicture.asset(
+            svgImage,
+            color: AppColors.darkGrey05,
+            height: 20,
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          Text(
+            title.tr, // Concatenate the daysUntilExpired to the subText
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.darkGrey09,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            "$daysUntilExpired", // Concatenate the daysUntilExpired to the subText
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(
+            width: 40,
+          ),
+        ],
+      ),
     );
   }
 }

@@ -163,6 +163,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                           : 'Plate No. required'.tr,
                       controller: controller.vehicleNoController.value,
                       onPress: () {},
+                      textCapitalization: TextCapitalization.characters,
                     ),
                     TextFieldWidgetPrefix(
                       prefix: Padding(

@@ -327,7 +327,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                                     color: AppColors.darkGrey07,
                                                     fontFamily:
                                                         AppThemData.bold,
-                                                    fontSize: 18,
+                                                    fontSize: 16,
                                                   ),
                                                 ),
                                                 // Checkbox(
@@ -348,7 +348,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                               style: const TextStyle(
                                                 color: AppColors.darkGrey07,
                                                 fontFamily: AppThemData.medium,
-                                                fontSize: 16,
+                                                fontSize: 14,
                                               ),
                                             ),
                                             const SizedBox(height: 3),
@@ -357,7 +357,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                               style: const TextStyle(
                                                 color: AppColors.darkGrey07,
                                                 fontFamily: AppThemData.medium,
-                                                fontSize: 16,
+                                                fontSize: 14,
                                               ),
                                             ),
                                             const SizedBox(height: 3),
@@ -367,7 +367,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                               style: const TextStyle(
                                                 color: AppColors.darkGrey03,
                                                 fontFamily: AppThemData.medium,
-                                                fontSize: 16,
+                                                fontSize: 14,
                                               ),
                                             ),
                                             const SizedBox(height: 3),
@@ -379,7 +379,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                                     ? Colors.red
                                                     : AppColors.green04,
                                                 fontFamily: AppThemData.medium,
-                                                fontSize: 16,
+                                                fontSize: 14,
                                               ),
                                             ),
                                             const SizedBox(height: 3),

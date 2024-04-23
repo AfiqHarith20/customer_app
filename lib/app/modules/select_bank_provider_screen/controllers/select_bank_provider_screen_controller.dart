@@ -48,7 +48,8 @@ class SelectBankProviderScreenController extends GetxController {
             .where((element) =>
                 element["id"] != "LOAD001" &&
                 element["name"] != "" &&
-                element["displayName"] != "")
+                element["displayName"] != "" &&
+                element["status"] == 1)
             .toList();
 
         for (var element in test) {

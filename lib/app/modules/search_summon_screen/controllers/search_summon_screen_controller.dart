@@ -102,6 +102,7 @@ class SearchSummonScreenController extends GetxController {
 
       // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
+        setLoading(true);
         // Parse the response JSON
         Map<String, dynamic> responseData = jsonDecode(response.body);
         print(responseData);

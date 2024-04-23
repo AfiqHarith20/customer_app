@@ -325,8 +325,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                     selectedPassId: widget.passId,
                     channelId: '18',
                   );
-                  print('Online Payment Data: $onlinePaymentModel');
-                  print('customerId ${passData['customerId']}');
+                  // print('Online Payment Data: $onlinePaymentModel');
+                  // print('customerId ${passData['customerId']}');
                   Get.toNamed(
                     Routes.WEBVIEW_SCREEN,
                     arguments: {

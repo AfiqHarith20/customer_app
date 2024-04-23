@@ -220,4 +220,5 @@ const Map<String, String> enUS = {
   "Tax": "Tax",
   "Enter Plate number": "Enter Plate number",
   "Enter compound number": "Enter compound number",
+  "Expired In (Day):": "Expired In (Day):",
 };

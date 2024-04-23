@@ -325,7 +325,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.NOTIFICATION_SCREEN,
-      page: () => NotificationScreenView(
+      page: () => const NotificationScreenView(
           // controller: Get.arguments['controller'] ?? '',
           ),
       binding: NotificationScreenBinding(),
