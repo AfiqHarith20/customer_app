@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:customer_app/app/widget/mobile_number_textfield.dart';
@@ -226,8 +228,9 @@ class InformationScreenView extends GetView<InformationScreenController> {
                     title: "Save and Continue",
                     txtColor: AppColors.lightGrey01,
                     bgColor: AppColors.darkGrey10,
-                    onPress: () {
+                    onPress: () async {
                       if (controller.formKey.value.currentState!.validate()) {
+                        // controller.sendEmailVerification();
                         controller.createAccount();
                       }
                     },
@@ -321,3 +324,23 @@ buildBottomSheet(BuildContext context, InformationScreenController controller) {
     },
   );
 }
+
+// void _showEmailVerifiedDialog(BuildContext context, String message) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: const Text("Email Verification"),
+//         content: Text(message),
+//         actions: <Widget>[
+//           TextButton(
+//             child: const Text("OK"),
+//             onPressed: () {
+//               Navigator.of(context).pop();
+//             },
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }

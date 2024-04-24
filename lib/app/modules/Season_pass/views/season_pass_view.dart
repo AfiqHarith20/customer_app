@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:customer_app/app/models/private_pass_model.dart';
-import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -64,8 +65,8 @@ class SeasonPassView extends GetView<SeasonPassController> {
                     // Custom sliding segmented control
                     _buildCustomSliding(controller),
                     // Content based on selected segment
-                    _buildContent(
-                        controller.seasonPassList, controller.privatePassList),
+                    _buildContent(context, controller.seasonPassList,
+                        controller.privatePassList),
                   ],
                 ),
         );
@@ -97,40 +98,44 @@ class SeasonPassView extends GetView<SeasonPassController> {
     );
   }
 
-  Widget _buildContent(List<SeasonPassModel> seasonPassList,
+  Widget _buildContent(
+      BuildContext context,
+      List<SeasonPassModel> seasonPassList,
       List<PrivatePassModel> privatePassList) {
     return Expanded(
       child: Obx(() {
         if (controller.selectedSegment.value == false) {
-          return _buildPassSection(seasonPassList);
+          return _buildPassSection(context, seasonPassList);
         } else {
-          return _buildPrivatePassSection(privatePassList);
+          return _buildPrivatePassSection(context, privatePassList);
         }
       }),
     );
   }
 
-  Widget _buildPassSection(List<SeasonPassModel> seasonPassList) {
+  Widget _buildPassSection(
+      BuildContext context, List<SeasonPassModel> seasonPassList) {
     return ListView.builder(
       itemCount: seasonPassList.length,
       itemBuilder: (context, index) {
         SeasonPassModel seasonPassModel = seasonPassList[index];
-        return _buildPassItem(seasonPassModel);
+        return _buildPassItem(context, seasonPassModel);
       },
     );
   }
 
-  Widget _buildPrivatePassSection(List<PrivatePassModel> privatePassList) {
+  Widget _buildPrivatePassSection(
+      BuildContext context, List<PrivatePassModel> privatePassList) {
     return ListView.builder(
       itemCount: privatePassList.length,
       itemBuilder: (context, index) {
         PrivatePassModel privatePassModel = privatePassList[index];
-        return _buildPassItem(privatePassModel);
+        return _buildPassItem(context, privatePassModel);
       },
     );
   }
 
-  Widget _buildPassItem(dynamic passModel) {
+  Widget _buildPassItem(BuildContext context, dynamic passModel) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
@@ -180,14 +185,35 @@ class SeasonPassView extends GetView<SeasonPassController> {
             itemWidget(
                 subText: '${passModel.validity}', title: '${"Validity".tr}:'),
             InkWell(
-              onTap: () {
-                // Adjust navigation based on the pass type
-                if (passModel is SeasonPassModel) {
-                  Get.toNamed(Routes.PURCHASE_PASS,
-                      arguments: {"seasonPassModel": passModel});
-                } else if (passModel is PrivatePassModel) {
-                  Get.toNamed(Routes.PURCHASE_PASS_PRIVATE,
-                      arguments: {"privatePassModel": passModel});
+              onTap: () async {
+                bool emailVerified = await controller.isEmailVerified();
+                if (emailVerified) {
+                  // Adjust navigation based on the pass type
+                  if (passModel is SeasonPassModel) {
+                    Get.toNamed(Routes.PURCHASE_PASS,
+                        arguments: {"seasonPassModel": passModel});
+                  } else if (passModel is PrivatePassModel) {
+                    Get.toNamed(Routes.PURCHASE_PASS_PRIVATE,
+                        arguments: {"privatePassModel": passModel});
+                  }
+                } else {
+                  // Show a message to inform the user to verify their email
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DialogBoxNotify(
+                        imageAsset: "assets/images/ic_email.png",
+                        onPressConfirm: () async {
+                          Navigator.of(context).pop();
+                        },
+                        onPressConfirmBtnName: "Ok".tr,
+                        onPressConfirmColor: AppColors.yellow04,
+                        content:
+                            "Please verify your email before proceeding.".tr,
+                        subTitle: "Email Verification".tr,
+                      );
+                    },
+                  );
                 }
               },
               child: Container(

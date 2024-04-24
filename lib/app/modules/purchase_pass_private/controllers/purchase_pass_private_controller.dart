@@ -32,6 +32,7 @@ class PurchasePassPrivateController extends GetxController {
   Rx<TextEditingController> addressController = TextEditingController().obs;
   Rx<TextEditingController> referenceController = TextEditingController().obs;
   RxString countryCode = "+60".obs;
+  RxBool isLoading = true.obs;
   RxString privateParkImage = "".obs;
   List<String> type = [
     "Pas Mingguan 1",
@@ -48,6 +49,24 @@ class PurchasePassPrivateController extends GetxController {
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
   RxList<File> imageFiles = <File>[].obs;
   final ImagePicker imagePicker = ImagePicker();
+
+  void clearFormData() {
+    vehicleNoController.value.clear();
+    lotNoController.value.clear();
+    companyNameController.value.clear();
+    companyRegistrationNoController.value.clear();
+    addressController.value.clear();
+    referenceController.value.clear();
+    privateParkImage.value = "";
+    // Add similar lines for other controllers as needed
+  }
+
+  // Dispose method for cleanup (optional in this case)
+  @override
+  void onClose() {
+    clearFormData(); // Clear form data when the controller is closed
+    super.onClose();
+  }
 
   void removeImage(int index) {
     imageFiles.removeAt(index);
@@ -95,15 +114,24 @@ class PurchasePassPrivateController extends GetxController {
 
   uploadPrivatePark() async {
     ShowToastDialog.showLoader("please_wait".tr);
+
+    // Check if privateParkImage is not empty and is a valid URL
     if (privateParkImage.value.isNotEmpty &&
         Constant().hasValidUrl(privateParkImage.value) == false) {
+      // Retrieve the document ID from pendingPassModel.value
+      String documentId = pendingPassModel.value.id ?? '';
+
+      // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
       privateParkImage.value =
           await Constant.uploadPrivateParkImageToFireStorage(
         File(privateParkImage.value),
-        "privateParkImage/${FireStoreUtils.getCurrentUid()}",
+        "privateParkImage/$documentId",
         File(privateParkImage.value).path.split('/').last,
       );
     }
+
+    // Close loader after image upload
+    ShowToastDialog.closeLoader();
   }
 
   getProfileData() async {
@@ -130,7 +158,6 @@ class PurchasePassPrivateController extends GetxController {
     pendingPassModel.value.mobileNumber = phoneNumberController.value.text;
     pendingPassModel.value.vehicleNo = vehicleNoController.value.text;
     pendingPassModel.value.lotNo = lotNoController.value.text;
-    pendingPassModel.value.image = imageFile?.path;
     pendingPassModel.value.companyName = companyNameController.value.text;
     pendingPassModel.value.companyRegistrationNo =
         companyRegistrationNoController.value.text;
@@ -143,11 +170,37 @@ class PurchasePassPrivateController extends GetxController {
             days:
                 checkDuration(selectedPrivatePass.value.validity.toString()))));
 
+    // Upload the image and get the URL
+    String imagePath = await uploadPrivateParkImage();
+
+    // Set the image path in the pendingPassModel
+    pendingPassModel.value.image = imagePath;
+
     // Setting default status as "pending"
     pendingPassModel.value.status = "pending";
 
     // Now, send the data to Firestore
     await FireStoreUtils.setPendingPass(pendingPassModel.value, imageFile);
+  }
+
+  Future<String> uploadPrivateParkImage() async {
+    // Check if privateParkImage is not empty and is a valid URL
+    if (privateParkImage.value.isNotEmpty &&
+        Constant().hasValidUrl(privateParkImage.value) == false) {
+      // Retrieve the document ID from pendingPassModel.value
+      String documentId = pendingPassModel.value.id ?? '';
+
+      // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
+      String imagePath = await Constant.uploadPrivateParkImageToFireStorage(
+        File(privateParkImage.value),
+        "parkinglot/$documentId",
+        File(privateParkImage.value).path.split('/').last,
+      );
+
+      return imagePath;
+    }
+
+    return ''; // Return empty string if no image uploaded
   }
 
   checkDuration(String time) {

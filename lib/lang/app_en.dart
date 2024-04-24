@@ -225,4 +225,12 @@ const Map<String, String> enUS = {
   "Company Name required": "Company Name required",
   "Lot No. required": "Lot No. required",
   "Please upload at least one image": "Please upload at least one image",
+  "Please verify your email before proceeding.":
+      "Please verify your email before proceeding.",
+  "Email Verification": "Email Verification",
+  "This Wallet Feature is Lock": "This Wallet Feature is Lock",
+  "A verification email has been sent to . Please verify your email to make sure you can make any transaction.":
+      "A verification email has been sent to . Please verify your email to make sure you can make any transaction.",
+  "Active Pass": "Active Pass",
+  "Pending Pass": "Pending Pass",
 };

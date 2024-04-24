@@ -67,11 +67,19 @@ class LoginScreenController extends GetxController {
         Get.toNamed(Routes.INFORMATION_SCREEN,
             arguments: {"customerModel": customerModel});
       }
-    } catch (e) {
-      // Handle sign-up failure
+    } on FirebaseAuthException catch (e) {
+      // Handle sign-in failure
       print("Sign-in failed: $e");
       ShowToastDialog.closeLoader();
-      ShowToastDialog.showToast("Something went wrong. Please try again.");
+      String errorMessage;
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+        // Invalid email or password
+        errorMessage = "Invalid email or password. Please try again.";
+      } else {
+        // Other error, show generic message
+        errorMessage = "Something went wrong. Please try again.";
+      }
+      ShowToastDialog.showToast(errorMessage);
     }
   }
 

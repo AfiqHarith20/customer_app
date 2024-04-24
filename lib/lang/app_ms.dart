@@ -25,7 +25,7 @@ const Map<String, String> msMY = {
   "Please complete booking": "Please complete booking",
   "Please enter amount": "Sila masukkan jumlah",
   "My Booking List": "Senarai Tempahan Saya",
-  "Wallet": "Wallet",
+  "Wallet": "Dompet",
   "Language": "Bahasa",
   "My Profile": "Profil Saya",
   "please_wait": "Sila Tunggu..",
@@ -226,4 +226,14 @@ const Map<String, String> msMY = {
   "Lot No. required": "No. Lot diperlukan",
   "Please upload at least one image":
       "Sila masukkan sekurang-kurangnya 1 gambar",
+  "Please verify your email before proceeding.":
+      "Sila sahkan e-mel sebelum meneruskan.",
+  "Email Verification": "Pengesahan E-mel",
+  "This Wallet Feature is Lock": "Ciri Dompet Disekat",
+  "A verification email has been sent to . Please verify your email to make sure you can make any transaction.":
+      "E-mel pengesahan telah dihantar ke akaun . Sila sahkan e-mel anda untuk memastikan anda boleh melakukan sebarang transaksi.",
+  "Active Pass": "Pas Aktif",
+  "Pending Pass": "Pas Belum Aktif",
+  "Active": "Aktif",
+  "pending": "Belum Aktif",
 };

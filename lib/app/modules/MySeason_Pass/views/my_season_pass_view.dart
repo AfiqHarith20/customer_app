@@ -1,7 +1,10 @@
+import 'package:customer_app/app/models/my_purchase_pass_model.dart';
+import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:sliding_switch/sliding_switch.dart';
 
 import '../../../../constant/constant.dart';
 import '../../../../themes/app_colors.dart';
@@ -55,130 +58,295 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
             ),
             body: controller.isLoading.value
                 ? Constant.loader()
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: controller.mySeasonPassList.length,
-                    physics: const ScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      DateTime endDate =
-                          controller.mySeasonPassList[index].endDate!.toDate();
-                      int daysUntilExpired =
-                          endDate.difference(DateTime.now()).inDays;
-
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                  color:
-                                      AppColors.darkGrey02.withOpacity(0.5))),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: ListTile(
-                                  leading: Container(
-                                    height: 56,
-                                    width: 56,
-                                    decoration: BoxDecoration(
-                                        color: AppColors.yellow04,
-                                        borderRadius:
-                                            BorderRadius.circular(200)),
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icons/ic_pass.svg',
-                                        height: 20,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    controller.mySeasonPassList[index]
-                                        .seasonPassModel!.passName
-                                        .toString(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: AppThemData.bold,
-                                      color: AppColors.darkGrey08,
-                                    ),
-                                  ),
-                                  subtitle: Row(
-                                    children: [
-                                      Text(
-                                        'RM ${controller.mySeasonPassList[index].seasonPassModel!.price.toString()}',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontFamily: AppThemData.medium,
-                                          color: AppColors.yellow04,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          '/ ${controller.mySeasonPassList[index].seasonPassModel?.validity.toString()}',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontFamily: AppThemData.medium,
-                                            color: AppColors.darkGrey08,
-                                          ),
-                                        ),
-                                      ),
-                                      itemStatusWidget(
-                                        endDate: endDate,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const Divider(
-                                height: 2,
-                                color: AppColors.darkGrey02,
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              itemWidget(
-                                  subText: controller
-                                      .mySeasonPassList[index].id!
-                                      .substring(0, 8)
-                                      .toUpperCase(),
-                                  title: 'Serial Number:'.tr,
-                                  svgImage: 'assets/icons/ic_hash.svg'),
-                              itemWidget(
-                                  subText: Constant.timestampToDate(controller
-                                      .mySeasonPassList[index].endDate!),
-                                  title: '${'Validity'.tr}:',
-                                  svgImage: 'assets/icons/ic_timer.svg'),
-                              itemExpiredWidget(
-                                  daysUntilExpired: daysUntilExpired,
-                                  title: 'Expired In (Day):'.tr,
-                                  svgImage: 'assets/icons/ic_timer.svg'),
-                              itemWidget(
-                                  subText:
-                                      '${controller.mySeasonPassList[index].vehicleNo}',
-                                  title: 'Plate Number:'.tr,
-                                  svgImage: 'assets/icons/ic_carsimple.svg'),
-                              itemWidget(
-                                  subText:
-                                      '${controller.mySeasonPassList[index].paymentType}',
-                                  title: 'Payment Type:'.tr,
-                                  svgImage: 'assets/icons/ic_payment.svg'),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Custom sliding segmented control
+                      _buildCustomSliding(controller),
+                      // Content based on selected segment
+                      _buildContent(context, controller.mySeasonPassList,
+                          controller.pendingPassList),
+                    ],
                   ),
           );
         });
+  }
+
+  Widget _buildCustomSliding(MySeasonPassController controller) {
+    return Center(
+      child: SlidingSwitch(
+        value: controller.selectedSegment == 0 ? true : false,
+        width: 350,
+        onChanged: (bool value) {
+          controller.changeSegment(value);
+        },
+        height: 40,
+        animationDuration: const Duration(milliseconds: 400),
+        onTap: () {},
+        onDoubleTap: () {},
+        onSwipe: () {},
+        textOff: "Active Pass".tr,
+        textOn: "Pending Pass".tr,
+        colorOn: Colors.black,
+        colorOff: Colors.black,
+        background: Colors.amber,
+        buttonColor: const Color(0xfff7f5f7),
+        inactiveColor: const Color(0xff636f7b),
+      ),
+    );
+  }
+
+  Widget _buildContent(
+      BuildContext context,
+      List<MyPurchasePassModel> purchasePassList,
+      List<PendingPassModel> pendingPassList) {
+    return Expanded(
+      child: Obx(() {
+        if (controller.selectedSegment.value == false) {
+          return _buildPassSection(context, purchasePassList);
+        } else {
+          return _buildPrivatePassSection(context, pendingPassList);
+        }
+      }),
+    );
+  }
+
+  Widget _buildPassSection(
+      BuildContext context, List<MyPurchasePassModel> mySeasonPassList) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: controller.mySeasonPassList.length,
+      physics: const ScrollPhysics(),
+      itemBuilder: (context, index) {
+        DateTime endDate = controller.mySeasonPassList[index].endDate!.toDate();
+        int daysUntilExpired = endDate.difference(DateTime.now()).inDays;
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(12),
+                border:
+                    Border.all(color: AppColors.darkGrey02.withOpacity(0.5))),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListTile(
+                    leading: Container(
+                      height: 56,
+                      width: 56,
+                      decoration: BoxDecoration(
+                          color: AppColors.yellow04,
+                          borderRadius: BorderRadius.circular(200)),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icons/ic_pass.svg',
+                          height: 20,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      controller
+                          .mySeasonPassList[index].seasonPassModel!.passName
+                          .toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontFamily: AppThemData.bold,
+                        color: AppColors.darkGrey08,
+                      ),
+                    ),
+                    subtitle: Row(
+                      children: [
+                        Text(
+                          'RM ${controller.mySeasonPassList[index].seasonPassModel!.price.toString()}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: AppThemData.medium,
+                            color: AppColors.yellow04,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            '/ ${controller.mySeasonPassList[index].seasonPassModel?.validity.toString()}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontFamily: AppThemData.medium,
+                              color: AppColors.darkGrey08,
+                            ),
+                          ),
+                        ),
+                        itemStatusWidget(
+                          endDate: endDate,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(
+                  height: 2,
+                  color: AppColors.darkGrey02,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                itemWidget(
+                    subText: controller.mySeasonPassList[index].id!
+                        .substring(0, 8)
+                        .toUpperCase(),
+                    title: 'Serial Number:'.tr,
+                    svgImage: 'assets/icons/ic_hash.svg'),
+                itemWidget(
+                    subText: Constant.timestampToDate(
+                        controller.mySeasonPassList[index].endDate!),
+                    title: '${'Validity'.tr}:',
+                    svgImage: 'assets/icons/ic_timer.svg'),
+                itemExpiredWidget(
+                    daysUntilExpired: daysUntilExpired,
+                    title: 'Expired In (Day):'.tr,
+                    svgImage: 'assets/icons/ic_timer.svg'),
+                itemWidget(
+                    subText: '${controller.mySeasonPassList[index].vehicleNo}',
+                    title: 'Plate Number:'.tr,
+                    svgImage: 'assets/icons/ic_carsimple.svg'),
+                itemWidget(
+                    subText:
+                        '${controller.mySeasonPassList[index].paymentType}',
+                    title: 'Payment Type:'.tr,
+                    svgImage: 'assets/icons/ic_payment.svg'),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPrivatePassSection(
+      BuildContext context, List<PendingPassModel> pendingPassList) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: controller.pendingPassList.length,
+      physics: const ScrollPhysics(),
+      itemBuilder: (context, index) {
+        DateTime endDate = controller.pendingPassList[index].endDate!.toDate();
+        int daysUntilExpired = endDate.difference(DateTime.now()).inDays;
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(12),
+                border:
+                    Border.all(color: AppColors.darkGrey02.withOpacity(0.5))),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListTile(
+                    leading: Container(
+                      height: 56,
+                      width: 56,
+                      decoration: BoxDecoration(
+                          color: AppColors.yellow04,
+                          borderRadius: BorderRadius.circular(200)),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icons/ic_pass.svg',
+                          height: 20,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      controller
+                          .pendingPassList[index].privatePassModel!.passName
+                          .toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontFamily: AppThemData.bold,
+                        color: AppColors.darkGrey08,
+                      ),
+                    ),
+                    subtitle: Row(
+                      children: [
+                        Text(
+                          'RM ${controller.pendingPassList[index].privatePassModel!.price.toString()}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: AppThemData.medium,
+                            color: AppColors.yellow04,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            '/ ${controller.pendingPassList[index].privatePassModel?.validity.toString()}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontFamily: AppThemData.medium,
+                              color: AppColors.darkGrey08,
+                            ),
+                          ),
+                        ),
+                        itemPendingWidget(
+                          title: controller.pendingPassList[index].status
+                              .toString(),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(
+                  height: 2,
+                  color: AppColors.darkGrey02,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                itemWidget(
+                    subText: controller.pendingPassList[index].id!
+                        .substring(0, 8)
+                        .toUpperCase(),
+                    title: 'Serial Number:'.tr,
+                    svgImage: 'assets/icons/ic_hash.svg'),
+                itemWidget(
+                    subText: Constant.timestampToDate(
+                        controller.pendingPassList[index].endDate!),
+                    title: '${'Validity'.tr}:',
+                    svgImage: 'assets/icons/ic_timer.svg'),
+                itemExpiredWidget(
+                    daysUntilExpired: daysUntilExpired,
+                    title: 'Expired In (Day):'.tr,
+                    svgImage: 'assets/icons/ic_timer.svg'),
+                itemWidget(
+                    subText: '${controller.pendingPassList[index].vehicleNo}',
+                    title: 'Plate Number:'.tr,
+                    svgImage: 'assets/icons/ic_carsimple.svg'),
+                // itemWidget(
+                //     subText: '${controller.pendingPassList[index].paymentType}',
+                //     title: 'Payment Type:'.tr,
+                //     svgImage: 'assets/icons/ic_payment.svg'),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   static Widget itemWidget({
@@ -234,10 +402,30 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            '($status)',
+            '($status)'.tr,
             style: TextStyle(
               fontSize: 16,
               color: isActive ? Colors.green : Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget itemPendingWidget({
+    required String title,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            '(${title.tr})',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.blueAccent,
             ),
           ),
         ],

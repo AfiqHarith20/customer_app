@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/widget/network_image_widget.dart';
+import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/screen_size.dart';
@@ -151,7 +152,8 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       countryCode: controller.countryCode.value,
                       onPress: () {},
                     ),
-                    TextFieldWidgetPrefix(
+
+                    TextFieldWidgetPrefixUpper(
                       prefix: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: SvgPicture.asset(
@@ -161,7 +163,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       inputFormatters: [
                         FilteringTextInputFormatter.deny(RegExp(r'\s')),
                       ],
-                      title: "Plate No.*".tr,
+                      title: "Plate No.".tr,
                       hintText: "Enter Plate No.".tr,
                       // validator: (value) => value != null && value.isNotEmpty
                       //     ? null
@@ -177,7 +179,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                           "assets/icons/ic_note.svg",
                         ),
                       ),
-                      title: "Lot No.".tr,
+                      title: "Lot No.*".tr,
                       hintText: "Enter Lot No.".tr,
                       validator: (value) => value != null && value.isNotEmpty
                           ? null
@@ -211,14 +213,20 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                                   Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: AppColors
+                                            .darkGrey06, // Adjust border color as needed
+                                        width:
+                                            2, // Adjust border width as needed
+                                      ),
                                       color:
-                                          AppColors.darkGrey02.withOpacity(0.5),
+                                          AppColors.darkGrey04.withOpacity(0.5),
                                     ),
                                     child: controller.privateParkImage.isEmpty
                                         ? const Icon(
                                             Icons.add,
-                                            size: 24,
-                                            color: Colors.white,
+                                            size: 110,
+                                            color: Colors.black12,
                                           )
                                         : (Constant().hasValidUrl(controller
                                                 .privateParkImage.value))
@@ -249,33 +257,12 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                                                 ),
                                               ),
                                   ),
-                                  const Positioned(
-                                    right: 0,
-                                    bottom: 0,
-                                    child: Icon(
-                                      Icons.add,
-                                      size: 24,
-                                      color: Colors.black,
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        if (controller.imageFiles
-                            .isEmpty) // Show error message if no image is uploaded
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              'Please upload at least one image'.tr,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
+                        // .
                       ],
                     ),
                     const SizedBox(
@@ -288,7 +275,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                           "assets/icons/ic_buildings.svg",
                         ),
                       ),
-                      title: "Company Name".tr,
+                      title: "Company Name*".tr,
                       hintText: "Enter Company Name".tr,
                       validator: (value) => value != null && value.isNotEmpty
                           ? null
@@ -303,7 +290,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                           "assets/icons/ic_hash.svg",
                         ),
                       ),
-                      title: "Company Registration No.".tr,
+                      title: "Company Registration No.*".tr,
                       hintText: "Enter Company Registration No.".tr,
                       validator: (value) => value != null && value.isNotEmpty
                           ? null
@@ -353,6 +340,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                 onPress: () async {
                   if (controller.formKey.value.currentState!.validate()) {
                     await controller.addPrivatePassData();
+                    controller.clearFormData();
                     // Show popup notification
                     Get.showSnackbar(
                       const GetSnackBar(

@@ -20,8 +20,12 @@ class HomeController extends GetxController {
     getProfileData();
     fetchCarousel();
     if (box.read('carouselData') != null) {
-      carouselData.assignAll(box.read('carouselData'));
+      List<dynamic>? carouselDataList = box.read('carouselData');
+      if (carouselDataList != null) {
+        carouselData.assignAll(carouselDataList.cast<CarouselModel>());
+      }
     }
+
     super.onInit();
   }
 

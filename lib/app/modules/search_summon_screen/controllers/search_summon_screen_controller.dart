@@ -4,6 +4,7 @@ import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/my_payment_compound_model.dart';
 import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/server.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,7 +19,7 @@ class SearchSummonScreenController extends GetxController {
   Server server = Server();
   final AuthModel authModel = AuthModel();
   final _isLoading = false.obs;
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool get isLoading => _isLoading.value;
 
   void setLoading(bool value) {
@@ -47,6 +48,19 @@ class SearchSummonScreenController extends GetxController {
         compoundList.value = value.cast<CompoundModel>();
       }
     });
+  }
+
+  Future<bool> isEmailVerified() async {
+    User? user = _auth.currentUser;
+    await user?.reload(); // Reloads the user to ensure the latest data
+    user = _auth.currentUser; // Refresh user object
+
+    if (user != null) {
+      return user
+          .emailVerified; // Returns true if email is verified, false otherwise
+    } else {
+      return false; // User is null, indicating not logged in
+    }
   }
 
   @override

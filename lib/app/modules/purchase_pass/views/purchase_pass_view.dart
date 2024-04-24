@@ -1,5 +1,6 @@
 import 'package:customer_app/app/models/season_pass_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
+import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:flutter/material.dart';
@@ -145,7 +146,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         countryCode: controller.countryCode.value,
                         onPress: () {},
                       ),
-                      TextFieldWidgetPrefix(
+                      TextFieldWidgetPrefixUpper(
                         prefix: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: SvgPicture.asset(

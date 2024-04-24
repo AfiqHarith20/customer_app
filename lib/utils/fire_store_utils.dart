@@ -70,6 +70,26 @@ class FireStoreUtils {
     return isLogin;
   }
 
+  static Future<void> sendEmailVerification() async {
+    try {
+      // Get the current user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null && !user.emailVerified) {
+        // Send email verification
+        await user.sendEmailVerification();
+
+        // Print a message or perform any other action upon successful sending of verification email
+        print('Verification email sent to ${user.email}');
+      } else {
+        print('User is either null or email is already verified.');
+      }
+    } catch (error) {
+      // Handle errors if any
+      print('Error sending verification email: $error');
+    }
+  }
+
   static Future<CustomerModel?> getUserProfile(String uuid) async {
     CustomerModel? customerModel;
 
@@ -834,6 +854,26 @@ class FireStoreUtils {
       return null;
     });
     return privatePassList;
+  }
+
+  static Future<List<PendingPassModel>?> getPendingPassData() async {
+    List<PendingPassModel> pendingPassList = [];
+    await fireStore
+        .collection(CollectionName.pendingPass)
+        .where('customerId', isEqualTo: getCurrentUid())
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        PendingPassModel pendingPassModel =
+            PendingPassModel.fromJson(element.data());
+        pendingPassList.add(pendingPassModel);
+        print('-------length----->${pendingPassList.length}');
+      }
+    }).catchError((error) {
+      log("Failed to get data: $error");
+      return null;
+    });
+    return pendingPassList;
   }
 
   static Future<List<MyPurchasePassModel>?> getMySeasonPassData() async {

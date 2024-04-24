@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class TextFieldWidgetPrefix extends StatelessWidget {
+class TextFieldWidgetPrefixUpper extends StatelessWidget {
   final String? title;
   final String hintText;
   final TextEditingController controller;
@@ -15,10 +15,12 @@ class TextFieldWidgetPrefix extends StatelessWidget {
   final bool? enable;
   final bool? readOnly;
   final validator;
+  final textCapitalization;
   final TextInputType? textInputType;
+
   final List<TextInputFormatter>? inputFormatters;
 
-  const TextFieldWidgetPrefix({
+  const TextFieldWidgetPrefixUpper({
     super.key,
     this.textInputType,
     this.enable,
@@ -30,6 +32,7 @@ class TextFieldWidgetPrefix extends StatelessWidget {
     required this.hintText,
     required this.controller,
     required this.onPress,
+    this.textCapitalization,
   });
 
   @override

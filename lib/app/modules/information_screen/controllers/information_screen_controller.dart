@@ -8,7 +8,9 @@ import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:customer_app/utils/notification_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +26,7 @@ class InformationScreenController extends GetxController {
   Rx<TextEditingController> referralCodeController =
       TextEditingController().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   RxList<String> genderList = ["Male", "Female"].obs;
   RxList<Map<String, String>> icList = [
@@ -39,6 +42,22 @@ class InformationScreenController extends GetxController {
   RxString loginType = "".obs;
 
   final ImagePicker imagePicker = ImagePicker();
+
+  // ActionCodeSettings for email verification
+  final ActionCodeSettings acs = ActionCodeSettings(
+    // URL you want to redirect back to. The domain (www.example.com) for this
+    // URL must be whitelisted in the Firebase Console.
+    url:
+        'https://nazifa-parking-29f2b.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
+    // This must be true
+    handleCodeInApp: true,
+    iOSBundleId: 'com.example.ios',
+    androidPackageName: 'com.terasoft.nazifaparking',
+    // installIfNotAvailable
+    androidInstallApp: true,
+    // minimumVersion
+    androidMinimumVersion: '12',
+  );
 
   @override
   void onInit() {
@@ -67,7 +86,13 @@ class InformationScreenController extends GetxController {
     update();
   }
 
+  void goToDashboardScreen() {
+    // Navigate user to DASHBOARD_SCREEN
+    Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+  }
+
   createAccount() async {
+    bool isVerified = await isEmailVerified(emailController.value.text);
     String fcmToken = await NotificationService.getToken();
     String firstTwoChar =
         fullNameController.value.text.substring(0, 2).toUpperCase();
@@ -78,6 +103,14 @@ class InformationScreenController extends GetxController {
         "profileImage/${FireStoreUtils.getCurrentUid()}",
         File(profileImage.value).path.split('/').last,
       );
+    }
+
+    if (isVerified) {
+      // Email is already verified, proceed to DASHBOARD_SCREEN
+      goToDashboardScreen();
+    } else {
+      // Email is not verified, send verification email
+      await sendEmailVerification();
     }
 
     if (referralCodeController.value.text.isNotEmpty) {
@@ -157,6 +190,60 @@ class InformationScreenController extends GetxController {
         }
       });
     }
+  }
+
+  Future<bool> isEmailVerified(String email) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload(); // Reloads the user to ensure the latest data
+    user = FirebaseAuth.instance.currentUser; // Refresh user object
+
+    if (user != null) {
+      return user
+          .emailVerified; // Returns true if email is verified, false otherwise
+    } else {
+      return false; // User is null, indicating not logged in
+    }
+  }
+
+  Future<void> sendEmailVerification() async {
+    try {
+      // Get the email from the registration form
+      String email = emailController.value.text;
+
+      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+
+      // Send email verification
+      // await FirebaseAuth.instance
+      //     .sendSignInLinkToEmail(email: email, actionCodeSettings: acs)
+      //     .catchError(
+      //         (onError) => print('Error sending email verification $onError'))
+      //     .then((value) => print('Successfully sent email verification'));
+
+      // Print a message or perform any other action upon successful sending of verification email
+      print('Verification email sent to $email');
+      _showEmailVerifiedSnackbar(
+          "A verification email has been sent to $email. Please verify your email to make sure you can make any transaction."
+              .tr);
+    } catch (error) {
+      // Handle errors if any
+      print('Error sending verification email: $error');
+      ShowToastDialog.showToast('Error sending verification email');
+    }
+  }
+
+  void _showEmailVerifiedSnackbar(String message) {
+    Get.snackbar(
+      "Email Verification",
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 8),
+      backgroundColor: Colors.grey[900],
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16.0),
+      borderRadius: 10.0,
+      snackStyle: SnackStyle.FLOATING,
+      animationDuration: const Duration(milliseconds: 500),
+    );
   }
 
   Future pickFile({required ImageSource source}) async {

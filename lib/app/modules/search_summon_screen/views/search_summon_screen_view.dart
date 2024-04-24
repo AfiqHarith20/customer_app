@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
 import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -322,13 +323,13 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                 widget.controller.compoundList[index];
                             return GestureDetector(
                               onTap: () async {
-                                Get.toNamed(Routes.PAY_COMPOUND, arguments: {
-                                  "payCompoundModel": compoundModel.toJson(),
-                                  "myPaymentCompoundModel": widget
-                                      .controller.myPaymentCompoundModel.value
-                                });
-                                print(
-                                    "payCompoundModel JSON: ${compoundModel.toJson()}");
+                                bool emailVerified =
+                                    await widget.controller.isEmailVerified();
+                                if (emailVerified) {
+                                  navigateToPayCompound(compoundModel);
+                                } else {
+                                  showVerifyEmailDialog();
+                                }
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -375,8 +376,17 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                                       ),
                                                       // Pay indicator
                                                       GestureDetector(
-                                                        onTap: () {
-                                                          // Implement pay logic here
+                                                        onTap: () async {
+                                                          bool emailVerified =
+                                                              await widget
+                                                                  .controller
+                                                                  .isEmailVerified();
+                                                          if (emailVerified) {
+                                                            navigateToPayCompound(
+                                                                compoundModel);
+                                                          } else {
+                                                            showVerifyEmailDialog();
+                                                          }
                                                         },
                                                         child: Container(
                                                           padding:
@@ -385,7 +395,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                                           decoration:
                                                               BoxDecoration(
                                                             color: Colors
-                                                                .transparent, // Customize the indicator color
+                                                                .orangeAccent, // Customize the indicator color
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
@@ -491,5 +501,30 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
             ),
           );
         });
+  }
+
+  void navigateToPayCompound(CompoundModel compoundModel) {
+    Get.toNamed(Routes.PAY_COMPOUND, arguments: {
+      "payCompoundModel": compoundModel.toJson(),
+      "myPaymentCompoundModel": widget.controller.myPaymentCompoundModel.value
+    });
+  }
+
+  void showVerifyEmailDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogBoxNotify(
+          imageAsset: "assets/images/ic_email.png",
+          onPressConfirm: () async {
+            Navigator.of(context).pop();
+          },
+          onPressConfirmBtnName: "Ok".tr,
+          onPressConfirmColor: AppColors.yellow04,
+          content: "Please verify your email before proceeding.".tr,
+          subTitle: "Email Verification".tr,
+        );
+      },
+    );
   }
 }
