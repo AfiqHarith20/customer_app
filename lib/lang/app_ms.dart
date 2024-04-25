@@ -187,10 +187,13 @@ const Map<String, String> msMY = {
   "Enter Plate No.": "Masukkan No. Plat",
   "Plate No. required": "No. Plat diperlukan",
   "Lot No.": "No. Lot",
+  "Lot No.*": "No. Lot*",
   "Enter Lot No.": "Masukkan No. Lot",
   "Company Name": "Nama Syarikat",
   "Enter Company Name": "Masukkan Nama Syarikat",
   "Company Registration No.": "No. Pendaftaran Syarikat",
+  "Company Name*": "Nama Syarikat*",
+  "Company Registration No.*": "No. Pendaftaran Syarikat*",
   "Enter Company Registration No.": "Masukkan No. Pendaftaran Syarikat",
   "Address": "Alamat",
   "Enter Address": "Masukkan Alamat",
@@ -238,4 +241,6 @@ const Map<String, String> msMY = {
   "Pending Pass": "Pas Belum Aktif",
   "Active": "Aktif",
   "pending": "Belum Aktif",
+  "Your request has been sent with status 'Pending'":
+      "Permintaan Petak Khas anda telah pun dihantar dengan status 'Belum Aktif'"
 };

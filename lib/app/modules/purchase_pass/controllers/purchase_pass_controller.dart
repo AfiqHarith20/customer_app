@@ -41,10 +41,20 @@ class PurchasePassController extends GetxController {
 
   Rx<CustomerModel> customerModel = CustomerModel().obs;
 
+  void clearFormData() {
+    vehicleNoController.value.clear();
+    lotNoController.value.clear();
+    companyNameController.value.clear();
+    companyRegistrationNoController.value.clear();
+    addressController.value.clear();
+    // Add similar lines for other controllers as needed
+  }
+
   @override
   void onInit() {
     getArgument();
     getProfileData();
+    clearFormData();
     super.onInit();
   }
 

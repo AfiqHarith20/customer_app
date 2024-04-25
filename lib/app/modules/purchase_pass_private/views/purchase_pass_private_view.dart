@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'dart:math';
 
@@ -6,6 +8,7 @@ import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/widget/network_image_widget.dart';
 import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
 import 'package:customer_app/constant/constant.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/screen_size.dart';
 import 'package:flutter/material.dart';
@@ -338,25 +341,50 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                 txtColor: Colors.black,
                 bgColor: AppColors.yellow04,
                 onPress: () async {
-                  if (controller.formKey.value.currentState!.validate()) {
-                    await controller.addPrivatePassData();
-                    controller.clearFormData();
-                    // Show popup notification
-                    Get.showSnackbar(
-                      const GetSnackBar(
-                        title: "Success",
-                        message:
-                            "Your request has been sent with status 'Pending'",
-                        backgroundColor: Colors.green,
-                        duration: Duration(
-                            seconds: 3), // Adjust the duration as needed
-                        snackPosition: SnackPosition
-                            .BOTTOM, // Set snackbar position to bottom
-                      ),
-                    );
-                    // Navigate to dashboard page
-                    Get.toNamed(Routes.DASHBOARD_SCREEN);
-                  }
+                  // Show popup notification
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DialogBoxNotify(
+                        imageAsset: "assets/images/ic_parking.png",
+                        onPressConfirm: () async {
+                          if (controller.formKey.value.currentState!
+                              .validate()) {
+                            // Show loading indicator
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.darkGrey10,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+
+                            // Call addPrivatePassData asynchronously
+                            await controller.addPrivatePassData();
+
+                            // Hide loading indicator
+                            Navigator.of(context).pop();
+
+                            // Navigate to dashboard page
+                            Get.offAndToNamed(
+                              Routes.DASHBOARD_SCREEN,
+                            );
+                          }
+                        },
+                        onPressConfirmBtnName: "Ok".tr,
+                        onPressConfirmColor: AppColors.green04,
+                        content:
+                            "Your request has been sent with status 'Pending'"
+                                .tr,
+                        subTitle: "Success".tr,
+                      );
+                    },
+                  );
                 },
               ),
             ),

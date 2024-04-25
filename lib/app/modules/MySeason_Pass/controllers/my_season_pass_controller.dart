@@ -18,6 +18,19 @@ class MySeasonPassController extends GetxController {
     super.onInit();
   }
 
+  loadMySeasonPassList() async {
+    isLoading.value =
+        true; // Set loading indicator to true before fetching data
+    await FireStoreUtils.getMySeasonPassData().then((value) {
+      if (value != null) {
+        mySeasonPassList.value = value;
+        print('----------->${mySeasonPassList.length}');
+      }
+    });
+    isLoading.value =
+        false; // Set loading indicator to false after fetching data
+  }
+
   getMySeasonPass() async {
     await FireStoreUtils.getMySeasonPassData().then((value) {
       if (value != null) {

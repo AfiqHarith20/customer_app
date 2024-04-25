@@ -312,7 +312,8 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                       ? const Center(
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.darkGrey10),
+                              AppColors.darkGrey10,
+                            ),
                           ),
                         ) // Show loading indicator
                       : ListView.builder(

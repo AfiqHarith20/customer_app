@@ -187,10 +187,13 @@ const Map<String, String> enUS = {
   "Enter Plate No.": "Enter Plate No.",
   "Plate No. required": "Plate No. required",
   "Lot No.": "Lot No.",
+  "Lot No.*": "Lot No.*",
   "Enter Lot No.": "Enter Lot No.",
   "Company Name": "Company Name",
   "Enter Company Name": "Enter Company Name",
   "Company Registration No.": "Company Registration No.",
+  "Company Name*": "Company Name*",
+  "Company Registration No.*": "Company Registration No.*",
   "Enter Company Registration No.": "Enter Company Registration No.",
   "Address": "Address",
   "Enter Address": "Enter Address",
@@ -235,4 +238,6 @@ const Map<String, String> enUS = {
       ".Please verify your email to make sure you can make any transaction.",
   "Active Pass": "Active Pass",
   "Pending Pass": "Pending Pass",
+  "Your request has been sent with status 'Pending'":
+      "Your request has been sent with status 'Pending'"
 };
