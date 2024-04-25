@@ -220,9 +220,10 @@ class InformationScreenController extends GetxController {
       //     .then((value) => print('Successfully sent email verification'));
 
       // Print a message or perform any other action upon successful sending of verification email
-      print('Verification email sent to $email');
-      _showEmailVerifiedSnackbar(
-          "A verification email has been sent to $email. Please verify your email to make sure you can make any transaction."
+      // print('Verification email sent to $email');
+      _showEmailVerifiedSnackbar("A verification email has been sent to " +
+          email +
+          ".Please verify your email to make sure you can make any transaction."
               .tr);
     } catch (error) {
       // Handle errors if any

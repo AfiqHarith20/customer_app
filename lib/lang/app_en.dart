@@ -145,8 +145,8 @@ const Map<String, String> enUS = {
   "Availability:": "Availability:",
   "Purchase": "Purchase",
   "Quick Mobile Login": "Quick Mobile Login",
-  "Access your account with ease by simply logging in with your mobile number.":
-      "Access your account with ease by simply logging in with your mobile number.",
+  "Access your account with ease by simply logging in with your email and password.":
+      "Access your account with ease by simply logging in with your email and password.",
   "Log in": "Log in",
   "Sign Up": "Sign Up",
   "Already have an account?": "Already have an account?",
@@ -229,8 +229,10 @@ const Map<String, String> enUS = {
       "Please verify your email before proceeding.",
   "Email Verification": "Email Verification",
   "This Wallet Feature is Lock": "This Wallet Feature is Lock",
-  "A verification email has been sent to . Please verify your email to make sure you can make any transaction.":
-      "A verification email has been sent to . Please verify your email to make sure you can make any transaction.",
+  "A verification email has been sent to ":
+      "A verification email has been sent to ",
+  ".Please verify your email to make sure you can make any transaction.":
+      ".Please verify your email to make sure you can make any transaction.",
   "Active Pass": "Active Pass",
   "Pending Pass": "Pending Pass",
 };

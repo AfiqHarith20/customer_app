@@ -143,8 +143,8 @@ const Map<String, String> msMY = {
   "Availability:": "Ketersediaan:",
   "Purchase": "Belian",
   "Quick Mobile Login": "Log Masuk Mudah Alih Pantas",
-  "Access your account with ease by simply logging in with your mobile number.":
-      "Akses akaun anda dengan mudah dengan hanya log masuk menggunakan nombor telefon anda.",
+  "Access your account with ease by simply logging in with your email and password.":
+      "Akses akaun anda dengan mudah dengan hanya log masuk menggunakan e-mel dan kata laluan anda.",
   "Log in": "Log masuk",
   "Sign Up": "Daftar Baru",
   "Already have an account?": "Sudah mempunyai akaun?",
@@ -230,8 +230,10 @@ const Map<String, String> msMY = {
       "Sila sahkan e-mel sebelum meneruskan.",
   "Email Verification": "Pengesahan E-mel",
   "This Wallet Feature is Lock": "Ciri Dompet Disekat",
-  "A verification email has been sent to . Please verify your email to make sure you can make any transaction.":
-      "E-mel pengesahan telah dihantar ke akaun . Sila sahkan e-mel anda untuk memastikan anda boleh melakukan sebarang transaksi.",
+  "A verification email has been sent to ":
+      "E-mel pengesahan telah dihantar ke akaun ",
+  ".Please verify your email to make sure you can make any transaction.":
+      ".Sila sahkan e-mel anda untuk memastikan anda boleh melakukan sebarang transaksi.",
   "Active Pass": "Pas Aktif",
   "Pending Pass": "Pas Belum Aktif",
   "Active": "Aktif",

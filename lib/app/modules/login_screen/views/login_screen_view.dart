@@ -42,7 +42,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
                     height: 6,
                   ),
                   Text(
-                    "Access your account with ease by simply logging in with your mobile number."
+                    "Access your account with ease by simply logging in with your email and password."
                         .tr,
                     style: const TextStyle(
                         color: AppColors.lightGrey10,
