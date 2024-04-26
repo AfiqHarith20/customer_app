@@ -64,6 +64,32 @@ class LoginScreenView extends GetView<LoginScreenController> {
                     controller: controller.passwordController.value,
                     onPress: () {},
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Forgot the password?".tr,
+                        style: const TextStyle(
+                          color: Colors.black45,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(Routes.RESET_PASS_SCREEN);
+                        },
+                        child: Text(
+                          "Click Here".tr,
+                          style: TextStyle(
+                            color: Colors.blue[900],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                     height: 32,
                   ),

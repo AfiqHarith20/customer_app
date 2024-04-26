@@ -33,6 +33,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
   Widget build(BuildContext context) {
     return GetX<PurchasePassPrivateController>(
       init: PurchasePassPrivateController(),
+      dispose: (state) => state.dispose(),
       builder: (controller) {
         return Scaffold(
           backgroundColor: AppColors.lightGrey02,
@@ -43,7 +44,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
           ),
           body: SingleChildScrollView(
             child: Form(
-              key: controller.formKey.value,
+              key: controller.formKeyPurchasePrivate.value,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
@@ -348,7 +349,8 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       return DialogBoxNotify(
                         imageAsset: "assets/images/ic_parking.png",
                         onPressConfirm: () async {
-                          if (controller.formKey.value.currentState!
+                          if (controller
+                              .formKeyPurchasePrivate.value.currentState!
                               .validate()) {
                             // Show loading indicator
                             showDialog(
@@ -405,7 +407,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
         return StatefulBuilder(
           builder: (context, setState) {
             return SizedBox(
-              height: Responsive.height(22, context),
+              height: Responsive.height(28, context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

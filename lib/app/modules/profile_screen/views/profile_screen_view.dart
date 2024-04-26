@@ -30,69 +30,102 @@ class ProfileScreenView extends StatelessWidget {
         builder: (controller) {
           return Scaffold(
               backgroundColor: AppColors.lightGrey02,
-              appBar: UiInterface().customAppBar(backgroundColor: AppColors.lightGrey02, context, "My Profile".tr, isBack: false),
+              appBar: UiInterface().customAppBar(
+                  backgroundColor: AppColors.lightGrey02,
+                  context,
+                  "My Profile".tr,
+                  isBack: false),
               body: controller.isLoading.value
                   ? SingleChildScrollView(
                       child: Form(
-                        key: controller.formKey.value,
+                        key: controller.formKeyProfile.value,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Center(
                                   child: controller.profileImage.isEmpty
                                       ? Container(
-                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(60), boxShadow: [
-                                            BoxShadow(
-                                                offset: const Offset(5, 4),
-                                                spreadRadius: .2,
-                                                blurRadius: 12,
-                                                color: AppColors.darkGrey02.withOpacity(.5))
-                                          ]),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(60),
-                                            child: Image.asset(
-                                              Constant.userPlaceHolder,
-                                              height: Responsive.width(30, context),
-                                              width: Responsive.width(30, context),
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        )
-                                      : (Constant().hasValidUrl(controller.profileImage.value))
-                                          ? Container(
-                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(60), boxShadow: [
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(60),
+                                              boxShadow: [
                                                 BoxShadow(
                                                     offset: const Offset(5, 4),
                                                     spreadRadius: .2,
                                                     blurRadius: 12,
-                                                    color: AppColors.darkGrey02.withOpacity(.5))
+                                                    color: AppColors.darkGrey02
+                                                        .withOpacity(.5))
                                               ]),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(60),
+                                            child: Image.asset(
+                                              Constant.userPlaceHolder,
+                                              height:
+                                                  Responsive.width(30, context),
+                                              width:
+                                                  Responsive.width(30, context),
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                        )
+                                      : (Constant().hasValidUrl(
+                                              controller.profileImage.value))
+                                          ? Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(60),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                        offset:
+                                                            const Offset(5, 4),
+                                                        spreadRadius: .2,
+                                                        blurRadius: 12,
+                                                        color: AppColors
+                                                            .darkGrey02
+                                                            .withOpacity(.5))
+                                                  ]),
                                               child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(60),
+                                                borderRadius:
+                                                    BorderRadius.circular(60),
                                                 child: NetworkImageWidget(
-                                                  imageUrl: controller.profileImage.value,
-                                                  height: Responsive.width(30, context),
-                                                  width: Responsive.width(30, context),
+                                                  imageUrl: controller
+                                                      .profileImage.value,
+                                                  height: Responsive.width(
+                                                      30, context),
+                                                  width: Responsive.width(
+                                                      30, context),
                                                   fit: BoxFit.fill,
                                                 ),
                                               ),
                                             )
                                           : Container(
-                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(60), boxShadow: [
-                                                BoxShadow(
-                                                    offset: const Offset(5, 4),
-                                                    spreadRadius: .2,
-                                                    blurRadius: 12,
-                                                    color: AppColors.darkGrey02.withOpacity(.5))
-                                              ]),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(60),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                        offset:
+                                                            const Offset(5, 4),
+                                                        spreadRadius: .2,
+                                                        blurRadius: 12,
+                                                        color: AppColors
+                                                            .darkGrey02
+                                                            .withOpacity(.5))
+                                                  ]),
                                               child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(60),
+                                                borderRadius:
+                                                    BorderRadius.circular(60),
                                                 child: Image.file(
-                                                  File(controller.profileImage.value),
-                                                  height: Responsive.width(30, context),
-                                                  width: Responsive.width(30, context),
+                                                  File(controller
+                                                      .profileImage.value),
+                                                  height: Responsive.width(
+                                                      30, context),
+                                                  width: Responsive.width(
+                                                      30, context),
                                                   fit: BoxFit.fill,
                                                 ),
                                               ),
@@ -102,13 +135,19 @@ class ProfileScreenView extends StatelessWidget {
                               ),
                               Center(
                                   child: Text(
-                                controller.customerModel.value.fullName.toString(),
-                                style: const TextStyle(fontFamily: AppThemData.bold, fontSize: 18, color: AppColors.darkGrey09),
+                                controller.customerModel.value.fullName
+                                    .toString(),
+                                style: const TextStyle(
+                                    fontFamily: AppThemData.bold,
+                                    fontSize: 18,
+                                    color: AppColors.darkGrey09),
                               )),
                               Center(
                                   child: Text(
                                 controller.customerModel.value.email.toString(),
-                                style: const TextStyle(fontFamily: AppThemData.regular, color: AppColors.darkGrey04),
+                                style: const TextStyle(
+                                    fontFamily: AppThemData.regular,
+                                    color: AppColors.darkGrey04),
                               )),
                               const SizedBox(
                                 height: 20,
@@ -118,7 +157,10 @@ class ProfileScreenView extends StatelessWidget {
                                   padding: const EdgeInsets.only(bottom: 20),
                                   child: ButtonThem.buildButton(
                                     btnHeight: 45,
-                                    btnWidthRatio: "Edit Profile".tr == "تعديل الملف الشخصي" ? .50 : .44,
+                                    btnWidthRatio: "Edit Profile".tr ==
+                                            "تعديل الملف الشخصي"
+                                        ? .50
+                                        : .44,
                                     fontWeight: FontWeight.w500,
                                     imageAsset: "assets/icons/ic_edit_line.svg",
                                     context,
@@ -126,8 +168,11 @@ class ProfileScreenView extends StatelessWidget {
                                     txtColor: AppColors.white,
                                     bgColor: AppColors.darkGrey10,
                                     onPress: () {
-                                      Get.toNamed(Routes.EDIT_PROFILE_SCREEN, arguments: {"customerModel": controller.customerModel.value})
-                                          ?.then((value) {
+                                      Get.toNamed(Routes.EDIT_PROFILE_SCREEN,
+                                          arguments: {
+                                            "customerModel":
+                                                controller.customerModel.value
+                                          })?.then((value) {
                                         controller.getProfileData();
                                       });
                                     },
@@ -165,7 +210,8 @@ class ProfileScreenView extends StatelessWidget {
                               ),
                               menuItemWidget(
                                 onTap: () {
-                                  Get.toNamed(Routes.LANGUAGE_SCREEN)?.then((value) {
+                                  Get.toNamed(Routes.LANGUAGE_SCREEN)
+                                      ?.then((value) {
                                     if (value == true) {
                                       controller.getLanguage();
                                     }
@@ -182,23 +228,31 @@ class ProfileScreenView extends StatelessWidget {
                               //   title: "Refer and Earn".tr,
                               //   svgImage: "assets/icons/ic_ticket.svg",
                               // ),
-                              const Divider(height: 0, color: AppColors.lightGrey05),
+                              const Divider(
+                                  height: 0, color: AppColors.lightGrey05),
                               menuItemWidget(
                                 onTap: () async {
-                                  final Uri url = Uri.parse(Constant.privacyPolicy.toString());
+                                  final Uri url = Uri.parse(
+                                      Constant.privacyPolicy.toString());
                                   if (!await launchUrl(url)) {
-                                    throw Exception('Could not launch ${Constant.supportURL.toString()}'.tr);
+                                    throw Exception(
+                                        'Could not launch ${Constant.supportURL.toString()}'
+                                            .tr);
                                   }
                                 },
                                 title: "Privacy Policy".tr,
                                 svgImage: "assets/icons/ic_privacy.svg",
                               ),
-                              const Divider(height: 0, color: AppColors.lightGrey05),
+                              const Divider(
+                                  height: 0, color: AppColors.lightGrey05),
                               menuItemWidget(
                                 onTap: () async {
-                                  final Uri url = Uri.parse(Constant.termsAndConditions.toString());
+                                  final Uri url = Uri.parse(
+                                      Constant.termsAndConditions.toString());
                                   if (!await launchUrl(url)) {
-                                    throw Exception('Could not launch ${Constant.supportURL.toString()}'.tr);
+                                    throw Exception(
+                                        'Could not launch ${Constant.supportURL.toString()}'
+                                            .tr);
                                   }
                                 },
                                 title: "Terms & Conditions".tr,
@@ -214,7 +268,8 @@ class ProfileScreenView extends StatelessWidget {
                                 title: "Support".tr,
                                 svgImage: "assets/icons/ic_call.svg",
                               ),
-                              const Divider(height: 0, color: AppColors.lightGrey05),
+                              const Divider(
+                                  height: 0, color: AppColors.lightGrey05),
                               menuItemWidget(
                                 onTap: () {
                                   Get.toNamed(Routes.CONTACT_US_SCREEN);
@@ -231,19 +286,25 @@ class ProfileScreenView extends StatelessWidget {
                                     context: context,
                                     builder: (context) {
                                       return DialogBox(
-                                          imageAsset: "assets/images/ic_log_out.png",
+                                          imageAsset:
+                                              "assets/images/ic_log_out.png",
                                           onPressConfirm: () async {
-                                            await FirebaseAuth.instance.signOut();
+                                            await FirebaseAuth.instance
+                                                .signOut();
                                             await GoogleSignIn().signOut();
-                                            Get.offAllNamed(Routes.LOGIN_SCREEN);
+                                            Get.offAllNamed(
+                                                Routes.LOGIN_SCREEN);
                                           },
                                           onPressConfirmBtnName: "Log Out".tr,
                                           onPressConfirmColor: AppColors.red04,
                                           onPressCancel: () {
                                             Get.back();
                                           },
-                                          content: "Are you sure you want to log out? You will be securely signed out of your account.".tr,
-                                          onPressCancelColor: AppColors.darkGrey01,
+                                          content:
+                                              "Are you sure you want to log out? You will be securely signed out of your account."
+                                                  .tr,
+                                          onPressCancelColor:
+                                              AppColors.darkGrey01,
                                           subTitle: "Log Out Confirmation".tr,
                                           onPressCancelBtnName: "Cancel".tr);
                                     },
@@ -261,12 +322,16 @@ class ProfileScreenView extends StatelessWidget {
                                     context: context,
                                     builder: (context) {
                                       return DialogBox(
-                                          imageAsset: "assets/images/ic_delete.png",
+                                          imageAsset:
+                                              "assets/images/ic_delete.png",
                                           onPressConfirm: () async {
-                                            await controller.deleteUserAccount();
-                                            await FirebaseAuth.instance.signOut();
+                                            await controller
+                                                .deleteUserAccount();
+                                            await FirebaseAuth.instance
+                                                .signOut();
                                             await GoogleSignIn().signOut();
-                                            Get.offAllNamed(Routes.LOGIN_SCREEN);
+                                            Get.offAllNamed(
+                                                Routes.LOGIN_SCREEN);
                                           },
                                           onPressConfirmBtnName: "Delete".tr,
                                           onPressConfirmColor: AppColors.red04,
@@ -276,7 +341,8 @@ class ProfileScreenView extends StatelessWidget {
                                           content:
                                               "Are you sure you want to Delete Account? All Information will be deleted of your account."
                                                   .tr,
-                                          onPressCancelColor: AppColors.darkGrey01,
+                                          onPressCancelColor:
+                                              AppColors.darkGrey01,
                                           subTitle: "Delete Account".tr,
                                           onPressCancelBtnName: "Cancel".tr);
                                     },
@@ -312,7 +378,9 @@ Widget menuItemWidget({
       trailing: const Icon(Icons.arrow_forward_ios, size: 18),
       leading: SvgPicture.asset(
         svgImage,
-        color: title == "Log Out" || title.tr == "Delete Account".tr ? AppColors.red04 : AppColors.darkGrey05,
+        color: title == "Log Out" || title.tr == "Delete Account".tr
+            ? AppColors.red04
+            : AppColors.darkGrey05,
         height: 26,
       ),
       title: Row(
@@ -322,7 +390,10 @@ Widget menuItemWidget({
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: AppThemData.medium,
-                  color: title.tr == "Log Out".tr || title.tr == "Delete Account".tr ? AppColors.red04 : AppColors.darkGrey08,
+                  color: title.tr == "Log Out".tr ||
+                          title.tr == "Delete Account".tr
+                      ? AppColors.red04
+                      : AppColors.darkGrey08,
                 )),
           ),
           if (title.tr == "Language".tr)

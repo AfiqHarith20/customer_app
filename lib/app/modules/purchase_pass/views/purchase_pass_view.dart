@@ -24,6 +24,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
   Widget build(BuildContext context) {
     return GetX<PurchasePassController>(
         init: PurchasePassController(),
+        dispose: (state) => state.dispose(),
         builder: (controller) {
           return Scaffold(
             backgroundColor: AppColors.lightGrey02,
@@ -34,7 +35,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
             ),
             body: SingleChildScrollView(
               child: Form(
-                key: controller.formKey.value,
+                key: controller.formKeyPurchase.value,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 12),
@@ -229,7 +230,8 @@ class PurchasePassView extends GetView<PurchasePassController> {
                     txtColor: Colors.black,
                     bgColor: AppColors.yellow04,
                     onPress: () async {
-                      if (controller.formKey.value.currentState!.validate()) {
+                      if (controller.formKeyPurchase.value.currentState!
+                          .validate()) {
                         await controller.addSeasonPassData();
                         Get.toNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
                           "addSeasonPassData": controller.addSeasonPassData,

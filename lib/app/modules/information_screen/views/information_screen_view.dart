@@ -39,7 +39,7 @@ class InformationScreenView extends GetView<InformationScreenController> {
         ),
         body: SingleChildScrollView(
           child: Form(
-            key: controller.formKey.value,
+            key: controller.formKeyInfo.value,
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
@@ -229,7 +229,8 @@ class InformationScreenView extends GetView<InformationScreenController> {
                     txtColor: AppColors.lightGrey01,
                     bgColor: AppColors.darkGrey10,
                     onPress: () async {
-                      if (controller.formKey.value.currentState!.validate()) {
+                      if (controller.formKeyInfo.value.currentState!
+                          .validate()) {
                         // controller.sendEmailVerification();
                         controller.createAccount();
                       }

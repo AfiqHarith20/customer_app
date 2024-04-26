@@ -18,7 +18,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PurchasePassPrivateController extends GetxController {
-  Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
+  Rx<GlobalKey<FormState>> formKeyPurchasePrivate = GlobalKey<FormState>().obs;
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> identificationNoController =

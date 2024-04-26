@@ -240,7 +240,17 @@ const Map<String, String> msMY = {
   "Active Pass": "Pas Aktif",
   "Pending Pass": "Pas Belum Aktif",
   "Active": "Aktif",
-  "pending": "Belum Aktif",
+  "pending": "Menunggu Pengesahan",
   "Your request has been sent with status 'Pending'":
-      "Permintaan Petak Khas anda telah pun dihantar dengan status 'Belum Aktif'"
+      "Permintaan Petak Khas anda telah pun dihantar dengan status 'Belum Aktif'",
+  "Pay": "Bayar",
+  'Create At:': 'Dibuat Pada:',
+  "Reset Password": "Tukar Kata Laluan",
+  "Reset New Password": "Tukar Kata Laluan Baru",
+  "Your password reset has been sent to ":
+      "Tukar Kata Laluan Baru telah dihantar ke ",
+  ".Please verify password reset to confirm the reset.":
+      ".Sila sahkan untuk pertukaran kata laluan.",
+  "Forgot the password?": "Lupa Kata Laluan?",
+  "Click Here": "Tekan Sini",
 };

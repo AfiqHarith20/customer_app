@@ -7,6 +7,8 @@ import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen
 import 'package:customer_app/app/modules/qrcode_screen/views/qrcode_screen_view.dart';
 import 'package:customer_app/app/modules/register_screen/bindings/register_screen_binding.dart';
 import 'package:customer_app/app/modules/register_screen/views/register_screen_view.dart';
+import 'package:customer_app/app/modules/reset_password_screen/bindings/reset_password_screen_binding.dart';
+import 'package:customer_app/app/modules/reset_password_screen/views/reset_password_screen_view.dart';
 import 'package:customer_app/app/modules/search_summon_screen/bindings/search_summon_screen_binding.dart';
 import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
 import 'package:customer_app/app/modules/search_summon_screen/views/search_summon_screen_view.dart';
@@ -118,6 +120,12 @@ class AppPages {
         name: _Paths.REGISTER_SCREEN,
         page: () => const RegisterScreenView(),
         binding: RegisterScreenBinding(),
+        transition: Transition.rightToLeftWithFade,
+        transitionDuration: const Duration(milliseconds: 250)),
+    GetPage(
+        name: _Paths.RESET_PASS_SCREEN,
+        page: () => const ResetPasswordScreenView(),
+        binding: ResetPasswordScreenBinding(),
         transition: Transition.rightToLeftWithFade,
         transitionDuration: const Duration(milliseconds: 250)),
     GetPage(

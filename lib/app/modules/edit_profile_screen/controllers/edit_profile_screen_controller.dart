@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreenController extends GetxController {
-  Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
+  Rx<GlobalKey<FormState>> formKeyEdit = GlobalKey<FormState>().obs;
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
@@ -46,7 +46,8 @@ class EditProfileScreenController extends GetxController {
 
   updateProfile() async {
     ShowToastDialog.showLoader("please_wait".tr);
-    if (profileImage.value.isNotEmpty && Constant().hasValidUrl(profileImage.value) == false) {
+    if (profileImage.value.isNotEmpty &&
+        Constant().hasValidUrl(profileImage.value) == false) {
       profileImage.value = await Constant.uploadUserImageToFireStorage(
         File(profileImage.value),
         "profileImage/${FireStoreUtils.getCurrentUid()}",

@@ -314,32 +314,36 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                           color: AppColors.darkGrey08,
                         ),
                       ),
-                      subtitle: Row(
+                      subtitle: Column(
                         children: [
-                          Text(
-                            'RM ${controller.pendingPassList[index].privatePassModel!.price.toString()}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontFamily: AppThemData.medium,
-                              color: AppColors.yellow04,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              '/ ${controller.pendingPassList[index].privatePassModel?.validity.toString()}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontFamily: AppThemData.medium,
-                                color: AppColors.darkGrey08,
+                          Row(
+                            children: [
+                              Text(
+                                'RM ${controller.pendingPassList[index].privatePassModel!.price.toString()}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: AppThemData.medium,
+                                  color: AppColors.yellow04,
+                                ),
                               ),
-                            ),
+                              Expanded(
+                                child: Text(
+                                  '/ ${controller.pendingPassList[index].privatePassModel?.validity.toString()}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontFamily: AppThemData.medium,
+                                    color: AppColors.darkGrey08,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           itemPendingWidget(
                             title: controller.pendingPassList[index].status
                                 .toString(),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -358,10 +362,16 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                       title: 'Serial Number:'.tr,
                       svgImage: 'assets/icons/ic_hash.svg'),
                   itemWidget(
+                      subText: controller.pendingPassList[index].lotNo!
+                          .toUpperCase(),
+                      title: '${'Lot No.'.tr}:',
+                      svgImage: "assets/icons/ic_note.svg"),
+                  itemWidget(
                       subText: Constant.timestampToDate(
-                          controller.pendingPassList[index].endDate!),
-                      title: '${'Validity'.tr}:',
+                          controller.pendingPassList[index].createAt!),
+                      title: 'Create At:'.tr,
                       svgImage: 'assets/icons/ic_timer.svg'),
+
                   // itemExpiredWidget(
                   //     daysUntilExpired: daysUntilExpired,
                   //     title: 'Expired In (Day):'.tr,
@@ -454,14 +464,14 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
     required String title,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(2.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             '(${title.tr})',
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               color: Colors.blueAccent,
             ),
           ),

@@ -402,9 +402,10 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                                                     .circular(
                                                                         8.0),
                                                           ),
-                                                          child: const Text(
-                                                            'Pay',
-                                                            style: TextStyle(
+                                                          child: Text(
+                                                            'Pay'.tr,
+                                                            style:
+                                                                const TextStyle(
                                                               color: AppColors
                                                                   .darkGrey07,
                                                               fontWeight:

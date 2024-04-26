@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreenController extends GetxController {
-  Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
+  Rx<GlobalKey<FormState>> formKeyProfile = GlobalKey<FormState>().obs;
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
@@ -36,7 +36,8 @@ class ProfileScreenController extends GetxController {
   }
 
   getProfileData() async {
-    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid()).then((value) {
+    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+        .then((value) {
       if (value != null) {
         customerModel.value = value;
         fullNameController.value.text = customerModel.value.fullName!;

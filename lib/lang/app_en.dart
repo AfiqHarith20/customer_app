@@ -239,5 +239,15 @@ const Map<String, String> enUS = {
   "Active Pass": "Active Pass",
   "Pending Pass": "Pending Pass",
   "Your request has been sent with status 'Pending'":
-      "Your request has been sent with status 'Pending'"
+      "Your request has been sent with status 'Pending'",
+  "Pay": "Pay",
+  'Create At:': 'Create At:',
+  "Reset Password": "Reset Password",
+  "Reset New Password": "Reset New Password",
+  "Your password reset has been sent to ":
+      "Your password reset has been sent to ",
+  ".Please verify password reset to confirm the reset.":
+      ".Please verify password reset to confirm the reset.",
+  "Forgot the password?": "Forgot the password?",
+  "Click Here": "Click Here",
 };

@@ -12,7 +12,7 @@ import '../../../models/my_purchase_pass_model.dart';
 
 class PurchasePassController extends GetxController {
   //TODO: Implement PurchasePassController
-  Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
+  Rx<GlobalKey<FormState>> formKeyPurchase = GlobalKey<FormState>().obs;
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> identificationNoController =

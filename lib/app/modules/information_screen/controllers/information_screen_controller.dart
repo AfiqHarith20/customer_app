@@ -16,7 +16,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InformationScreenController extends GetxController {
-  Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
+  Rx<GlobalKey<FormState>> formKeyInfo = GlobalKey<FormState>().obs;
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
@@ -221,7 +221,7 @@ class InformationScreenController extends GetxController {
 
       // Print a message or perform any other action upon successful sending of verification email
       // print('Verification email sent to $email');
-      _showEmailVerifiedSnackbar("A verification email has been sent to " +
+      _showEmailVerifiedSnackbar("A verification email has been sent to ".tr +
           email +
           ".Please verify your email to make sure you can make any transaction."
               .tr);
