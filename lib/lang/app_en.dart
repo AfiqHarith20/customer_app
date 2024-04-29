@@ -250,4 +250,7 @@ const Map<String, String> enUS = {
       ".Please verify password reset to confirm the reset.",
   "Forgot the password?": "Forgot the password?",
   "Click Here": "Click Here",
+  "Please Select": "Please Select",
+  "Please select a lot image": "Please select a lot image",
+  "Pass and Contact Info": "Pass and Contact Info",
 };

@@ -31,7 +31,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
             appBar: UiInterface().customAppBar(
               backgroundColor: AppColors.white,
               context,
-              "Purchase Pass".tr,
+              "Pass and Contact Info".tr,
             ),
             body: SingleChildScrollView(
               child: Form(

@@ -253,4 +253,7 @@ const Map<String, String> msMY = {
       ".Sila sahkan untuk pertukaran kata laluan.",
   "Forgot the password?": "Lupa Kata Laluan?",
   "Click Here": "Tekan Sini",
+  "Please Select": "Sila Pilih",
+  "Please select a lot image": "Sila pilih gambar lot",
+  "Pass and Contact Info": "Pas dan Maklumat Hubungan"
 };

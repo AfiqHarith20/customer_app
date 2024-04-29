@@ -37,7 +37,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
           appBar: UiInterface().customAppBar(
             backgroundColor: AppColors.white,
             context,
-            "Purchase Special Pass".tr,
+            "Pass and Contact Info".tr,
           ),
           body: SingleChildScrollView(
             child: Form(
@@ -263,7 +263,15 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                             ),
                           ),
                         ),
-                        // .
+                        if (controller.privateParkImage
+                            .isEmpty) // Show warning if lot image is not selected
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              "Please select a lot image",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
                       ],
                     ),
                     const SizedBox(
@@ -340,7 +348,8 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                 bgColor: AppColors.yellow04,
                 onPress: () async {
                   if (controller.formKeyPurchasePrivate.value.currentState!
-                      .validate()) {
+                          .validate() &&
+                      controller.privateParkImage.value.isNotEmpty) {
                     // Show loading indicator
                     showDialog(
                       context: context,
@@ -360,28 +369,29 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
 
                     // Hide loading indicator
                     Navigator.of(context).pop();
+
+                    // Show popup notification
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DialogBoxNotify(
+                          imageAsset: "assets/images/ic_parking.png",
+                          onPressConfirm: () async {
+                            // Navigate to dashboard page
+                            Get.offAndToNamed(
+                              Routes.DASHBOARD_SCREEN,
+                            );
+                          },
+                          onPressConfirmBtnName: "Ok".tr,
+                          onPressConfirmColor: AppColors.green04,
+                          content:
+                              "Your request has been sent with status 'Pending'"
+                                  .tr,
+                          subTitle: "Success".tr,
+                        );
+                      },
+                    );
                   }
-                  // Show popup notification
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return DialogBoxNotify(
-                        imageAsset: "assets/images/ic_parking.png",
-                        onPressConfirm: () async {
-                          // Navigate to dashboard page
-                          Get.offAndToNamed(
-                            Routes.DASHBOARD_SCREEN,
-                          );
-                        },
-                        onPressConfirmBtnName: "Ok".tr,
-                        onPressConfirmColor: AppColors.green04,
-                        content:
-                            "Your request has been sent with status 'Pending'"
-                                .tr,
-                        subTitle: "Success".tr,
-                      );
-                    },
-                  );
                 },
               ),
             ),
@@ -409,7 +419,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                   Padding(
                     padding: const EdgeInsets.only(top: 15),
                     child: Text(
-                      "please_select".tr,
+                      "Please Select".tr,
                       style: const TextStyle(
                         fontSize: 16,
                         fontFamily: AppThemData.semiBold,

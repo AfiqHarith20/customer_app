@@ -16,6 +16,8 @@ class SeasonPassController extends GetxController {
   RxList<SeasonPassModel> seasonPassList = <SeasonPassModel>[].obs;
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
 
+  RxBool isMyPassScreen = false.obs;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override

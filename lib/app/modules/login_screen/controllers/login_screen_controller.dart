@@ -119,21 +119,14 @@ class LoginScreenController extends GetxController {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if (googleUser == null) {
-        // Google sign-in canceled or failed
-        ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast("Google sign-in canceled or failed");
-        return null;
-      }
-
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
       );
 
       // Once signed in, return the UserCredential

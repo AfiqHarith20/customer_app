@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/private_pass_model.dart';
+import 'package:customer_app/app/modules/Season_pass/controllers/season_pass_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/constant/constant.dart';
@@ -49,6 +50,8 @@ class PurchasePassPrivateController extends GetxController {
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
   RxList<File> imageFiles = <File>[].obs;
   final ImagePicker imagePicker = ImagePicker();
+  final bool selectedSegment = Get.arguments['selectedSegment'];
+  final SeasonPassController seasonPassController = Get.find();
 
   void clearFormData() {
     vehicleNoController.value.clear();
@@ -84,6 +87,14 @@ class PurchasePassPrivateController extends GetxController {
     getArgument();
     getProfileData();
     super.onInit();
+  }
+
+  void navigateBackToSeasonPassView() {
+    // Put your navigation logic here
+    Get.back();
+    // After navigating back, update the selected segment in SeasonPassController
+    seasonPassController.changeSegment(
+        false); // Set the selected segment to false (Season Pass)
   }
 
   getArgument() async {

@@ -115,24 +115,28 @@ class SeasonPassView extends GetView<SeasonPassController> {
 
   Widget _buildPassSection(
       BuildContext context, List<SeasonPassModel> seasonPassList) {
-    return ListView.builder(
-      itemCount: seasonPassList.length,
-      itemBuilder: (context, index) {
-        SeasonPassModel seasonPassModel = seasonPassList[index];
-        return _buildPassItem(context, seasonPassModel);
-      },
-    );
+    return controller.isLoading.value
+        ? Constant.loader()
+        : ListView.builder(
+            itemCount: seasonPassList.length,
+            itemBuilder: (context, index) {
+              SeasonPassModel seasonPassModel = seasonPassList[index];
+              return _buildPassItem(context, seasonPassModel);
+            },
+          );
   }
 
   Widget _buildPrivatePassSection(
       BuildContext context, List<PrivatePassModel> privatePassList) {
-    return ListView.builder(
-      itemCount: privatePassList.length,
-      itemBuilder: (context, index) {
-        PrivatePassModel privatePassModel = privatePassList[index];
-        return _buildPassItem(context, privatePassModel);
-      },
-    );
+    return controller.isLoading.value
+        ? Constant.loader()
+        : ListView.builder(
+            itemCount: privatePassList.length,
+            itemBuilder: (context, index) {
+              PrivatePassModel privatePassModel = privatePassList[index];
+              return _buildPassItem(context, privatePassModel);
+            },
+          );
   }
 
   Widget _buildPassItem(BuildContext context, dynamic passModel) {
@@ -193,8 +197,10 @@ class SeasonPassView extends GetView<SeasonPassController> {
                     Get.toNamed(Routes.PURCHASE_PASS,
                         arguments: {"seasonPassModel": passModel});
                   } else if (passModel is PrivatePassModel) {
-                    Get.toNamed(Routes.PURCHASE_PASS_PRIVATE,
-                        arguments: {"privatePassModel": passModel});
+                    Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {
+                      "privatePassModel": passModel,
+                      "selectedSegment": controller.selectedSegment.value,
+                    });
                   }
                 } else {
                   // Show a message to inform the user to verify their email
