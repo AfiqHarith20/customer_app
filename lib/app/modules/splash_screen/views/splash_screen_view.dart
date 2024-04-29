@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import '../controllers/splash_screen_controller.dart';
 
-
 class SplashScreenView extends StatelessWidget {
   const SplashScreenView({Key? key}) : super(key: key);
 
@@ -20,14 +19,25 @@ class SplashScreenView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset("assets/images/logo.png",height: 88,width: 941,),
-                Text(
+                Image.asset(
+                  "assets/images/logo.png",
+                  height: 88,
+                  width: 941,
+                ),
+                const Text(
                   "NAZIFA PARKING",
-                  style: TextStyle(fontFamily: AppThemData.bold, fontWeight: FontWeight.w900, color: Colors.black, fontSize: 32),
+                  style: TextStyle(
+                      fontFamily: AppThemData.bold,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                      fontSize: 32),
                 ),
                 Text(
                   "Effortless Parking".tr,
-                  style: TextStyle(fontFamily: AppThemData.regular, color: Colors.black, fontSize: 16),
+                  style: const TextStyle(
+                      fontFamily: AppThemData.regular,
+                      color: Colors.black,
+                      fontSize: 16),
                 ),
               ],
             ),

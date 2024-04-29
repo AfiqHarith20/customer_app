@@ -1,22 +1,19 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-import 'dart:math';
 
-import 'package:customer_app/app/models/private_pass_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/widget/network_image_widget.dart';
 import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
-import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/screen_size.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
-
-import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../themes/app_colors.dart';
 import '../../../../themes/app_them_data.dart';
@@ -342,6 +339,28 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                 txtColor: Colors.black,
                 bgColor: AppColors.yellow04,
                 onPress: () async {
+                  if (controller.formKeyPurchasePrivate.value.currentState!
+                      .validate()) {
+                    // Show loading indicator
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.darkGrey10,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+
+                    // Call addPrivatePassData asynchronously
+                    await controller.addPrivatePassData();
+
+                    // Hide loading indicator
+                    Navigator.of(context).pop();
+                  }
                   // Show popup notification
                   showDialog(
                     context: context,
@@ -349,34 +368,10 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       return DialogBoxNotify(
                         imageAsset: "assets/images/ic_parking.png",
                         onPressConfirm: () async {
-                          if (controller
-                              .formKeyPurchasePrivate.value.currentState!
-                              .validate()) {
-                            // Show loading indicator
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      AppColors.darkGrey10,
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-
-                            // Call addPrivatePassData asynchronously
-                            await controller.addPrivatePassData();
-
-                            // Hide loading indicator
-                            Navigator.of(context).pop();
-
-                            // Navigate to dashboard page
-                            Get.offAndToNamed(
-                              Routes.DASHBOARD_SCREEN,
-                            );
-                          }
+                          // Navigate to dashboard page
+                          Get.offAndToNamed(
+                            Routes.DASHBOARD_SCREEN,
+                          );
                         },
                         onPressConfirmBtnName: "Ok".tr,
                         onPressConfirmColor: AppColors.green04,

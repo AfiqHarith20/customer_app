@@ -1,11 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/widget/email_textfield.dart';
 import 'package:customer_app/app/widget/password_textfield.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
 import 'package:customer_app/themes/button_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../controllers/register_screen_controller.dart';
 
