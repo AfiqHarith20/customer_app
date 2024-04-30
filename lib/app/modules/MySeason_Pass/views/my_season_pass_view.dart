@@ -147,7 +147,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
         itemBuilder: (context, index) {
           DateTime endDate =
               controller.mySeasonPassList[index].endDate!.toDate();
-          int daysUntilExpired = endDate.difference(DateTime.now()).inDays;
+          int daysUntilExpired = endDate.difference(DateTime.now()).inDays + 1;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -178,7 +178,8 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                       title: Text(
                         controller
                             .mySeasonPassList[index].seasonPassModel!.passName
-                            .toString(),
+                            .toString()
+                            .tr,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -199,7 +200,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                           ),
                           Expanded(
                             child: Text(
-                              '/ ${controller.mySeasonPassList[index].seasonPassModel?.validity.toString()}',
+                              '/ ${controller.mySeasonPassList[index].seasonPassModel?.validity.toString().tr}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -305,7 +306,8 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                       title: Text(
                         controller
                             .pendingPassList[index].privatePassModel!.passName
-                            .toString(),
+                            .toString()
+                            .tr,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -328,7 +330,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                               ),
                               Expanded(
                                 child: Text(
-                                  '/ ${controller.pendingPassList[index].privatePassModel?.validity.toString()}',
+                                  '/ ${controller.pendingPassList[index].privatePassModel?.validity.toString().tr}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -440,7 +442,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
   static Widget itemStatusWidget({
     required DateTime endDate,
   }) {
-    bool isActive = DateTime.now().isBefore(endDate);
+    bool isActive = DateTime.now().isAfter(endDate);
     String status = isActive ? 'Active'.tr : 'Expired'.tr;
 
     return Padding(
@@ -449,7 +451,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            '($status)'.tr,
+            '($status)',
             style: TextStyle(
               fontSize: 16,
               color: isActive ? Colors.green : Colors.red,

@@ -343,6 +343,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
               padding: const EdgeInsets.only(bottom: 10),
               child: ButtonThem.buildButton(
                 context,
+                btnHeight: 48,
                 title: "Submit".tr,
                 txtColor: Colors.black,
                 bgColor: AppColors.yellow04,

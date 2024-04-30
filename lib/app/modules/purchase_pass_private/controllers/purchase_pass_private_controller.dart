@@ -215,19 +215,19 @@ class PurchasePassPrivateController extends GetxController {
   }
 
   checkDuration(String time) {
-    if (time == "1 Minggu") {
+    if (time == "1 Week") {
       return 7;
-    } else if (time == "2 Minggu") {
+    } else if (time == "2 Weeks") {
       return 14;
-    } else if (time == "3 Minggu") {
+    } else if (time == "3 Weeks") {
       return 21;
-    } else if (time == "1 Bulan") {
+    } else if (time == "1 Month") {
       return 30;
-    } else if (time == "3 Bulan") {
+    } else if (time == "3 Months") {
       return 90;
-    } else if (time == "6 Bulan") {
+    } else if (time == "6 Months") {
       return 182;
-    } else if (time == "12 Bulan") {
+    } else if (time == "12 Months") {
       return 365;
     }
   }

@@ -167,7 +167,7 @@ class SeasonPassView extends GetView<SeasonPassController> {
                   ),
                 ),
                 title: Text(
-                  passModel.passName.toString(),
+                  passModel.passName.toString().tr,
                   style: const TextStyle(
                     fontSize: 18,
                     fontFamily: AppThemData.bold,
@@ -187,7 +187,7 @@ class SeasonPassView extends GetView<SeasonPassController> {
             Divider(height: 2, color: AppColors.darkGrey02.withOpacity(0.5)),
             const SizedBox(height: 10),
             itemWidget(
-                subText: '${passModel.validity}', title: '${"Validity".tr}:'),
+                subText: '${passModel.validity}'.tr, title: "Validity:".tr),
             InkWell(
               onTap: () async {
                 bool emailVerified = await controller.isEmailVerified();
@@ -224,7 +224,7 @@ class SeasonPassView extends GetView<SeasonPassController> {
               },
               child: Container(
                 margin: const EdgeInsets.only(left: 15, right: 15, top: 10),
-                height: 56,
+                height: 48,
                 width: double.infinity,
                 decoration: BoxDecoration(
                     color: AppColors.yellow04,

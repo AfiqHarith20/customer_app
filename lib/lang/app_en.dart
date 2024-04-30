@@ -240,6 +240,7 @@ const Map<String, String> enUS = {
   "Pending Pass": "Pending Pass",
   "Your request has been sent with status 'Pending'":
       "Your request has been sent with status 'Pending'",
+  "pending": "Pending",
   "Pay": "Pay",
   'Create At:': 'Create At:',
   "Reset Password": "Reset Password",
@@ -253,4 +254,15 @@ const Map<String, String> enUS = {
   "Please Select": "Please Select",
   "Please select a lot image": "Please select a lot image",
   "Pass and Contact Info": "Pass and Contact Info",
+  "1 Week": "1 Week",
+  "2 Weeks": "2 Weeks",
+  "3 Weeks": "3 Weeks",
+  "1 Month": "1 Month",
+  "6 Months": "6 Months",
+  "12 Months": "12 Months",
+  "Pas Mingguan": "Weekly Pass",
+  "Pas Bulanan": "Monthly Pass",
+  "Petak Khas": "Special Lot",
+  "Active": "Active",
+  "Expired": "Expired",
 };
