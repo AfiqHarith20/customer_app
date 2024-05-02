@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
@@ -165,6 +169,13 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                             carNum: _requestMethod == 'car' ? searchText : '',
                           );
 
+                          String convertBase64ToUrl(String base64Strings) {
+                            final String decodedUrl =
+                                utf8.decode(base64.decode(base64Strings));
+
+                            return decodedUrl;
+                          }
+
                           // Parse the JSON response into a list of CompoundModel objects
                           List<CompoundModel> compounds = [];
                           List<String> compoundNums =
@@ -194,6 +205,12 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                   ? searchResult['vehicle_num'].split("::")
                                   : [];
 
+                          List<String> imageUrls =
+                              searchResult['allCompoundImage'] != null
+                                  ? convertBase64ToUrl(
+                                          searchResult['allCompoundImage'])
+                                      .split("::")
+                                  : [];
                           for (int i = 0; i < compoundNums.length; i++) {
                             CompoundModel compound = CompoundModel(
                               compoundNo: compoundNums[i],
@@ -208,6 +225,8 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                   kodHasils.isNotEmpty ? kodHasils[i] : '',
                               vehicleNum:
                                   vehicleNums.isNotEmpty ? vehicleNums[i] : '',
+                              imageUrl:
+                                  imageUrls.isNotEmpty ? imageUrls[i] : '',
                             );
                             compounds.add(compound);
                           }
@@ -235,78 +254,12 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                         }
                       },
                     ),
-                    // if (_requestMethod == 'compound')
-                    //   const SizedBox(
-                    //     width: 10,
-                    //   ),
-                    // if (_requestMethod == 'compound')
-                    //   ButtonThem.buildButton(
-                    //     btnHeight: 40,
-                    //     btnWidthRatio: 0.43,
-                    //     txtSize: 14,
-                    //     context,
-                    //     title: "Scan a Barcode".tr,
-                    //     txtColor: AppColors.lightGrey01,
-                    //     bgColor: AppColors.darkGrey10,
-                    //     onPress: () async {
-                    //       final result = await Get.toNamed(
-                    //         Routes.QRCODE_SCREEN,
-                    //         arguments: {
-                    //           'controller': QRCodeScanController(),
-                    //           'searchController': _searchController,
-                    //         },
-                    //       );
-                    //       if (result != null &&
-                    //           result is Map<String, dynamic>) {
-                    //         _searchController.text = result.toString();
-                    //       }
-                    //     },
-                    //   ),
                   ],
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                // if (widget.controller.compoundList.isNotEmpty) ...[
-                // Show Select All checkbox and Pay button if there are search results
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //   children: [
-                //     Row(
-                //       children: [
-                //         const Text('Select All'),
-                //         Checkbox(
-                //           value: _selectAll,
-                //           onChanged: (bool? value) {
-                //             setState(() {
-                //               _selectAll = value ?? false;
-                //               // Toggle selection for all items in the list
-                //               for (var compound in widget.controller.compoundList) {
-                //                 compound.isSelected = _selectAll;
-                //               }
-                //             });
-                //           },
-                //         ),
-                //       ],
-                //     ),
-                //     ButtonThem.buildButton(
-                //       // imageAsset: "assets/images/pay-per-click.png",
-                //       btnHeight: 30,
-                //       btnWidthRatio: 0.30,
-                //       txtSize: 14,
-                //       context,
-                //       title: "Pay",
-                //       txtColor: AppColors.darkGrey10,
-                //       bgColor: AppColors.darkGrey01,
-                //       onPress: () {
-                //         // Implement pay logic here
-                //         // Iterate through the compound list and pay selected items
-                //       },
-                //     ),
-                //   ],
-                // ),
                 const SizedBox(height: 2),
-                // ],
                 Expanded(
                   child: widget.controller.isLoading
                       ? const Center(
@@ -322,177 +275,228 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                             // print('Building item at index: $index');
                             CompoundModel compoundModel =
                                 widget.controller.compoundList[index];
-                            return GestureDetector(
-                              onTap: () async {
-                                bool emailVerified =
-                                    await widget.controller.isEmailVerified();
-                                if (emailVerified) {
-                                  navigateToPayCompound(compoundModel);
-                                } else {
-                                  showVerifyEmailDialog();
-                                }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors
-                                        .lightGrey06, // Specify the border color
-                                    width: 3.0, // Specify the border width
-                                  ),
-                                  borderRadius: BorderRadius.circular(
-                                    8.0,
-                                  ), // Specify the border radius
+                            List<String> imageUrls =
+                                compoundModel.imageUrl!.split(";");
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors
+                                      .lightGrey06, // Specify the border color
+                                  width: 3.0, // Specify the border width
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 12.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      // Compound number
-                                                      Text(
-                                                        compoundModel.compoundNo
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                          color: AppColors
-                                                              .darkGrey07,
-                                                          fontFamily:
-                                                              AppThemData.bold,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                      // Pay indicator
-                                                      GestureDetector(
-                                                        onTap: () async {
-                                                          bool emailVerified =
-                                                              await widget
-                                                                  .controller
-                                                                  .isEmailVerified();
-                                                          if (emailVerified) {
-                                                            navigateToPayCompound(
-                                                                compoundModel);
-                                                          } else {
-                                                            showVerifyEmailDialog();
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .orangeAccent, // Customize the indicator color
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.0),
-                                                          ),
-                                                          child: Text(
-                                                            'Pay'.tr,
-                                                            style:
-                                                                const TextStyle(
-                                                              color: AppColors
-                                                                  .darkGrey07,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                borderRadius: BorderRadius.circular(
+                                  8.0,
+                                ), // Specify the border radius
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(
+                                      direction: Axis.vertical,
+                                      children: [
+                                        Text(
+                                          compoundModel.compoundNo.toString(),
+                                          style: const TextStyle(
+                                            color: AppColors.darkGrey07,
+                                            fontFamily: AppThemData.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                          Constant.amountShow(
+                                              amount: compoundModel.amount
+                                                  .toString()),
+                                          style: const TextStyle(
+                                            color: AppColors.darkGrey07,
+                                            fontFamily: AppThemData.medium,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          compoundModel.vehicleNum ?? '',
+                                          style: const TextStyle(
+                                            color: AppColors.darkGrey07,
+                                            fontFamily: AppThemData.medium,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          Constant.timestampToDate(
+                                              compoundModel.dateTime!),
+                                          style: const TextStyle(
+                                            color: AppColors.darkGrey03,
+                                            fontFamily: AppThemData.medium,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        // Text(
+                                        //   compoundModel.status
+                                        //       .toString(),
+                                        //   style: TextStyle(
+                                        //     color: compoundModel
+                                        //                 .status ==
+                                        //             'unpaid'
+                                        //         ? Colors.red
+                                        //         : AppColors.green04,
+                                        //     fontFamily:
+                                        //         AppThemData.medium,
+                                        //     fontSize: 14,
+                                        //   ),
+                                        // ),
+                                        // const SizedBox(height: 3),
+                                        Text(
+                                          '${compoundModel.offence.toString().substring(0, 36)}\n${compoundModel.offence.toString().substring(36, 51)}',
+                                          style: const TextStyle(
+                                            color: AppColors.darkGrey03,
+                                            fontFamily: AppThemData.medium,
+                                            fontSize: 12,
+                                          ),
+                                          overflow: TextOverflow
+                                              .ellipsis, // This property will handle overflow text
+                                          maxLines:
+                                              2, // Set the maximum number of lines
+                                        ),
+
+                                        const SizedBox(height: 10),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        // Only show the image gallery icon if not in the process of making payment
+                                        widget.controller.isMakingPayment
+                                            ? Container()
+                                            : InkWell(
+                                                onTap: () async {
+                                                  bool emailVerified =
+                                                      await widget.controller
+                                                          .isEmailVerified();
+                                                  if (emailVerified) {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Dialog(
+                                                          child: SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            height: 215,
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: GridView
+                                                                  .builder(
+                                                                gridDelegate:
+                                                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                  crossAxisCount:
+                                                                      3,
+                                                                  crossAxisSpacing:
+                                                                      4.0,
+                                                                  mainAxisSpacing:
+                                                                      4.0,
+                                                                ),
+                                                                itemCount:
+                                                                    imageUrls
+                                                                        .length,
+                                                                itemBuilder:
+                                                                    (context,
+                                                                        index) {
+                                                                  return InkWell(
+                                                                    onTap: () {
+                                                                      showImageFullScreen(
+                                                                          imageUrls[
+                                                                              index]);
+                                                                    },
+                                                                    child: Image
+                                                                        .network(
+                                                                      imageUrls[
+                                                                          index],
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                        );
+                                                      },
+                                                    );
+                                                  } else {
+                                                    showVerifyEmailDialog();
+                                                  }
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 45.0,
+                                                    horizontal: 5.0,
                                                   ),
-                                                  Text(
-                                                    Constant.amountShow(
-                                                        amount: compoundModel
-                                                            .amount
-                                                            .toString()),
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.darkGrey07,
-                                                      fontFamily:
-                                                          AppThemData.medium,
-                                                      fontSize: 14,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.rectangle,
+                                                    border: Border.all(
+                                                      color: Colors.amber,
                                                     ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
                                                   ),
-                                                  const SizedBox(height: 3),
-                                                  Text(
-                                                    compoundModel.vehicleNum ??
-                                                        '',
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.darkGrey07,
-                                                      fontFamily:
-                                                          AppThemData.medium,
-                                                      fontSize: 14,
-                                                    ),
+                                                  child: Image.asset(
+                                                    "assets/images/image-gallery.png",
+                                                    width: 30,
+                                                    height: 25,
                                                   ),
-                                                  const SizedBox(height: 3),
-                                                  Text(
-                                                    Constant.timestampToDate(
-                                                        compoundModel
-                                                            .dateTime!),
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.darkGrey03,
-                                                      fontFamily:
-                                                          AppThemData.medium,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 3),
-                                                  // Text(
-                                                  //   compoundModel.status
-                                                  //       .toString(),
-                                                  //   style: TextStyle(
-                                                  //     color: compoundModel
-                                                  //                 .status ==
-                                                  //             'unpaid'
-                                                  //         ? Colors.red
-                                                  //         : AppColors.green04,
-                                                  //     fontFamily:
-                                                  //         AppThemData.medium,
-                                                  //     fontSize: 14,
-                                                  //   ),
-                                                  // ),
-                                                  // const SizedBox(height: 3),
-                                                  Text(
-                                                    compoundModel.offence
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.darkGrey03,
-                                                      fontFamily:
-                                                          AppThemData.medium,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ],
+                                                ),
                                               ),
+                                        const SizedBox(width: 2),
+                                        InkWell(
+                                          onTap: () async {
+                                            bool emailVerified = await widget
+                                                .controller
+                                                .isEmailVerified();
+                                            if (emailVerified) {
+                                              navigateToPayCompound(
+                                                  compoundModel);
+                                            } else {
+                                              showVerifyEmailDialog();
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 45.0,
+                                              horizontal: 5.0,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.rectangle,
+                                              color: Colors.amber,
+                                              // border: Border.all(
+                                              // ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            child: Image.asset(
+                                              "assets/images/money.png",
+                                              width: 30,
+                                              height: 28,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ), // Add spacing between items if needed
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             );
@@ -507,9 +511,41 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
 
   void navigateToPayCompound(CompoundModel compoundModel) {
     Get.toNamed(Routes.PAY_COMPOUND, arguments: {
-      "payCompoundModel": compoundModel.toJson(),
+      "payCompoundModel": {
+        "compoundNo": compoundModel.compoundNo,
+        "amount": compoundModel.amount,
+        "dateTime": compoundModel.dateTime,
+        "status": compoundModel.status,
+        "offence": compoundModel.offence,
+        "kodHasil": compoundModel.kodHasil,
+        "vehicleNum": compoundModel.vehicleNum,
+      },
       "myPaymentCompoundModel": widget.controller.myPaymentCompoundModel.value
     });
+  }
+
+  void showImageFullScreen(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop(); // Dismiss the dialog when tapped
+          },
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            child: Center(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void showVerifyEmailDialog() {

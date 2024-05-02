@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class CompoundModel {
   String? amount;
@@ -12,6 +15,7 @@ class CompoundModel {
   String? kodHasil;
   String? msg;
   bool? isSelected;
+  String? imageUrl;
 
   CompoundModel({
     this.amount,
@@ -25,6 +29,7 @@ class CompoundModel {
     this.kodHasil,
     this.msg,
     this.isSelected = false,
+    this.imageUrl,
   });
 
   CompoundModel.fromJson(Map<String, dynamic> json) {
@@ -38,6 +43,12 @@ class CompoundModel {
     kodHasil = json['kod_hasil'];
     offence = json['offence'];
     msg = json['msg'];
+    imageUrl = json['allCompoundImage'];
+
+    if (imageUrl != null) {
+      final String decodedString = utf8.decode(base64.decode(imageUrl!));
+      imageUrl = decodedString;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +63,7 @@ class CompoundModel {
     data['kod_hasil'] = kodHasil;
     data['offence'] = offence;
     data['msg'] = msg;
+    data['allCompoundImage'] = imageUrl;
     return data;
   }
 }

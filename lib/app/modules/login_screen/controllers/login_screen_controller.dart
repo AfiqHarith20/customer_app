@@ -37,7 +37,7 @@ class LoginScreenController extends GetxController {
 
   sendSignIn() async {
     ShowToastDialog.showLoader("please_wait".tr);
-    String email = emailController.value.text;
+    String email = emailController.value.text.trim();
     String password = passwordController.value.text;
 
     try {
@@ -54,18 +54,7 @@ class LoginScreenController extends GetxController {
         // User exists in Firestore, navigate to dashboard screen
         Get.offAllNamed(Routes.DASHBOARD_SCREEN);
       } else {
-        UserCredential userCredential = await _auth
-            .createUserWithEmailAndPassword(email: email, password: password);
-        // User does not exist in Firestore, navigate to information screen to complete registration
-        CustomerModel customerModel = CustomerModel(
-          id: userCredential.user!.uid,
-          email: userCredential.user!.email,
-          // fullName: userCredential.user!.displayName,
-          profilePic: userCredential.user!.photoURL,
-          loginType: Constant.emailpassLoginType,
-        );
-        Get.toNamed(Routes.INFORMATION_SCREEN,
-            arguments: {"customerModel": customerModel});
+        Get.offNamed(Routes.REGISTER_SCREEN);
       }
     } on FirebaseAuthException catch (e) {
       // Handle sign-in failure

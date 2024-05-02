@@ -88,7 +88,7 @@ class SeasonPassView extends GetView<SeasonPassController> {
         onDoubleTap: () {},
         onSwipe: () {},
         textOff: "Season Pass".tr,
-        textOn: "Special Lot".tr,
+        textOn: "Reserve Lot".tr,
         colorOn: Colors.black,
         colorOff: Colors.black,
         background: Colors.amber,

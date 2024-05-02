@@ -14,6 +14,7 @@ import '../../../models/wallet_transaction_model.dart';
 
 class SearchSummonScreenController extends GetxController {
   RxList<CompoundModel> compoundList = <CompoundModel>[].obs;
+  RxList<CompoundModel> compoundImage = <CompoundModel>[].obs;
   Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
       MyPaymentCompoundModel().obs;
   Server server = Server();
@@ -21,6 +22,13 @@ class SearchSummonScreenController extends GetxController {
   final _isLoading = false.obs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool get isLoading => _isLoading.value;
+  final _isMakingPayment = false.obs;
+
+  bool get isMakingPayment => _isMakingPayment.value;
+
+  void setMakingPayment(bool value) {
+    _isMakingPayment.value = value;
+  }
 
   void setLoading(bool value) {
     _isLoading.value = value;
