@@ -14,4 +14,5 @@ class APIList {
       "${baseUrl!}/api/v1/commercepay/query?AccessToken=@token&TransactionId=";
   static String? searchCompound =
       "https://mptemerloh.epa-lits.com.my/search_compound_vendor.php";
+  static String? reserveLot = "${baseUrl!}/api/v1/firebase/reservelot";
 }

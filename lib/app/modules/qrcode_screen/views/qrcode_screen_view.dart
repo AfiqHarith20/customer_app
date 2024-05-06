@@ -90,20 +90,8 @@ class _QRCodeScreenViewState extends State<QRCodeScanScreenView> {
       String? compoundNumber = scanData.code;
 
       if (compoundNumber != null && compoundNumber.isNotEmpty) {
-        print(compoundNumber);
-
-        Navigator.pop(context, {
-          'compoundNumber': compoundNumber,
-        });
-        // Navigator.pushNamed(context, '/search-summon-screen',
-        //     arguments: compoundNumber);
-
-        // Get.toNamed(
-        //   Routes.SEARCH_SUMMON_SCREEN,
-        //   arguments: {
-        //     'controller': QRCodeScanController,
-        //   },
-        // );
+        print("Compound number: $compoundNumber");
+        widget.controller.handleScannedDataAndNavigate(compoundNumber);
       }
     });
   }

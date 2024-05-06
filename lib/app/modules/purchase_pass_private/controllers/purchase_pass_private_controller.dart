@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -9,6 +11,7 @@ import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
+import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class PurchasePassPrivateController extends GetxController {
   Rx<GlobalKey<FormState>> formKeyPurchasePrivate = GlobalKey<FormState>().obs;
@@ -157,6 +161,24 @@ class PurchasePassPrivateController extends GetxController {
     });
   }
 
+  Future<String> postReservePassData() async {
+    try {
+      print('Add Reserve Pass...');
+      final response = await http.post(
+        Uri.parse(APIList.reserveLot.toString()),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(pendingPassModel.value.toJson()),
+      );
+      return response.body;
+    } catch (e, s) {
+      log("$e \n$s");
+      ShowToastDialog.showToast("Error occurred while making payment: $e");
+      return '';
+    }
+  }
+
   addPrivatePassData() async {
     pendingPassModel.value.id = Constant.getUuid();
     pendingPassModel.value.customerId = FireStoreUtils.getCurrentUid();
@@ -176,43 +198,93 @@ class PurchasePassPrivateController extends GetxController {
     pendingPassModel.value.countryCode = countryCode.reactive.toString();
     pendingPassModel.value.startDate = Timestamp.now();
     pendingPassModel.value.createAt = Timestamp.now();
-    pendingPassModel.value.endDate = Timestamp.fromDate(DateTime.timestamp()
-        .add(Duration(
-            days:
-                checkDuration(selectedPrivatePass.value.validity.toString()))));
+    pendingPassModel.value.endDate = Timestamp.fromDate(
+      DateTime.timestamp().add(
+        Duration(
+          days: checkDuration(
+            selectedPrivatePass.value.validity.toString(),
+          ),
+        ),
+      ),
+    );
+
+    print('Pending Pass Data:');
+    print('ID: ${pendingPassModel.value.id}');
+    print('Customer ID: ${pendingPassModel.value.customerId}');
+    print('Private Pass Model: ${pendingPassModel.value.privatePassModel}');
+    print('Full Name: ${pendingPassModel.value.fullName}');
+    print('Reference: ${pendingPassModel.value.reference}');
+    print('Email: ${pendingPassModel.value.email}');
+    print('Identification No: ${pendingPassModel.value.identificationNo}');
+    print('Mobile Number: ${pendingPassModel.value.mobileNumber}');
+    print('Vehicle No: ${pendingPassModel.value.vehicleNo}');
+    print('Lot No: ${pendingPassModel.value.lotNo}');
+    print('Company Name: ${pendingPassModel.value.companyName}');
+    print(
+        'Company Registration No: ${pendingPassModel.value.companyRegistrationNo}');
+    print('Address: ${pendingPassModel.value.address}');
+    print('Country Code: ${pendingPassModel.value.countryCode}');
+    print('Start Date: ${pendingPassModel.value.startDate}');
+    print('Create At: ${pendingPassModel.value.createAt}');
+    print('End Date: ${pendingPassModel.value.endDate}');
+
+    String imageName = File(privateParkImage.value).path.split('/').last;
+    pendingPassModel.value.imageFileName = imageName;
+
+    String base64Image = await convertImageToBase64(privateParkImage.value);
+    pendingPassModel.value.imageBase64 = base64Image;
+
+    print('Base64 Image: $base64Image');
+    print('Image Name: $imageName');
 
     // Upload the image and get the URL
-    String imagePath = await uploadPrivateParkImage();
+    // String imagePath = await uploadPrivateParkImage();
 
     // Set the image path in the pendingPassModel
-    pendingPassModel.value.image = imagePath;
+    // pendingPassModel.value.imageBase64 = imagePath;
 
     // Setting default status as "pending"
     pendingPassModel.value.status = "pending";
 
     // Now, send the data to Firestore
-    await FireStoreUtils.setPendingPass(pendingPassModel.value, imageFile);
+    await postReservePassData();
   }
 
-  Future<String> uploadPrivateParkImage() async {
-    // Check if privateParkImage is not empty and is a valid URL
-    if (privateParkImage.value.isNotEmpty &&
-        Constant().hasValidUrl(privateParkImage.value) == false) {
-      // Retrieve the document ID from pendingPassModel.value
-      String documentId = pendingPassModel.value.id ?? '';
+  Future<String> convertImageToBase64(String imagePath) async {
+    // Read the bytes from the image file
+    List<int> imageBytes = await File(imagePath).readAsBytes();
 
-      // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
-      String imagePath = await Constant.uploadPrivateParkImageToFireStorage(
-        File(privateParkImage.value),
-        "parkinglot/$documentId",
-        File(privateParkImage.value).path.split('/').last,
-      );
+    // Convert the bytes to base64
+    String base64Image = base64Encode(imageBytes);
 
-      return imagePath;
+    // Check if the base64 string starts with "/9j/"
+    if (base64Image.startsWith("/9j/")) {
+      // Remove "/9j/" from the beginning of the base64 string
+      base64Image = base64Image.substring(4);
     }
 
-    return ''; // Return empty string if no image uploaded
+    return base64Image;
   }
+
+  // Future<String> uploadPrivateParkImage() async {
+  //   // Check if privateParkImage is not empty and is a valid URL
+  //   if (privateParkImage.value.isNotEmpty &&
+  //       Constant().hasValidUrl(privateParkImage.value) == false) {
+  //     // Retrieve the document ID from pendingPassModel.value
+  //     String documentId = pendingPassModel.value.id ?? '';
+
+  //     // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
+  //     String imagePath = await Constant.uploadPrivateParkImageToFireStorage(
+  //       File(privateParkImage.value),
+  //       "parkinglot/$documentId",
+  //       File(privateParkImage.value).path.split('/').last,
+  //     );
+
+  //     return imagePath;
+  //   }
+
+  //   return ''; // Return empty string if no image uploaded
+  // }
 
   checkDuration(String time) {
     if (time == "1 Week") {
@@ -232,13 +304,13 @@ class PurchasePassPrivateController extends GetxController {
     }
   }
 
-  pendingOrder() async {
-    await FireStoreUtils.setPendingPass(pendingPassModel.value, imageFile)
-        .then((value) {
-      Get.back();
-      Get.toNamed(Routes.DASHBOARD_SCREEN);
-    });
-  }
+  // pendingOrder() async {
+  //   await FireStoreUtils.setPendingPass(pendingPassModel.value, imageFile)
+  //       .then((value) {
+  //     Get.back();
+  //     Get.toNamed(Routes.DASHBOARD_SCREEN);
+  //   });
+  // }
 
   Future<void> pickImage() async {
     final picker = ImagePicker();

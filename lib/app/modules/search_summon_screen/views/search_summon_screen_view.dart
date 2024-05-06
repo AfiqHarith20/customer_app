@@ -144,7 +144,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                   children: [
                     ButtonThem.buildButton(
                       btnHeight: 40,
-                      btnWidthRatio: 0.9,
+                      btnWidthRatio: 0.43,
                       // _requestMethod == 'compound' ? 0.43 : 0.9,
                       txtSize: 14,
                       context,
@@ -254,6 +254,39 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                         }
                       },
                     ),
+                    if (_requestMethod == 'compound')
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    if (_requestMethod == 'compound')
+                      ButtonThem.buildButton(
+                        btnHeight: 40,
+                        btnWidthRatio: 0.43,
+                        txtSize: 14,
+                        context,
+                        title: "Scan a Barcode".tr,
+                        txtColor: AppColors.lightGrey01,
+                        bgColor: AppColors.darkGrey10,
+                        onPress: () async {
+                          final result = await Get.toNamed(
+                            Routes.QRCODE_SCREEN,
+                            arguments: {
+                              'controller': QRCodeScanController(),
+                              'searchController': _searchController,
+                            },
+                          );
+                          if (result != null &&
+                              result is Map<String, dynamic>) {
+                            // Check if the result contains the compound number
+                            if (result.containsKey('compoundNumber')) {
+                              // Set the compound number in the search bar
+                              _searchController.text = result['compoundNumber'];
+                              // Trigger the API request automatically
+                              await _triggerApiRequest();
+                            }
+                          }
+                        },
+                      ),
                   ],
                 ),
                 const SizedBox(
@@ -546,6 +579,96 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
         );
       },
     );
+  }
+
+  Future<void> _triggerApiRequest() async {
+    String searchText = _searchController.text;
+    // Set loading state to true immediately after clicking search
+    widget.controller.setLoading(true);
+
+    try {
+      Map<String, dynamic> searchResult =
+          await SearchSummonScreenController().searchCompound(
+        id: 'vendor_mptemerloh',
+        pass:
+            'M=Lu5k%r8uw!6yBq^T924bdjE_piB3DU2^d9eB39^7u9^GdAKe_IG5KbK&V2vt5=KpxkB',
+        requestMethod: _requestMethod,
+        compoundNum: _requestMethod == 'compound' ? searchText : '',
+        carNum: _requestMethod == 'car' ? searchText : '',
+      );
+      String convertBase64ToUrl(String base64Strings) {
+        final String decodedUrl = utf8.decode(base64.decode(base64Strings));
+
+        return decodedUrl;
+      }
+
+      // Parse the JSON response into a list of CompoundModel objects
+      List<CompoundModel> compounds = [];
+      List<String> compoundNums = searchResult['compound_num'] != null
+          ? searchResult['compound_num'].split("::")
+          : [];
+      List<String> amounts = searchResult['amount'] != null
+          ? searchResult['amount'].split("::")
+          : [];
+      List<String> dateTimes = searchResult['datetime'] != null
+          ? searchResult['datetime'].split("::")
+          : [];
+      List<String> statuses = searchResult['status'] != null
+          ? searchResult['status'].split("::")
+          : [];
+      List<String> offences = searchResult['offence'] != null
+          ? searchResult['offence'].split("::")
+          : [];
+      List<String> kodHasils = searchResult['kod_hasil'] != null
+          ? searchResult['kod_hasil'].split("::")
+          : [];
+      List<String> vehicleNums = searchResult['vehicle_num'] != null
+          ? searchResult['vehicle_num'].split("::")
+          : [];
+
+      List<String> imageUrls = searchResult['allCompoundImage'] != null
+          ? convertBase64ToUrl(searchResult['allCompoundImage']).split("::")
+          : [];
+      for (int i = 0; i < compoundNums.length; i++) {
+        CompoundModel compound = CompoundModel(
+          compoundNo: compoundNums[i],
+          amount: amounts.isNotEmpty ? amounts[i] : '',
+          dateTime: dateTimes.isNotEmpty
+              ? Timestamp.fromDate(DateTime.parse(dateTimes[i]))
+              : Timestamp.now(),
+          status: statuses.isNotEmpty ? statuses[i] : '',
+          offence: offences.isNotEmpty ? offences[i] : '',
+          kodHasil: kodHasils.isNotEmpty ? kodHasils[i] : '',
+          vehicleNum: vehicleNums.isNotEmpty ? vehicleNums[i] : '',
+          imageUrl: imageUrls.isNotEmpty ? imageUrls[i] : '',
+        );
+        compounds.add(compound);
+      }
+
+      // Update the compoundList in the controller
+      widget.controller.updateCompoundList(compounds);
+
+      // Rebuild the widget tree to reflect the changes
+      setState(() {});
+
+      // Show a toast message based on the msg field in the response
+      if (searchResult.containsKey('msg') &&
+          searchResult['msg'] != null &&
+          searchResult['msg'].isNotEmpty) {
+        ShowToastDialog.showToast(
+          searchResult['msg'],
+        );
+      }
+
+      // Set loading state back to false after search completes
+      widget.controller.setLoading(false);
+    } catch (e) {
+      // Handle any errors that occur during the search
+      print('Error searching: $e');
+    } finally {
+      // Set loading state back to false after search completes
+      widget.controller.setLoading(false);
+    }
   }
 
   void showVerifyEmailDialog() {

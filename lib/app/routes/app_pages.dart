@@ -1,3 +1,7 @@
+import 'package:customer_app/app/modules/news_detail_screen/bindings/news_detail_screen_binding.dart';
+import 'package:customer_app/app/modules/news_detail_screen/views/news_detail_screen_view.dart';
+import 'package:customer_app/app/modules/news_screen/bindings/news_screen_binding.dart';
+import 'package:customer_app/app/modules/news_screen/views/news_screen_view.dart';
 import 'package:customer_app/app/modules/notification_screen/views/notification_screen_view.dart';
 import 'package:customer_app/app/modules/pay_compound_screen/bindings/pay_compound_screen_binding.dart';
 import 'package:customer_app/app/modules/pay_compound_screen/views/pay_compound_screen_view.dart';
@@ -313,7 +317,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.PURCHASE_PASS_PRIVATE,
-      page: () => PurchasePassPrivateView(),
+      page: () => const PurchasePassPrivateView(),
       binding: PurchasePassPrivateBinding(),
     ),
     GetPage(
@@ -380,6 +384,16 @@ class AppPages {
         kodHasil: Get.arguments["kodHasil"] ?? '',
       ),
       binding: PayCompoundScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.NEWS_SCREEN,
+      page: () => const NewsScreenView(),
+      binding: NewsScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.NEWS_DETAIL_SCREEN,
+      page: () => const NewsDetailScreenView(),
+      binding: NewsDetailScreenBinding(),
     ),
   ];
 }

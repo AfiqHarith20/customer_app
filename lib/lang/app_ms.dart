@@ -266,4 +266,6 @@ const Map<String, String> msMY = {
   "Pass Bulanan": "Pas Bulanan",
   "Petak Khas": "Petak Khas",
   "Expired": "Tamat Tempoh",
+  "More News": "Senarai Berita",
+  "News Detail": "Butiran Berita",
 };

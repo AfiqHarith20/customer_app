@@ -265,4 +265,6 @@ const Map<String, String> enUS = {
   "Petak Khas": "Reserve Lot",
   "Active": "Active",
   "Expired": "Expired",
+  "More News": "More News",
+  "News Detail": "News Detail",
 };

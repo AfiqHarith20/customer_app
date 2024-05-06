@@ -16,6 +16,7 @@ class QRCodeScanController extends GetxController {
 //TODO: Implement MySeasonPassController
 
   RxBool isLoading = true.obs;
+  RxString scanCompoundNo = "".obs;
   List<CompoundModel> compoundList = <CompoundModel>[].obs;
 
   //RxList<MyPurchasePassModel> mySeasonPassList = <MyPurchasePassModel>[].obs;
@@ -75,5 +76,12 @@ class QRCodeScanController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void handleScannedDataAndNavigate(String compoundNumber) {
+    // Handle scanned data here
+
+    // Navigate back to the previous screen with the compound number data
+    Get.back(result: {'compoundNumber': compoundNumber});
   }
 }

@@ -187,11 +187,7 @@ class _HomeViewState extends State<HomeView> {
     return GetX<HomeController>(
         init: HomeController(),
         builder: (controller) {
-          return
-              // SingleChildScrollView(
-              //   physics: const ClampingScrollPhysics(),
-              //   child:
-              SizedBox(
+          return SizedBox(
             height: MediaQuery.of(context).size.height,
             child: Scaffold(
                 backgroundColor: AppColors.lightGrey02,
@@ -329,7 +325,7 @@ class _HomeViewState extends State<HomeView> {
                               autoPlay: true,
                               enlargeCenterPage: false,
                               scrollDirection: Axis.horizontal,
-                              height: 250,
+                              height: 220,
                               onPageChanged: (index, reason) {
                                 setState(
                                   () {
@@ -394,28 +390,71 @@ class _HomeViewState extends State<HomeView> {
                             }).toList(),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                             //apply padding to all four sides
-                            child: Text(
-                              'Latest News'.tr,
-                              style: const TextStyle(
-                                fontFamily: AppThemData.medium,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Latest News'.tr,
+                                  style: const TextStyle(
+                                    fontFamily: AppThemData.medium,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    // Navigate to the news screen
+                                    Get.toNamed(Routes.NEWS_SCREEN);
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'More News'.tr,
+                                        style: const TextStyle(
+                                          fontFamily: AppThemData.medium,
+                                          fontWeight: FontWeight.normal,
+                                          color: AppColors.darkGrey04,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 2,
+                                      ),
+                                      const Icon(
+                                        Icons.newspaper,
+                                        color: AppColors.darkGrey04,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          // ListView
                           Expanded(
                             child: ListView.builder(
-                                itemCount: items.length,
+                                itemCount: items.length > 5 ? 5 : items.length,
                                 itemBuilder: (context, index) {
                                   final itemData = items[index];
                                   final title = itemData['title'];
                                   final des = itemData['des'];
                                   final date = itemData['pubDate'];
                                   return GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      final titleValue = title ?? '';
+                                      final desValue = des ?? '';
+                                      final dateValue = date ?? '';
+
+                                      Get.toNamed(
+                                        Routes.NEWS_DETAIL_SCREEN,
+                                        arguments: {
+                                          'title': titleValue,
+                                          'des': desValue,
+                                          'date': dateValue,
+                                        },
+                                      );
+                                    },
                                     child: Card(
                                       shape: RoundedRectangleBorder(
                                         borderRadius:

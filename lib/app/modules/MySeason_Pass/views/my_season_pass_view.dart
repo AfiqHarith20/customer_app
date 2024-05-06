@@ -212,6 +212,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                           ),
                           itemStatusWidget(
                             endDate: endDate,
+                            daysUntilExpired: daysUntilExpired,
                           )
                         ],
                       ),
@@ -441,9 +442,15 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
 
   static Widget itemStatusWidget({
     required DateTime endDate,
+    required int daysUntilExpired,
   }) {
-    bool isActive = DateTime.now().isAfter(endDate);
+    bool isActive = DateTime.now().isBefore(endDate);
     String status = isActive ? 'Active'.tr : 'Expired'.tr;
+
+    // If daysUntilExpired is less than or equal to 0, set status to Expired
+    if (daysUntilExpired <= 0) {
+      status = 'Expired'.tr;
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),

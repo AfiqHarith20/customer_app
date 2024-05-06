@@ -49,6 +49,8 @@ abstract class Routes {
   static const PAY_COMPOUND = _Paths.PAY_COMPOUND;
   static const WEBVIEW_WALLET_SCREEN = _Paths.WEBVIEW_WALLET_SCREEN;
   static const RESET_PASS_SCREEN = _Paths.RESET_PASS_SCREEN;
+  static const NEWS_SCREEN = _Paths.NEWS_SCREEN;
+  static const NEWS_DETAIL_SCREEN = _Paths.NEWS_DETAIL_SCREEN;
 }
 
 abstract class _Paths {
@@ -97,4 +99,6 @@ abstract class _Paths {
   static const PAY_COMPOUND = '/pay-compound-screen';
   static const WEBVIEW_WALLET_SCREEN = '/webview-wallet-screen';
   static const RESET_PASS_SCREEN = '/reset-pass-screen';
+  static const NEWS_SCREEN = '/news-screen';
+  static const NEWS_DETAIL_SCREEN = '/news-detail-screen';
 }
