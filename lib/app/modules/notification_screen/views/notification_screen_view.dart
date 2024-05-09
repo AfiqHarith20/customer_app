@@ -1,96 +1,297 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/modules/notification_screen/controllers/notification_screen_controller.dart';
+import 'package:customer_app/constant/constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
 import '../../../../themes/app_colors.dart';
 import '../../../../themes/common_ui.dart';
 
-class NotificationScreenView extends StatefulWidget {
+class NotificationScreenView extends GetView<NotificationScreenController> {
   const NotificationScreenView({Key? key}) : super(key: key);
 
   @override
-  State<NotificationScreenView> createState() => _NotificationScreenViewState();
+  Widget build(BuildContext context) {
+    return GetX<NotificationScreenController>(builder: (controller) {
+      return Scaffold(
+        backgroundColor: AppColors.lightGrey02,
+        appBar: UiInterface().customAppBar(
+          backgroundColor: AppColors.yellow04,
+          context,
+          "Inbox".tr,
+          isBack: true,
+          actions: [
+            InkWell(
+              onTap: () {
+                // Toggle the selection mode
+                controller.toggleEditMode();
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16.0,
+                  top: 10,
+                ),
+                child: Icon(
+                  controller.isInEditMode.value
+                      ? Icons.cancel
+                      : Icons.edit_notifications_rounded,
+                  color: AppColors.darkGrey10,
+                ),
+              ),
+            ),
+          ],
+        ),
+        body: controller.isLoading.value
+            ? Constant.loader()
+            : DefaultTabController(
+                length: 2, // Number of tabs
+                child: Column(
+                  children: [
+                    Container(
+                      color: AppColors.yellow04,
+                      child: TabBar(
+                        labelColor: AppColors.darkGrey10,
+                        tabs: [
+                          Tab(
+                            text: "Notifications".tr,
+                          ),
+                          Tab(
+                            text: "Activity".tr,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          // First tab: Notifications
+                          Obx(() {
+                            return ListView.separated(
+                              itemCount: controller.notifyList.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Divider(
+                                height: 2,
+                              ),
+                              itemBuilder: (context, index) {
+                                var notification = controller.notifyList[index];
+                                final category = notification['category'];
+                                final createAt = notification['createAt'];
+                                final message = notification['message'];
+
+                                // Render each notification card based on selection mode
+                                return category != 'Petak Khas'
+                                    ? NotificationCard(
+                                        category: category,
+                                        createAt: createAt,
+                                        message: message,
+                                        isInEditMode:
+                                            controller.isInEditMode.value,
+                                        isSelected:
+                                            controller.isSelected(index),
+                                        onTap: () {
+                                          if (controller.isInEditMode.value) {
+                                            controller.toggleSelection(index);
+                                          } else {
+                                            // Handle tapping on notification card in normal mode
+                                          }
+                                        },
+                                      )
+                                    : Container();
+                              },
+                            );
+                          }),
+                          // Second tab: Activity
+                          Obx(() {
+                            return ListView.separated(
+                              itemCount: controller.notifyList.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Divider(
+                                height: 2,
+                              ),
+                              itemBuilder: (context, index) {
+                                var notification = controller.notifyList[index];
+                                final category = notification['category'];
+                                final createAt = notification['createAt'];
+                                final message = notification['message'];
+
+                                // Only show notifications with category 'Petak Khas'
+                                return category == 'Petak Khas'
+                                    ? NotificationCard(
+                                        category: category,
+                                        createAt: createAt,
+                                        message: message,
+                                        isInEditMode:
+                                            controller.isInEditMode.value,
+                                        isSelected:
+                                            controller.isSelected(index),
+                                        onTap: () {
+                                          if (controller.isInEditMode.value) {
+                                            controller.toggleSelection(index);
+                                          } else {
+                                            // Handle tapping on notification card in normal mode
+                                          }
+                                        },
+                                      )
+                                    : Container();
+                              },
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                    // Bottom bar for edit mode actions
+                    Visibility(
+                      visible: controller.isInEditMode.value,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        color: Colors.grey[100],
+                        child: Row(
+                          children: [
+                            // Select all checkbox
+                            Checkbox(
+                              activeColor: Colors.blue,
+                              value: controller.isAllSelected(),
+                              onChanged: (value) {
+                                controller.toggleSelectAll(value ?? false);
+                              },
+                            ),
+                            Text(
+                              "Select All".tr,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontStyle: FontStyle.normal,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const Spacer(),
+                            // Delete button
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  AppColors.red04,
+                                ), // Change color here
+                              ),
+                              onPressed: () {
+                                controller.deleteSelectedNotifications();
+                              },
+                              child: Text(
+                                "Delete".tr,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.normal,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            // Mark as read button
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  AppColors.yellow04,
+                                ), // Change color here
+                              ),
+                              onPressed: () {
+                                controller.markSelectedAsRead();
+                              },
+                              child: Text(
+                                "Mark as Read".tr,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.normal,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      );
+    });
+  }
 }
 
-class _NotificationScreenViewState extends State<NotificationScreenView> {
-  List<Map<String, dynamic>> notifyList = []; // Adjusted the type
+// NotificationCard widget
 
-  @override
-  void initState() {
-    super.initState();
-    fetchInformation(); // Fetch notifications on initialization
-  }
+class NotificationCard extends StatelessWidget {
+  final String? category;
+  final dynamic createAt;
+  final String? message;
+  final bool isInEditMode;
+  final bool isSelected;
+  final VoidCallback onTap;
 
-  void fetchInformation() async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance.collection('notification').get();
-
-      List<Map<String, dynamic>> fetchNotify = querySnapshot.docs.map((doc) {
-        return {
-          "des": doc.data()['desc'].toString(),
-          "title": doc.data()['title'].toString(),
-          "pubDate": doc.data()['date'].toString(),
-          "category": doc.data()['category'].toString(),
-        };
-      }).toList();
-
-      setState(() {
-        notifyList = fetchNotify;
-      });
-    } catch (e) {
-      print('Error fetching information: $e');
-    }
-  }
+  const NotificationCard({
+    Key? key,
+    this.category,
+    this.createAt,
+    this.message,
+    required this.isInEditMode,
+    required this.isSelected,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightGrey02,
-      appBar: UiInterface().customAppBar(
-        backgroundColor: AppColors.lightGrey02,
-        context,
-        "Notifications".tr,
-        isBack: true,
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
       ),
-      body: ListView.separated(
-        itemCount: notifyList.length,
-        separatorBuilder: (BuildContext context, int index) =>
-            const Divider(), // Add divider between list items
-        itemBuilder: (context, index) {
-          var notification = notifyList[index];
-          return Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  notification['category'],
-                  style: const TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Row(
+            children: [
+              if (isInEditMode)
+                Checkbox(
+                  activeColor: Colors.blue,
+                  value: isSelected,
+                  onChanged: (_) => onTap(),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  notification['pubDate'],
-                  style: const TextStyle(
-                    color: Colors.grey,
-                  ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      category ?? '',
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      Constant.timestampToDate(createAt),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      message ?? '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  notification['des'],
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

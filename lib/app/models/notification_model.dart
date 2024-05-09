@@ -1,20 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class NotificationModel {
-  String? title;
-  String? date;
   String? category;
-  String? desc;
+  Timestamp? createAt;
+  bool? isRead;
+  String? message;
+  String? reference;
+  String? title;
+  bool? isSelected;
 
   NotificationModel({
     this.title,
-    this.date,
+    this.createAt,
     this.category,
-    this.desc,
+    this.reference,
+    this.message,
+    this.isSelected,
+    this.isRead,
   });
 
   NotificationModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
-    date = json['date'];
+    createAt = json['createAt'];
     category = json['category'];
-    desc = json['desc'];
+    reference = json['reference'];
+    message = json['message'];
+    isRead = json['isRead'];
   }
 }

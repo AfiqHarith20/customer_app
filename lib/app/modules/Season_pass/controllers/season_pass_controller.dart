@@ -26,6 +26,23 @@ class SeasonPassController extends GetxController {
     super.onInit();
   }
 
+  reload() async {
+    // Implement the logic to reload data or UI
+    try {
+      // Set isLoading to true to show loading indicator
+      isLoading(true);
+
+      // Call the methods to fetch data
+      await getPurchasePass();
+    } catch (e) {
+      // Handle error
+      print('Error: $e');
+    } finally {
+      // Set isLoading to false after loading is completed
+      isLoading(false);
+    }
+  }
+
   Future<bool> isEmailVerified() async {
     User? user = _auth.currentUser;
     await user?.reload(); // Reloads the user to ensure the latest data

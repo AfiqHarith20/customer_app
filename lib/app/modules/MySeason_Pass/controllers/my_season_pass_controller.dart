@@ -19,6 +19,24 @@ class MySeasonPassController extends GetxController {
     super.onInit();
   }
 
+  reload() async {
+    // Implement the logic to reload data or UI
+    try {
+      // Set isLoading to true to show loading indicator
+      isLoading(true);
+
+      // Call the methods to fetch data
+      await getMySeasonPass();
+      await getPendingPass();
+    } catch (e) {
+      // Handle error
+      print('Error: $e');
+    } finally {
+      // Set isLoading to false after loading is completed
+      isLoading(false);
+    }
+  }
+
   loadMySeasonPassList() async {
     isLoading.value =
         true; // Set loading indicator to true before fetching data

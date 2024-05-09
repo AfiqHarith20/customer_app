@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:customer_app/app/modules/MySeason_Pass/controllers/my_season_pass_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,7 +31,6 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
   Widget build(BuildContext context) {
     return GetX<PurchasePassPrivateController>(
       init: PurchasePassPrivateController(),
-      dispose: (state) => state.dispose(),
       builder: (controller) {
         return Scaffold(
           backgroundColor: AppColors.lightGrey02,
@@ -366,30 +366,49 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                     );
 
                     // Call addPrivatePassData asynchronously
-                    await controller.addPrivatePassData();
+                    bool success = await controller.addPrivatePassData();
 
                     // Hide loading indicator
                     Navigator.of(context).pop();
 
-                    // Show popup notification
+                    // Show success or error dialog based on the result
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return DialogBoxNotify(
-                          imageAsset: "assets/images/ic_parking.png",
-                          onPressConfirm: () async {
-                            // Navigate to dashboard page
-                            Get.offAndToNamed(
-                              Routes.DASHBOARD_SCREEN,
-                            );
-                          },
-                          onPressConfirmBtnName: "Ok".tr,
-                          onPressConfirmColor: AppColors.green04,
-                          content:
-                              "Your request has been sent with status 'Pending'"
-                                  .tr,
-                          subTitle: "Success".tr,
-                        );
+                        return success
+                            ? DialogBoxNotify(
+                                imageAsset: "assets/images/ic_parking.png",
+                                onPressConfirm: () async {
+                                  // Close the dialog
+                                  Navigator.pop(context);
+
+                                  // Navigate to dashboard page
+                                  Get.offAndToNamed(
+                                    Routes.DASHBOARD_SCREEN,
+                                  );
+                                  // Reload the DASHBOARD_SCREEN
+                                  Get.find<MySeasonPassController>().reload();
+                                },
+                                onPressConfirmBtnName: "Ok".tr,
+                                onPressConfirmColor: AppColors.green04,
+                                content:
+                                    "Your request has been sent with status 'Pending'"
+                                        .tr,
+                                subTitle: "Success".tr,
+                              )
+                            : DialogBoxNotify(
+                                imageAsset: "assets/images/ic_parking.png",
+                                onPressConfirm: () async {
+                                  // Close the dialog
+                                  Navigator.pop(context);
+                                },
+                                onPressConfirmBtnName: "Ok".tr,
+                                onPressConfirmColor: AppColors.red04,
+                                content:
+                                    "Your request is not successfully sent, please try again"
+                                        .tr,
+                                subTitle: "Error".tr,
+                              );
                       },
                     );
                   }

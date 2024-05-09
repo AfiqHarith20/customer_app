@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
+import 'package:customer_app/app/models/pending_detail_pass_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/modules/Season_pass/controllers/season_pass_controller.dart';
@@ -48,8 +49,10 @@ class PurchasePassPrivateController extends GetxController {
     "Pas Bulanan 12"
   ];
   Rx<PrivatePassModel> selectedPrivatePass = PrivatePassModel().obs;
+  Rx<PendingDetailPassModel> paymentType = PendingDetailPassModel().obs;
 
-  Rx<PendingPassModel> pendingPassModel = PendingPassModel().obs;
+  Rx<PendingDetailPassModel> pendingDetailPassModel =
+      PendingDetailPassModel().obs;
   final FirebaseAuth auth = FirebaseAuth.instance;
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
   RxList<File> imageFiles = <File>[].obs;
@@ -133,8 +136,8 @@ class PurchasePassPrivateController extends GetxController {
     // Check if privateParkImage is not empty and is a valid URL
     if (privateParkImage.value.isNotEmpty &&
         Constant().hasValidUrl(privateParkImage.value) == false) {
-      // Retrieve the document ID from pendingPassModel.value
-      String documentId = pendingPassModel.value.id ?? '';
+      // Retrieve the document ID from pendingDetailPassModel.value
+      String documentId = pendingDetailPassModel.value.id ?? '';
 
       // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
       privateParkImage.value =
@@ -164,15 +167,38 @@ class PurchasePassPrivateController extends GetxController {
   Future<String> postReservePassData() async {
     try {
       print('Add Reserve Pass...');
+
+      Map<String, dynamic> rawData = await getRawData();
+
+      // Print each item of raw data
+      // rawData.forEach((key, value) {
+      //   print('$key: $value');
+      // });
+
       final response = await http.post(
         Uri.parse(APIList.reserveLot.toString()),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(pendingPassModel.value.toJson()),
+        body: jsonEncode(rawData),
       );
-      return response.body;
+
+      if (response.statusCode == 200) {
+        // Success
+        print('Reserve Pass added successfully.');
+        print(response.body);
+        return response.body;
+      } else {
+        // Error
+        print('Error occurred while adding Reserve Pass.');
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+        ShowToastDialog.showToast(
+            "Error occurred while making payment. Status Code: ${response.statusCode}");
+        return '';
+      }
     } catch (e, s) {
+      // Exception
       log("$e \n$s");
       ShowToastDialog.showToast("Error occurred while making payment: $e");
       return '';
@@ -180,74 +206,86 @@ class PurchasePassPrivateController extends GetxController {
   }
 
   addPrivatePassData() async {
-    pendingPassModel.value.id = Constant.getUuid();
-    pendingPassModel.value.customerId = FireStoreUtils.getCurrentUid();
-    pendingPassModel.value.privatePassModel = selectedPrivatePass.value;
-    pendingPassModel.value.fullName = fullNameController.value.text;
-    pendingPassModel.value.reference = referenceController.value.text;
-    pendingPassModel.value.email = emailController.value.text;
-    pendingPassModel.value.identificationNo =
-        identificationNoController.value.text;
-    pendingPassModel.value.mobileNumber = phoneNumberController.value.text;
-    pendingPassModel.value.vehicleNo = vehicleNoController.value.text;
-    pendingPassModel.value.lotNo = lotNoController.value.text;
-    pendingPassModel.value.companyName = companyNameController.value.text;
-    pendingPassModel.value.companyRegistrationNo =
-        companyRegistrationNoController.value.text;
-    pendingPassModel.value.address = addressController.value.text;
-    pendingPassModel.value.countryCode = countryCode.reactive.toString();
-    pendingPassModel.value.startDate = Timestamp.now();
-    pendingPassModel.value.createAt = Timestamp.now();
-    pendingPassModel.value.endDate = Timestamp.fromDate(
-      DateTime.timestamp().add(
+    try {
+      pendingDetailPassModel.value.id = Constant.getUuid();
+      pendingDetailPassModel.value.customerId = FireStoreUtils.getCurrentUid();
+      pendingDetailPassModel.value.privatePassModel = selectedPrivatePass.value;
+      pendingDetailPassModel.value.fullName = fullNameController.value.text;
+      pendingDetailPassModel.value.reference = referenceController.value.text;
+      pendingDetailPassModel.value.email = emailController.value.text;
+      pendingDetailPassModel.value.mobileNumber =
+          phoneNumberController.value.text;
+      pendingDetailPassModel.value.vehicleNo = vehicleNoController.value.text;
+      pendingDetailPassModel.value.lotNo = lotNoController.value.text;
+      pendingDetailPassModel.value.companyName =
+          companyNameController.value.text;
+      pendingDetailPassModel.value.companyRegistrationNo =
+          companyRegistrationNoController.value.text;
+      pendingDetailPassModel.value.address = addressController.value.text;
+      pendingDetailPassModel.value.countryCode =
+          countryCode.reactive.toString();
+      // Convert DateTime values to String
+      pendingDetailPassModel.value.startDate = DateTime.now();
+      pendingDetailPassModel.value.createAt = DateTime.now();
+      pendingDetailPassModel.value.endDate = DateTime.now().add(
         Duration(
-          days: checkDuration(
-            selectedPrivatePass.value.validity.toString(),
-          ),
-        ),
-      ),
-    );
+            days: checkDuration(selectedPrivatePass.value.validity.toString())),
+      );
+      pendingDetailPassModel.value.status = "pending";
 
-    print('Pending Pass Data:');
-    print('ID: ${pendingPassModel.value.id}');
-    print('Customer ID: ${pendingPassModel.value.customerId}');
-    print('Private Pass Model: ${pendingPassModel.value.privatePassModel}');
-    print('Full Name: ${pendingPassModel.value.fullName}');
-    print('Reference: ${pendingPassModel.value.reference}');
-    print('Email: ${pendingPassModel.value.email}');
-    print('Identification No: ${pendingPassModel.value.identificationNo}');
-    print('Mobile Number: ${pendingPassModel.value.mobileNumber}');
-    print('Vehicle No: ${pendingPassModel.value.vehicleNo}');
-    print('Lot No: ${pendingPassModel.value.lotNo}');
-    print('Company Name: ${pendingPassModel.value.companyName}');
-    print(
-        'Company Registration No: ${pendingPassModel.value.companyRegistrationNo}');
-    print('Address: ${pendingPassModel.value.address}');
-    print('Country Code: ${pendingPassModel.value.countryCode}');
-    print('Start Date: ${pendingPassModel.value.startDate}');
-    print('Create At: ${pendingPassModel.value.createAt}');
-    print('End Date: ${pendingPassModel.value.endDate}');
+      await postReservePassData();
+      return true;
+    } catch (e) {
+      // Handle any exceptions
+      print('Error adding private pass data: $e');
+      return false;
+    }
+  }
 
-    String imageName = File(privateParkImage.value).path.split('/').last;
-    pendingPassModel.value.imageFileName = imageName;
+  getRawData() async {
+    // Retrieve the filename from the privateParkImage path
+    String imageName = privateParkImage.value.split('/').last;
 
+    // Convert the image to base64
     String base64Image = await convertImageToBase64(privateParkImage.value);
-    pendingPassModel.value.imageBase64 = base64Image;
 
-    print('Base64 Image: $base64Image');
-    print('Image Name: $imageName');
+    // Create a Map for privatePassModel
+    Map<String, dynamic> privatePassData = {
+      "availability": selectedPrivatePass.value.availability,
+      "id": selectedPrivatePass.value.passId,
+      "passName": selectedPrivatePass.value.passName,
+      "price": selectedPrivatePass.value.price,
+      "status": selectedPrivatePass.value.status,
+      "userType": selectedPrivatePass.value.userType,
+      "validity": selectedPrivatePass.value.validity,
+    };
 
-    // Upload the image and get the URL
-    // String imagePath = await uploadPrivateParkImage();
+    // Create the raw data JSON structure
+    Map<String, dynamic> rawData = {
+      "id": Constant.getUuid(),
+      "customerId": FireStoreUtils.getCurrentUid(),
+      "privatePassModel": privatePassData,
+      "fullName": fullNameController.value.text,
+      "reference": referenceController.value.text,
+      "email": emailController.value.text,
+      "identificationNo": identificationNoController.value.text,
+      "mobileNumber": phoneNumberController.value.text,
+      "vehicleNo": vehicleNoController.value.text,
+      "lotNo": lotNoController.value.text,
+      "companyName": companyNameController.value.text,
+      "companyRegistrationNo": companyRegistrationNoController.value.text,
+      "address": addressController.value.text,
+      "countryCode": countryCode.value,
+      "startDate": pendingDetailPassModel.value.startDate?.toString(),
+      "createAt": pendingDetailPassModel.value.createAt?.toString(),
+      "endDate": pendingDetailPassModel.value.endDate?.toString(),
+      "status": pendingDetailPassModel.value.status,
+      "paymentType": "",
+      "imageBase64": base64Image,
+      "imageFileName": imageName,
+    };
 
-    // Set the image path in the pendingPassModel
-    // pendingPassModel.value.imageBase64 = imagePath;
-
-    // Setting default status as "pending"
-    pendingPassModel.value.status = "pending";
-
-    // Now, send the data to Firestore
-    await postReservePassData();
+    return rawData;
   }
 
   Future<String> convertImageToBase64(String imagePath) async {
@@ -258,10 +296,6 @@ class PurchasePassPrivateController extends GetxController {
     String base64Image = base64Encode(imageBytes);
 
     // Check if the base64 string starts with "/9j/"
-    if (base64Image.startsWith("/9j/")) {
-      // Remove "/9j/" from the beginning of the base64 string
-      base64Image = base64Image.substring(4);
-    }
 
     return base64Image;
   }
@@ -270,8 +304,8 @@ class PurchasePassPrivateController extends GetxController {
   //   // Check if privateParkImage is not empty and is a valid URL
   //   if (privateParkImage.value.isNotEmpty &&
   //       Constant().hasValidUrl(privateParkImage.value) == false) {
-  //     // Retrieve the document ID from pendingPassModel.value
-  //     String documentId = pendingPassModel.value.id ?? '';
+  //     // Retrieve the document ID from pendingDetailPassModel.value
+  //     String documentId = pendingDetailPassModel.value.id ?? '';
 
   //     // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
   //     String imagePath = await Constant.uploadPrivateParkImageToFireStorage(
@@ -305,7 +339,7 @@ class PurchasePassPrivateController extends GetxController {
   }
 
   // pendingOrder() async {
-  //   await FireStoreUtils.setPendingPass(pendingPassModel.value, imageFile)
+  //   await FireStoreUtils.setPendingPass(pendingDetailPassModel.value, imageFile)
   //       .then((value) {
   //     Get.back();
   //     Get.toNamed(Routes.DASHBOARD_SCREEN);

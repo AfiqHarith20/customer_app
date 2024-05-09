@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks
 
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/constant/dialogue_box.dart';

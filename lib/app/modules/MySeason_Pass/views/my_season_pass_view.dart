@@ -1,5 +1,6 @@
 import 'package:customer_app/app/models/my_purchase_pass_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
+import 'package:customer_app/app/modules/Season_pass/controllers/season_pass_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -34,6 +35,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                   child: InkWell(
                     onTap: () {
                       Get.toNamed(Routes.SEASON_PASS);
+                      Get.find<SeasonPassController>().reload();
                     },
                     child: Container(
                       height: 40,
@@ -245,7 +247,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                           '${controller.mySeasonPassList[index].vehicleNo}',
                       title: 'Plate Number:'.tr,
                       svgImage: 'assets/icons/ic_carsimple.svg'),
-                  itemWidget(
+                  itemPayWidget(
                       subText:
                           '${controller.mySeasonPassList[index].paymentType}',
                       title: 'Payment Type:'.tr,
@@ -486,6 +488,48 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
           ),
         ],
       ),
+    );
+  }
+
+  static Widget itemPayWidget({
+    required String subText,
+    required String svgImage,
+    required String title,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SvgPicture.asset(
+            svgImage,
+            color: AppColors.darkGrey05,
+            height: 20,
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+          Text(
+            title.tr,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: AppThemData.regular,
+              color: AppColors.darkGrey09,
+            ),
+          ),
+          const Spacer(),
+          Expanded(
+            child: Text(
+              subText.tr,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.clip,
+            ),
+          ),
+        ],
+      ).marginOnly(left: 10, right: 10),
     );
   }
 

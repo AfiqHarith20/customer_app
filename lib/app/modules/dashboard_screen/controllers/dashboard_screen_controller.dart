@@ -20,7 +20,7 @@ class DashboardScreenController extends GetxController {
   // Define the expected types for each page
   final List<Widget> pageList = [
     const HomeView(),
-    const MySeasonPassView(),
+    MySeasonPassView(),
     SearchSummonScreenView(
       controller: SearchSummonScreenController(),
     ),
