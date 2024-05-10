@@ -144,5 +144,6 @@ class PurchasePassController extends GetxController {
     } else if (time == "12 Bulan") {
       return 365;
     }
+    return 0;
   }
 }

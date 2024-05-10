@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/notification_screen/controllers/notification_screen_controller.dart';
 import 'package:customer_app/constant/constant.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -97,6 +98,69 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                             controller.toggleSelection(index);
                                           } else {
                                             // Handle tapping on notification card in normal mode
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                final controller = Get.find<
+                                                    NotificationScreenController>();
+                                                return AlertDialog(
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        category ?? '',
+                                                        style: const TextStyle(
+                                                          color: Colors.blue,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      Text(
+                                                        Constant
+                                                            .timestampToDate(
+                                                                createAt),
+                                                        style: const TextStyle(
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Text(
+                                                        message ?? '',
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        // Mark the notification as read and close the dialog
+                                                        controller
+                                                            .markSelectedAsRead();
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text(
+                                                        'Mark as Read'.tr,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontStyle:
+                                                              FontStyle.normal,
+                                                          color: AppColors
+                                                              .yellow04,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
                                           }
                                         },
                                       )
@@ -133,7 +197,68 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                           if (controller.isInEditMode.value) {
                                             controller.toggleSelection(index);
                                           } else {
-                                            // Handle tapping on notification card in normal mode
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                final controller = Get.find<
+                                                    NotificationScreenController>();
+                                                return AlertDialog(
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        category ?? '',
+                                                        style: const TextStyle(
+                                                          color: Colors.blue,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      Text(
+                                                        Constant
+                                                            .timestampToDate(
+                                                                createAt),
+                                                        style: const TextStyle(
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Text(
+                                                        message ?? '',
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        // Mark the notification as read and close the dialog
+                                                        controller
+                                                            .markSelectedAsRead();
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: Text(
+                                                        'Ok'.tr,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontStyle:
+                                                              FontStyle.normal,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
                                           }
                                         },
                                       )
@@ -164,7 +289,7 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                             Text(
                               "Select All".tr,
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 12,
                                 fontStyle: FontStyle.normal,
                                 color: Colors.black,
                               ),
@@ -179,12 +304,36 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                 ), // Change color here
                               ),
                               onPressed: () {
-                                controller.deleteSelectedNotifications();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return DialogBox(
+                                        imageAsset:
+                                            "assets/images/ic_delete.png",
+                                        onPressConfirm: () async {
+                                          controller
+                                              .deleteSelectedNotifications();
+                                          Navigator.of(context).pop();
+                                        },
+                                        onPressConfirmBtnName: "Delete".tr,
+                                        onPressConfirmColor: AppColors.red04,
+                                        onPressCancel: () {
+                                          Get.back();
+                                        },
+                                        content:
+                                            "Are you sure you want to Delete this notification."
+                                                .tr,
+                                        onPressCancelColor:
+                                            AppColors.darkGrey01,
+                                        subTitle: "Delete Notification".tr,
+                                        onPressCancelBtnName: "Cancel".tr);
+                                  },
+                                );
                               },
                               child: Text(
                                 "Delete".tr,
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontStyle: FontStyle.normal,
                                   color: Colors.black,
                                 ),
@@ -201,11 +350,12 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                               ),
                               onPressed: () {
                                 controller.markSelectedAsRead();
+                                controller.toggleEditMode();
                               },
                               child: Text(
                                 "Mark as Read".tr,
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontStyle: FontStyle.normal,
                                   color: Colors.black,
                                 ),

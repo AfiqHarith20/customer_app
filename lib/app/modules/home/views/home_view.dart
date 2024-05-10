@@ -252,7 +252,7 @@ class _HomeViewState extends State<HomeView> {
                               children: [
                                 Center(
                                   child: Text(
-                                    'Hi, ${controller.customerModel.value.fullName}',
+                                    'Hi, ${controller.customerModel.value.fullName ?? ''}',
                                     style: const TextStyle(
                                       fontFamily: AppThemData.bold,
                                       fontSize: 18,
@@ -260,19 +260,34 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                   ),
                                 ),
-                                Center(
-                                  child: Text(
-                                    controller.customerModel.value.countryCode
-                                            .toString() +
-                                        controller
-                                            .customerModel.value.phoneNumber
-                                            .toString(),
-                                    //controller.customerModel.value.email.toString(),
-                                    style: const TextStyle(
-                                      fontFamily: AppThemData.regular,
-                                      color: AppColors.darkGrey06,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      controller.customerModel.value != null
+                                          ? controller
+                                              .customerModel.value.countryCode
+                                              .toString()
+                                          : '',
+                                      //controller.customerModel.value.email.toString(),
+                                      style: const TextStyle(
+                                        fontFamily: AppThemData.regular,
+                                        color: AppColors.darkGrey06,
+                                      ),
                                     ),
-                                  ),
+                                    Text(
+                                      controller.customerModel.value != null
+                                          ? controller
+                                              .customerModel.value.phoneNumber
+                                              .toString()
+                                          : '',
+                                      //controller.customerModel.value.email.toString(),
+                                      style: const TextStyle(
+                                        fontFamily: AppThemData.regular,
+                                        color: AppColors.darkGrey06,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(
                                   height: 10,

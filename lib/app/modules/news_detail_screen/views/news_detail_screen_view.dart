@@ -30,7 +30,7 @@ class NewsDetailScreenView extends StatelessWidget {
                       Text(
                         controller.titleValue.value,
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -39,7 +39,7 @@ class NewsDetailScreenView extends StatelessWidget {
                       Text(
                         controller.dateValue.value,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -47,7 +47,7 @@ class NewsDetailScreenView extends StatelessWidget {
                       Text(
                         controller.desValue.value,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           color: Colors.black,
                         ),
                       ),

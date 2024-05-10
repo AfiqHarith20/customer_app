@@ -37,7 +37,7 @@ class InformationScreenController extends GetxController {
     {"value": "5", "name": "Others"}
   ].obs;
   RxString selectedIc = "1".obs; // Default selected value
-  RxString selectedGender = "Male".obs;
+  RxString selectedGender = "".obs;
   RxString profileImage = "".obs;
   RxString loginType = "".obs;
 

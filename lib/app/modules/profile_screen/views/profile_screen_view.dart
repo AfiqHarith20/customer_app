@@ -95,7 +95,7 @@ class ProfileScreenView extends StatelessWidget {
                                                   imageUrl: controller
                                                       .profileImage.value,
                                                   height: Responsive.width(
-                                                      30, context),
+                                                      40, context),
                                                   width: Responsive.width(
                                                       30, context),
                                                   fit: BoxFit.fill,
@@ -123,7 +123,7 @@ class ProfileScreenView extends StatelessWidget {
                                                   File(controller
                                                       .profileImage.value),
                                                   height: Responsive.width(
-                                                      30, context),
+                                                      40, context),
                                                   width: Responsive.width(
                                                       30, context),
                                                   fit: BoxFit.fill,

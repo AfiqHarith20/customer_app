@@ -49,8 +49,8 @@ class EditProfileScreenView extends StatelessWidget {
                                 },
                                 child: Center(
                                   child: SizedBox(
-                                    height: Responsive.width(30, context),
-                                    width: Responsive.width(30, context),
+                                    height: Responsive.width(40, context),
+                                    width: Responsive.width(40, context),
                                     child: Stack(
                                       children: [
                                         controller.profileImage.isEmpty
@@ -75,9 +75,9 @@ class EditProfileScreenView extends StatelessWidget {
                                                   child: Image.asset(
                                                     Constant.userPlaceHolder,
                                                     height: Responsive.width(
-                                                        30, context),
+                                                        40, context),
                                                     width: Responsive.width(
-                                                        30, context),
+                                                        40, context),
                                                     fit: BoxFit.fill,
                                                   ),
                                                 ),
@@ -104,16 +104,21 @@ class EditProfileScreenView extends StatelessWidget {
                                                     child: ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              60),
+                                                        60,
+                                                      ),
                                                       child: NetworkImageWidget(
                                                         imageUrl: controller
                                                             .profileImage.value,
                                                         height:
                                                             Responsive.width(
-                                                                30, context),
+                                                          40,
+                                                          context,
+                                                        ),
                                                         width: Responsive.width(
-                                                            30, context),
-                                                        fit: BoxFit.fill,
+                                                          40,
+                                                          context,
+                                                        ),
+                                                        fit: BoxFit.cover,
                                                       ),
                                                     ),
                                                   )
@@ -137,25 +142,31 @@ class EditProfileScreenView extends StatelessWidget {
                                                     child: ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              60),
+                                                        60,
+                                                      ),
                                                       child: Image.file(
                                                         File(controller
                                                             .profileImage
                                                             .value),
                                                         height:
                                                             Responsive.width(
-                                                                30, context),
+                                                          40,
+                                                          context,
+                                                        ),
                                                         width: Responsive.width(
-                                                            30, context),
-                                                        fit: BoxFit.fill,
+                                                          40,
+                                                          context,
+                                                        ),
+                                                        fit: BoxFit.cover,
                                                       ),
                                                     ),
                                                   ),
                                         Positioned(
-                                            right: 0,
-                                            bottom: 0,
-                                            child: SvgPicture.asset(
-                                                "assets/icons/ic_camera.svg")),
+                                          right: 0,
+                                          bottom: 0,
+                                          child: SvgPicture.asset(
+                                              "assets/icons/ic_camera.svg"),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -217,7 +228,7 @@ class EditProfileScreenView extends StatelessWidget {
                                           },
                                         )),
                                     Text(
-                                      controller.genderList[index],
+                                      controller.genderList[index].tr,
                                       style: const TextStyle(
                                           fontFamily: AppThemData.medium,
                                           color: AppColors.darkGrey04,

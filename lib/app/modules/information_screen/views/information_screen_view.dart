@@ -46,9 +46,9 @@ class InformationScreenView extends GetView<InformationScreenController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Complete Your Profile",
-                    style: TextStyle(
+                  Text(
+                    "Complete Your Profile".tr,
+                    style: const TextStyle(
                         fontSize: 20,
                         color: AppColors.darkGrey10,
                         fontFamily: AppThemData.bold),
@@ -56,9 +56,10 @@ class InformationScreenView extends GetView<InformationScreenController> {
                   const SizedBox(
                     height: 6,
                   ),
-                  const Text(
-                    "Provide your essential details and add a profile picture to personalize your experience",
-                    style: TextStyle(
+                  Text(
+                    "Provide your essential details and add a profile picture to personalize your experience"
+                        .tr,
+                    style: const TextStyle(
                         color: AppColors.lightGrey10,
                         fontFamily: AppThemData.regular),
                   ),
@@ -102,7 +103,7 @@ class InformationScreenView extends GetView<InformationScreenController> {
                       ),
                     ),
                     title: "Full Name".tr,
-                    hintText: "Enter Full Name",
+                    hintText: "Enter Full Name".tr,
                     controller: controller.fullNameController.value,
                     onPress: () {},
                   ),
@@ -114,8 +115,8 @@ class InformationScreenView extends GetView<InformationScreenController> {
                         "assets/icons/ic_email.svg",
                       ),
                     ),
-                    title: "Email",
-                    hintText: "Enter Email Address",
+                    title: "Email".tr,
+                    hintText: "Enter Email Address".tr,
                     controller: controller.emailController.value,
                     onPress: () {},
                   ),
@@ -171,9 +172,9 @@ class InformationScreenView extends GetView<InformationScreenController> {
                   //     );
                   //   }),
                   // ),
-                  const Text(
-                    "Select Gender",
-                    style: TextStyle(
+                  Text(
+                    "Select Gender".tr,
+                    style: const TextStyle(
                         fontFamily: AppThemData.regular,
                         color: AppColors.darkGrey06),
                   ),
@@ -192,7 +193,7 @@ class InformationScreenView extends GetView<InformationScreenController> {
                               },
                             )),
                         Text(
-                          controller.genderList[index],
+                          controller.genderList[index].tr,
                           style: const TextStyle(
                               fontFamily: AppThemData.medium,
                               color: AppColors.darkGrey04,
@@ -202,22 +203,22 @@ class InformationScreenView extends GetView<InformationScreenController> {
                       ],
                     );
                   })),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  TextFieldWidgetPrefix(
-                    validator: (value) => null,
-                    prefix: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: SvgPicture.asset(
-                        "assets/icons/ic_ticket.svg",
-                      ),
-                    ),
-                    title: "Referral Code",
-                    hintText: "Enter Referral Code ",
-                    controller: controller.referralCodeController.value,
-                    onPress: () {},
-                  ),
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
+                  // TextFieldWidgetPrefix(
+                  //   validator: (value) => null,
+                  //   prefix: Padding(
+                  //     padding: const EdgeInsets.all(12.0),
+                  //     child: SvgPicture.asset(
+                  //       "assets/icons/ic_ticket.svg",
+                  //     ),
+                  //   ),
+                  //   title: "Referral Code",
+                  //   hintText: "Enter Referral Code ",
+                  //   controller: controller.referralCodeController.value,
+                  //   onPress: () {},
+                  // ),
                   const SizedBox(
                     height: 33,
                   ),
@@ -225,7 +226,7 @@ class InformationScreenView extends GetView<InformationScreenController> {
                     btnHeight: 56,
                     txtSize: 16,
                     context,
-                    title: "Save and Continue",
+                    title: "Save and Continue".tr,
                     txtColor: AppColors.lightGrey01,
                     bgColor: AppColors.darkGrey10,
                     onPress: () async {

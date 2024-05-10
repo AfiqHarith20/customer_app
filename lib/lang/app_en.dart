@@ -47,7 +47,7 @@ const Map<String, String> enUS = {
   "Enter Email Address": "Enter Email Address",
   "Mobile Number": "Mobile Number",
   "Select Gender": "Select Gender",
-  "please_select": "please_select",
+  "please_select": "Please Select",
   "camera": "camera",
   "Male": "Male",
   "Female": "Female",
@@ -267,4 +267,18 @@ const Map<String, String> enUS = {
   "Expired": "Expired",
   "More News": "More News",
   "News Detail": "News Detail",
+  "Please select payment method before proceeding to pay.":
+      "Please select payment method before proceeding to pay.",
+  "Select Payment": "Select Payment",
+  "Complete Your Profile": "Complete Your Profile",
+  "Provide your essential details and add a profile picture to personalize your experience":
+      "Provide your essential details and add a profile picture to personalize your experience",
+  "Save and Continue": "Save and Continue",
+  "Mark as Read": "Mark as Read",
+  "Select All": "Select All",
+  "Activity": "Activity",
+  "Inbox": "Inbox",
+  "Are you sure you want to Delete this notification.":
+      "Are you sure you want to Delete this notification.",
+  "Delete Notification": "Delete Notification",
 };

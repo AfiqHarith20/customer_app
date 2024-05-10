@@ -5,6 +5,7 @@ import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/app/widget/svg_image_widget.dart';
 import 'package:customer_app/constant/constant.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
@@ -263,6 +264,31 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   : AppColors.darkGrey10,
               onPress: () async {
                 if (!controller.isPaymentCompleted.value) {
+                  return;
+                }
+                // Check if no payment method is selected
+                if (controller.selectedPaymentMethod.value.isEmpty ||
+                    (controller.selectedPaymentMethod.value ==
+                            "Online Banking" &&
+                        (widget.selectedBankName == null ||
+                            widget.selectedBankName.isEmpty))) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DialogBoxNotify(
+                        imageAsset: "assets/images/mobile-payment.png",
+                        onPressConfirm: () async {
+                          Navigator.of(context).pop();
+                        },
+                        onPressConfirmBtnName: "Ok".tr,
+                        onPressConfirmColor: AppColors.red04,
+                        content:
+                            "Please select payment method before proceeding to pay."
+                                .tr,
+                        subTitle: "Select Payment".tr,
+                      );
+                    },
+                  );
                   return;
                 }
                 // Check the selected payment method
@@ -590,7 +616,9 @@ Widget paymentDecoration({
     padding: const EdgeInsets.only(bottom: 16),
     child: InkWell(
       onTap: () {
-        controller.selectedPaymentMethod.value = value.toString();
+        if (value != "wallet") {
+          controller.selectedPaymentMethod.value = value.toString();
+        }
       },
       child: Row(
         children: [

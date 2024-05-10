@@ -16,6 +16,7 @@ import 'package:customer_app/utils/preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -136,7 +137,10 @@ class Constant {
 
   static Widget loader() {
     return const Center(
-      child: CircularProgressIndicator(color: Colors.black),
+      child: CircularProgressIndicator(
+        color: Colors.black,
+        strokeCap: StrokeCap.round,
+      ),
     );
   }
 

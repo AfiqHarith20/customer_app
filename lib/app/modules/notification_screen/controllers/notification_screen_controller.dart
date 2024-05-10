@@ -83,18 +83,42 @@ class NotificationScreenController extends GetxController {
     }
   }
 
-  void deleteSelectedNotifications() {
-    selectedIndexes.sort((a, b) => b.compareTo(a));
-    for (var index in selectedIndexes) {
-      notifyList.removeAt(index);
+  void deleteSelectedNotifications() async {
+    try {
+      selectedIndexes.sort((a, b) => b.compareTo(a));
+      for (var index in selectedIndexes) {
+        String documentId =
+            notifyList[index]['reference']; // Get the document ID
+        await FirebaseFirestore.instance
+            .collection('notifications')
+            .doc(getCurrentUid())
+            .collection('messages')
+            .doc(documentId)
+            .delete(); // Delete the document from Firestore
+        notifyList.removeAt(index);
+      }
+      // Clear selected indexes after deletion
+      selectedIndexes.clear();
+    } catch (e) {
+      print('Error deleting notifications: $e');
     }
-    // Clear selected indexes after deletion
-    selectedIndexes.clear();
   }
 
-  void markSelectedAsRead() {
-    for (var index in selectedIndexes) {
-      notifyList[index]['isRead'] = true;
+  markSelectedAsRead() async {
+    try {
+      for (var index in selectedIndexes) {
+        String documentId =
+            notifyList[index]['reference']; // Get the document ID
+        await FirebaseFirestore.instance
+            .collection('notifications')
+            .doc(getCurrentUid())
+            .collection('messages')
+            .doc(documentId)
+            .update({'isRead': true}); // Update the 'isRead' field to true
+        notifyList[index]['isRead'] = true; // Update locally as well
+      }
+    } catch (e) {
+      print('Error marking notifications as read: $e');
     }
   }
 

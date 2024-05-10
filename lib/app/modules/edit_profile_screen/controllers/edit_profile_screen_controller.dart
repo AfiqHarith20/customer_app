@@ -17,7 +17,7 @@ class EditProfileScreenController extends GetxController {
   RxString countryCode = "+60".obs;
   RxBool isLoading = false.obs;
 
-  RxList<String> genderList = ["Male".tr, "Female".tr].obs;
+  RxList<String> genderList = ["Male", "Female"].obs;
   RxString selectedGender = "Male".tr.obs;
   RxString profileImage = "".obs;
   final ImagePicker imagePicker = ImagePicker();
@@ -41,6 +41,8 @@ class EditProfileScreenController extends GetxController {
       selectedGender.value = customerModel.value.gender!;
       profileImage.value = customerModel.value.profilePic!;
       isLoading.value = true;
+
+      print('Selected Gender: ${selectedGender.value}');
     }
   }
 

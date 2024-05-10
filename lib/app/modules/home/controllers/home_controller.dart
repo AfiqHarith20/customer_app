@@ -30,17 +30,22 @@ class HomeController extends GetxController {
   }
 
   getProfileData() async {
-    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
-        .then((value) {
-      if (value != null) {
-        customerModel.value = value;
-      }
-    });
+    try {
+      isLoading.value = true;
+      await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+          .then((value) {
+        if (value != null) {
+          customerModel.value = value;
+        }
+      });
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void fetchCarousel() async {
     try {
-      isLoading = true.obs;
+      isLoading.value = true;
       update();
 
       List<CarouselModel>? data = await FireStoreUtils.getCarousel();
@@ -49,7 +54,7 @@ class HomeController extends GetxController {
         box.write('carouselData', data);
       }
     } finally {
-      isLoading = false.obs;
+      isLoading.value = false;
       update();
       print('data fetch done');
     }

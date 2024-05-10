@@ -47,7 +47,7 @@ const Map<String, String> msMY = {
   "Enter Email Address": "Masukkan alamat e-mel",
   "Mobile Number": "Nombor Telefon",
   "Select Gender": "Pilih Jantina",
-  "please_select": "please_select",
+  "please_select": "Sila pilih",
   "camera": "kamera",
   "Male": "Lelaki",
   "Female": "Perempuan",
@@ -268,4 +268,18 @@ const Map<String, String> msMY = {
   "Expired": "Tamat Tempoh",
   "More News": "Senarai Berita",
   "News Detail": "Butiran Berita",
+  "Please select payment method before proceeding to pay.":
+      "Sila pilih kaedah bayaran sebelum meneruskan pembayaran anda.",
+  "Select Payment": "Pilih Bayaran",
+  "Complete Your Profile": "Lengkapkan Profil Anda",
+  "Provide your essential details and add a profile picture to personalize your experience":
+      "Berikan butiran anda dan tambahkan gambar profil untuk memperibadikan pengalaman anda",
+  "Save and Continue": "Simpan dan Teruskan",
+  "Mark as Read": "Tanda telah Dibaca",
+  "Select All": "Pilih Semua",
+  "Activity": "Aktiviti",
+  "Inbox": "Peti Masuk",
+  "Are you sure you want to Delete this notification.":
+      "Anda pasti untuk padam notifikasi ini.",
+  "Delete Notification": "Padam Notifikasi",
 };
