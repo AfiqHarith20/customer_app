@@ -30,6 +30,19 @@ class WebviewScreenController extends GetxController {
   RxBool isFormVisible = false.obs;
   String paymentResponse = '';
   RxString paymentType = RxString('');
+  bool isPaymentFetched = false;
+
+  // Singleton instance variable
+  static final WebviewScreenController _instance =
+      WebviewScreenController._privateConstructor();
+
+  // Private constructor
+  WebviewScreenController._privateConstructor();
+
+  // Factory constructor to return the singleton instance
+  factory WebviewScreenController() {
+    return _instance;
+  }
 
   @override
   void onInit() {
@@ -67,7 +80,6 @@ class WebviewScreenController extends GetxController {
             onlinePaymentModel.value.identificationType ?? '';
         DateTime? endDate = onlinePaymentModel.value.endDate;
         DateTime? startDate = onlinePaymentModel.value.startDate;
-        await fetchPayment();
       }
     } catch (e, s) {
       log("$e \n$s");
@@ -112,6 +124,16 @@ class WebviewScreenController extends GetxController {
 
   Future<WebViewResponse> fetchPayment() async {
     try {
+      // Check if payment is already fetched
+      if (isPaymentFetched) {
+        // If payment is already fetched, return an empty response
+        return WebViewResponse(
+          redirectionType: 0,
+          redirectUrl: '',
+          clientScript: '',
+        );
+      }
+
       print('Fetching payment...');
       final response = await http.post(
         Uri.parse(APIList.payment.toString()),
@@ -133,19 +155,8 @@ class WebviewScreenController extends GetxController {
           final String redirectUrl = responseBody['redirectUrl'] ?? '';
           final String clientScript = responseBody['clientScript'] ?? '';
 
-          // Handle redirection based on the type
-          if (redirectionType == 1) {
-            // Redirect using URL
-            print('Redirecting using URL: $redirectUrl');
-            // Handle redirection using URL here
-          } else if (redirectionType == 2) {
-            // Redirect using client script
-            print('Redirecting using client script: $clientScript');
-            // Handle redirection using client script here
-          } else {
-            print('Invalid redirection type');
-            // Handle invalid redirection type here
-          }
+          // Update the flag to indicate that payment is fetched
+          isPaymentFetched = true;
 
           // Return WebViewResponse object
           return WebViewResponse(
@@ -183,95 +194,95 @@ class WebviewScreenController extends GetxController {
     }
   }
 
-  void getArgumentandPayCompound() async {
-    try {
-      dynamic argumentData = Get.arguments;
-      if (argumentData != null &&
-          argumentData['myPaymentCompoundModel'] != null) {
-        myPaymentCompoundModel.value = argumentData['myPaymentCompoundModel'];
-        String customerId = myPaymentCompoundModel.value.customerId ?? '';
-        String accessToken = myPaymentCompoundModel.value.accessToken ?? '';
-        String providerChannelId =
-            myPaymentCompoundModel.value.selectedBankId ?? '';
-        String name = myPaymentCompoundModel.value.name ?? '';
-        String email = myPaymentCompoundModel.value.email ?? '';
-        String address = myPaymentCompoundModel.value.address ?? '';
-        String identificationNo =
-            myPaymentCompoundModel.value.identificationNo ?? '';
-        String mobileNumber = myPaymentCompoundModel.value.mobileNumber ?? '';
-        String vehicleNum = myPaymentCompoundModel.value.vehicleNum ?? '';
-        String compoundNo = myPaymentCompoundModel.value.compoundNo ?? '';
-        String kodHasil = myPaymentCompoundModel.value.kodHasil ?? '';
-        String channelId = myPaymentCompoundModel.value.channelId ?? '';
-        String amount = myPaymentCompoundModel.value.amount.toString();
-        String userName = myPaymentCompoundModel.value.userName ?? '';
-        String identificationType =
-            myPaymentCompoundModel.value.identificationType ?? '';
-        paymentType.value = 'compound';
-        await fetchPayCompound();
-      }
-    } catch (e, s) {
-      log("$e \n$s");
-      ShowToastDialog.showToast("exception:$e \n$s");
-    }
-  }
+  // void getArgumentandPayCompound() async {
+  //   try {
+  //     dynamic argumentData = Get.arguments;
+  //     if (argumentData != null &&
+  //         argumentData['myPaymentCompoundModel'] != null) {
+  //       myPaymentCompoundModel.value = argumentData['myPaymentCompoundModel'];
+  //       String customerId = myPaymentCompoundModel.value.customerId ?? '';
+  //       String accessToken = myPaymentCompoundModel.value.accessToken ?? '';
+  //       String providerChannelId =
+  //           myPaymentCompoundModel.value.selectedBankId ?? '';
+  //       String name = myPaymentCompoundModel.value.name ?? '';
+  //       String email = myPaymentCompoundModel.value.email ?? '';
+  //       String address = myPaymentCompoundModel.value.address ?? '';
+  //       String identificationNo =
+  //           myPaymentCompoundModel.value.identificationNo ?? '';
+  //       String mobileNumber = myPaymentCompoundModel.value.mobileNumber ?? '';
+  //       String vehicleNum = myPaymentCompoundModel.value.vehicleNum ?? '';
+  //       String compoundNo = myPaymentCompoundModel.value.compoundNo ?? '';
+  //       String kodHasil = myPaymentCompoundModel.value.kodHasil ?? '';
+  //       String channelId = myPaymentCompoundModel.value.channelId ?? '';
+  //       String amount = myPaymentCompoundModel.value.amount.toString();
+  //       String userName = myPaymentCompoundModel.value.userName ?? '';
+  //       String identificationType =
+  //           myPaymentCompoundModel.value.identificationType ?? '';
+  //       paymentType.value = 'compound';
+  //       await fetchPayCompound();
+  //     }
+  //   } catch (e, s) {
+  //     log("$e \n$s");
+  //     ShowToastDialog.showToast("exception:$e \n$s");
+  //   }
+  // }
 
-  String getCompoundBody() {
-    final myPaymentCompoundData = myPaymentCompoundModel.value;
-    final body = {
-      'accessToken': myPaymentCompoundData.accessToken ?? '',
-      'customerId': myPaymentCompoundData.customerId ?? '',
-      'channelId': myPaymentCompoundData.channelId ?? '',
-      'providerChannelId': myPaymentCompoundData.selectedBankId ?? '',
-      'amount': myPaymentCompoundData.amount?.toString() ??
-          '', // Convert amount to string explicitly
-      'address': myPaymentCompoundData.address ?? '',
-      'name': myPaymentCompoundData.name ?? '',
-      'email': myPaymentCompoundData.email ?? '',
-      'mobileNumber': myPaymentCompoundData.mobileNumber ?? '',
-      'username': myPaymentCompoundData.userName ?? '',
-      'identificationNumber': myPaymentCompoundData.identificationNo ?? '',
-      'identificationType': myPaymentCompoundData.identificationType ?? '',
-      'vehicleNo': myPaymentCompoundData.vehicleNum ?? '',
-      'compoundNo': myPaymentCompoundData.compoundNo ?? '',
-      'kodHasil': myPaymentCompoundData.kodHasil ?? '',
-    };
-    body.forEach((key, value) {
-      // print('$key: $value');
-    });
+  // String getCompoundBody() {
+  //   final myPaymentCompoundData = myPaymentCompoundModel.value;
+  //   final body = {
+  //     'accessToken': myPaymentCompoundData.accessToken ?? '',
+  //     'customerId': myPaymentCompoundData.customerId ?? '',
+  //     'channelId': myPaymentCompoundData.channelId ?? '',
+  //     'providerChannelId': myPaymentCompoundData.selectedBankId ?? '',
+  //     'amount': myPaymentCompoundData.amount?.toString() ??
+  //         '', // Convert amount to string explicitly
+  //     'address': myPaymentCompoundData.address ?? '',
+  //     'name': myPaymentCompoundData.name ?? '',
+  //     'email': myPaymentCompoundData.email ?? '',
+  //     'mobileNumber': myPaymentCompoundData.mobileNumber ?? '',
+  //     'username': myPaymentCompoundData.userName ?? '',
+  //     'identificationNumber': myPaymentCompoundData.identificationNo ?? '',
+  //     'identificationType': myPaymentCompoundData.identificationType ?? '',
+  //     'vehicleNo': myPaymentCompoundData.vehicleNum ?? '',
+  //     'compoundNo': myPaymentCompoundData.compoundNo ?? '',
+  //     'kodHasil': myPaymentCompoundData.kodHasil ?? '',
+  //   };
+  //   body.forEach((key, value) {
+  //     // print('$key: $value');
+  //   });
 
-    // Convert the map to a JSON object
-    final String jsonString = json.encode(body);
-    // print(jsonString);
+  //   // Convert the map to a JSON object
+  //   final String jsonString = json.encode(body);
+  //   // print(jsonString);
 
-    return jsonString;
-  }
+  //   return jsonString;
+  // }
 
-  Future<String> fetchPayCompound() async {
-    try {
-      print('Fetching payment...');
-      final response = await http.post(
-        Uri.parse(APIList.payCompound.toString()),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: getCompoundBody(),
-      );
+  // Future<String> fetchPayCompound() async {
+  //   try {
+  //     print('Fetching payment...');
+  //     final response = await http.post(
+  //       Uri.parse(APIList.payCompound.toString()),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: getCompoundBody(),
+  //     );
 
-      // Process the response here
-      print('Payment Status Code: ${response.statusCode}');
-      print('Payment Body: ${response.body}');
-      print('Payment Headers: ${response.headers}');
+  //     // Process the response here
+  //     print('Payment Status Code: ${response.statusCode}');
+  //     print('Payment Body: ${response.body}');
+  //     print('Payment Headers: ${response.headers}');
 
-      // Return the response body as a String
-      return response.body;
-    } catch (e, s) {
-      log("$e \n$s");
-      ShowToastDialog.showToast("Error occurred while making payment: $e");
-      // Return an empty string or handle the error as needed
-      return '';
-    }
-  }
+  //     // Return the response body as a String
+  //     return response.body;
+  //   } catch (e, s) {
+  //     log("$e \n$s");
+  //     ShowToastDialog.showToast("Error occurred while making payment: $e");
+  //     // Return an empty string or handle the error as needed
+  //     return '';
+  //   }
+  // }
 }
 
 class WebViewResponse {

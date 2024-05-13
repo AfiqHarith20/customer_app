@@ -98,7 +98,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: SlidingSwitch(
                     value: _requestMethod == 'compound' ? false : true,
-                    width: 350,
+                    width: 340,
                     onChanged: (bool value) {
                       setState(() {
                         _requestMethod = value ? 'car' : 'compound';
@@ -386,7 +386,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                         // ),
                                         // const SizedBox(height: 3),
                                         Text(
-                                          '${compoundModel.offence.toString().substring(0, 36)}\n${compoundModel.offence.toString().substring(36, 51)}',
+                                          '${compoundModel.offence.toString().substring(0, 30)}\n${compoundModel.offence.toString().substring(30, 51)}',
                                           style: const TextStyle(
                                             color: AppColors.darkGrey03,
                                             fontFamily: AppThemData.medium,
@@ -543,16 +543,18 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
   }
 
   void navigateToPayCompound(CompoundModel compoundModel) {
+    CompoundModel payCompoundModel = CompoundModel(
+      compoundNo: compoundModel.compoundNo,
+      amount: compoundModel.amount,
+      dateTime: compoundModel.dateTime,
+      status: compoundModel.status,
+      offence: compoundModel.offence,
+      kodHasil: compoundModel.kodHasil,
+      vehicleNum: compoundModel.vehicleNum,
+    );
+
     Get.toNamed(Routes.PAY_COMPOUND, arguments: {
-      "payCompoundModel": {
-        "compoundNo": compoundModel.compoundNo,
-        "amount": compoundModel.amount,
-        "dateTime": compoundModel.dateTime,
-        "status": compoundModel.status,
-        "offence": compoundModel.offence,
-        "kodHasil": compoundModel.kodHasil,
-        "vehicleNum": compoundModel.vehicleNum,
-      },
+      "payCompoundModel": payCompoundModel.toJson(),
       "myPaymentCompoundModel": widget.controller.myPaymentCompoundModel.value
     });
   }

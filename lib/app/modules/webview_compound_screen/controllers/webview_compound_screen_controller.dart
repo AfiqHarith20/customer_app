@@ -40,6 +40,7 @@ class WebviewCompoundScreenController extends GetxController {
   void onInit() {
     super.onInit();
     // Retrieve arguments and make payment when the controller is initialized
+    // fetchPayCompound();
     getArgumentandPayCompound();
   }
 
@@ -68,7 +69,6 @@ class WebviewCompoundScreenController extends GetxController {
         String identificationType =
             myPaymentCompoundModel.value.identificationType ?? '';
         paymentType.value = 'compound';
-        await fetchPayCompound();
       }
     } catch (e, s) {
       log("$e \n$s");
@@ -97,7 +97,7 @@ class WebviewCompoundScreenController extends GetxController {
       'kodHasil': myPaymentCompoundData.kodHasil ?? '',
     };
     body.forEach((key, value) {
-      // print('$key: $value');
+      print('$key: $value');
     });
 
     // Convert the map to a JSON object

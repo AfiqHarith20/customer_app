@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/compound_model.dart';
 import 'package:customer_app/app/models/my_payment_compound_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/button_theme.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
@@ -79,9 +80,9 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
     if (arguments != null && arguments.containsKey("payCompoundModel")) {
       compoundModel = CompoundModel.fromJson(arguments["payCompoundModel"]);
       // Now you have access to the compoundModel, you can use it as needed
-      // print('Compound Number: ${compoundModel.compoundNo}');
-      // print('Amount: ${compoundModel.amount}');
-      // print('vehicle no: ${compoundModel.vehicleNum ?? ''}');
+      print('Compound Number: ${compoundModel.compoundNo ?? ''}');
+      print('Amount: ${compoundModel.amount}');
+      print('vehicle no: ${compoundModel.vehicleNum ?? ''}');
       // TODO: implement initState
       super.initState();
       final compoundPrice = controller.compoundModel.value.amount ?? '';
@@ -249,6 +250,31 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                 if (!controller.isPaymentCompleted.value) {
                   return;
                 }
+                // Check if no payment method is selected
+                if (controller.selectedPaymentMethod.value.isEmpty ||
+                    (controller.selectedPaymentMethod.value ==
+                            "Online Banking" &&
+                        (widget.selectedBankName == null ||
+                            widget.selectedBankName.isEmpty))) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DialogBoxNotify(
+                        imageAsset: "assets/images/mobile-payment.png",
+                        onPressConfirm: () async {
+                          Navigator.of(context).pop();
+                        },
+                        onPressConfirmBtnName: "Ok".tr,
+                        onPressConfirmColor: AppColors.red04,
+                        content:
+                            "Please select payment method before proceeding to pay."
+                                .tr,
+                        subTitle: "Select Payment".tr,
+                      );
+                    },
+                  );
+                  return;
+                }
                 // Check the selected payment method
                 if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.commercePay!.name) {
@@ -259,7 +285,6 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                       Constant.currencyModel!.decimalDigits!,
                     ),
                   );
-
                   // Calculate total price using the passPrice
                   double totalPrice = calculateTotalPrice(
                     compoundModel,

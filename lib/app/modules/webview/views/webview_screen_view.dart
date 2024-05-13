@@ -90,25 +90,25 @@ class _WebviewScreenState extends State<WebviewScreen> {
                     encoding: 'utf8',
                   );
                 } else {
-                  // print('Invalid redirection type');
+                  print('Invalid redirection type');
                   // Handle invalid redirection type here
                 }
               },
-              onLoadStop: (InAppWebViewController controller, url) async {
-                final response = await this.controller.fetchPayment();
+              // onLoadStop: (InAppWebViewController controller, url) async {
+              //   final response = await this.controller.fetchPayment();
 
-                // Handle redirection based on the type
+              //   // Handle redirection based on the type
 
-                final String redirectUrl = response.redirectUrl;
+              //   final String redirectUrl = response.redirectUrl;
 
-                // print('URL: $url');
-                // // You can also print other details of the URL if needed
-                // print('Host: ${Uri.parse(redirectUrl).host}');
-                // print('Path: ${Uri.parse(redirectUrl).path}');
-                // print(
-                //     'Query Parameters: ${Uri.parse(redirectUrl).queryParameters}');
-                // print('Fragment: ${Uri.parse(redirectUrl).fragment}');
-              },
+              //   // print('URL: $url');
+              //   // // You can also print other details of the URL if needed
+              //   // print('Host: ${Uri.parse(redirectUrl).host}');
+              //   // print('Path: ${Uri.parse(redirectUrl).path}');
+              //   // print(
+              //   //     'Query Parameters: ${Uri.parse(redirectUrl).queryParameters}');
+              //   // print('Fragment: ${Uri.parse(redirectUrl).fragment}');
+              // },
             );
           },
         ),

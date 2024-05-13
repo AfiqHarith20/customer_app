@@ -57,7 +57,7 @@ class PurchasePassPrivateController extends GetxController {
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
   RxList<File> imageFiles = <File>[].obs;
   final ImagePicker imagePicker = ImagePicker();
-  final bool selectedSegment = Get.arguments['selectedSegment'];
+  final bool selectedSegment = Get.arguments?['selectedSegment'] ?? false;
   final SeasonPassController seasonPassController = Get.find();
 
   void clearFormData() {
