@@ -234,7 +234,7 @@ class InformationScreenController extends GetxController {
 
   void _showEmailVerifiedSnackbar(String message) {
     Get.snackbar(
-      "Email Verification",
+      "Email Verification".tr,
       message,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 8),

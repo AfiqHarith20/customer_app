@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -662,15 +663,46 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
         );
       }
 
-      // Set loading state back to false after search completes
-      widget.controller.setLoading(false);
-    } catch (e) {
-      // Handle any errors that occur during the search
-      print('Error searching: $e');
-    } finally {
-      // Set loading state back to false after search completes
-      widget.controller.setLoading(false);
+      // If no compound is found, show a Snackbar
+      if (compounds.isEmpty) {
+        _noCompoundSnackBar("No compound is found.".tr);
+      }
+    } on SocketException catch (e) {
+      // Handle connection problem
+      _noConnectionSnackBar("Connection problem. Please try again.".tr);
     }
+    // Set loading state back to false after search completes
+    widget.controller.setLoading(false);
+  }
+
+  void _noCompoundSnackBar(String message) {
+    Get.snackbar(
+      "No Compound".tr,
+      message,
+      snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 3),
+      backgroundColor: Colors.grey[900],
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16.0),
+      borderRadius: 10.0,
+      snackStyle: SnackStyle.FLOATING,
+      animationDuration: const Duration(milliseconds: 500),
+    );
+  }
+
+  void _noConnectionSnackBar(String message) {
+    Get.snackbar(
+      "No Connection".tr,
+      message,
+      snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 3),
+      backgroundColor: Colors.grey[900],
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16.0),
+      borderRadius: 10.0,
+      snackStyle: SnackStyle.FLOATING,
+      animationDuration: const Duration(milliseconds: 500),
+    );
   }
 
   void showVerifyEmailDialog() {

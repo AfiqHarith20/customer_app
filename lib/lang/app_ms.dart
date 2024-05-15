@@ -282,4 +282,9 @@ const Map<String, String> msMY = {
   "Are you sure you want to Delete this notification.":
       "Anda pasti untuk padam notifikasi ini.",
   "Delete Notification": "Padam Notifikasi",
+  "No compound is found.": "Nombor ini Tiada Kompoun.",
+  "Connection problem. Please try again.":
+      "Masalah Sambungan Internet. Sila cuba sekali lagi.",
+  "No Compound": "Tiada Kompoun",
+  "No Connection": "Tiada Sambungan",
 };

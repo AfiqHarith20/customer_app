@@ -281,4 +281,9 @@ const Map<String, String> enUS = {
   "Are you sure you want to Delete this notification.":
       "Are you sure you want to Delete this notification.",
   "Delete Notification": "Delete Notification",
+  "No compound is found.": "No compound is found.",
+  "Connection problem. Please try again.":
+      "Connection problem. Please try again.",
+  "No Compound": "No Compound",
+  "No Connection": "No Connection",
 };
