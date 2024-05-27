@@ -1,20 +1,19 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ffi';
 import 'dart:io';
 
-import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
 import 'package:customer_app/app/models/pending_detail_pass_model.dart';
-import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/private_pass_model.dart';
+import 'package:customer_app/app/models/zone_road_model.dart';
 import 'package:customer_app/app/modules/Season_pass/controllers/season_pass_controller.dart';
-import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
-import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
+import 'package:customer_app/utils/preferences.dart';
+import 'package:customer_app/utils/server.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,9 +47,9 @@ class PurchasePassPrivateController extends GetxController {
     "Pas Bulanan 6",
     "Pas Bulanan 12"
   ];
+  Rx<CustomerModel> customerModel = CustomerModel().obs;
   Rx<PrivatePassModel> selectedPrivatePass = PrivatePassModel().obs;
   Rx<PendingDetailPassModel> paymentType = PendingDetailPassModel().obs;
-
   Rx<PendingDetailPassModel> pendingDetailPassModel =
       PendingDetailPassModel().obs;
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -59,8 +58,31 @@ class PurchasePassPrivateController extends GetxController {
   final ImagePicker imagePicker = ImagePicker();
   final bool selectedSegment = Get.arguments?['selectedSegment'] ?? false;
   final SeasonPassController seasonPassController = Get.find();
+  Server server = Server();
+  var zones = <Zone>[].obs;
+  var roads = <Road>[].obs;
+  var selectedZone = Rxn<Zone>();
+  var selectedRoad = Rxn<Road>();
+
+  @override
+  void onInit() {
+    getArgument();
+    getProfileData();
+    fetchZones();
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    clearFormData();
+    super.onClose();
+  }
 
   void clearFormData() {
+    fullNameController.value.clear();
+    emailController.value.clear();
+    identificationNoController.value.clear();
+    phoneNumberController.value.clear();
     vehicleNoController.value.clear();
     lotNoController.value.clear();
     companyNameController.value.clear();
@@ -68,43 +90,34 @@ class PurchasePassPrivateController extends GetxController {
     addressController.value.clear();
     referenceController.value.clear();
     privateParkImage.value = "";
-    // Add similar lines for other controllers as needed
-  }
 
-  // Dispose method for cleanup (optional in this case)
-  @override
-  void onClose() {
-    clearFormData(); // Clear form data when the controller is closed
-    super.onClose();
-  }
-
-  void removeImage(int index) {
-    imageFiles.removeAt(index);
-  }
-
-  Rx<CustomerModel> customerModel = CustomerModel().obs;
-  XFile? imageFile;
-
-  bool isImageSelected() {
-    return imageFiles.isNotEmpty;
-  }
-
-  @override
-  void onInit() {
-    getArgument();
+    // Clear fetched data
+    customerModel.value = CustomerModel();
+    selectedPrivatePass.value = PrivatePassModel();
+    paymentType.value = PendingDetailPassModel();
+    pendingDetailPassModel.value = PendingDetailPassModel();
+    selectedZone.value = null;
+    selectedRoad.value = null;
+    // Fetch fresh data
     getProfileData();
-    super.onInit();
+    fetchZones();
   }
 
-  void navigateBackToSeasonPassView() {
-    // Put your navigation logic here
-    Get.back();
-    // After navigating back, update the selected segment in SeasonPassController
-    seasonPassController.changeSegment(
-        false); // Set the selected segment to false (Season Pass)
+  Future<void> fetchZones() async {
+    List<Zone> response = await getZone();
+    if (response.isNotEmpty) {
+      zones.value = response;
+    }
   }
 
-  getArgument() async {
+  Future<void> fetchRoads(int zoneId) async {
+    List<Road> response = await getRoad(zoneId);
+    if (response.isNotEmpty) {
+      roads.value = response;
+    }
+  }
+
+  void getArgument() async {
     await FireStoreUtils.getPrivatePassData().then((value) {
       if (value != null) {
         privatePassList.value = value;
@@ -119,27 +132,22 @@ class PurchasePassPrivateController extends GetxController {
     update();
   }
 
-  Future pickFile({required ImageSource source}) async {
+  Future<void> pickFile({required ImageSource source}) async {
     try {
       XFile? image = await imagePicker.pickImage(source: source);
       if (image == null) return;
-      Get.back();
       privateParkImage.value = image.path;
     } on PlatformException catch (e) {
       ShowToastDialog.showToast("${"failed_to_pick".tr} : \n $e");
     }
   }
 
-  uploadPrivatePark() async {
+  Future<void> uploadPrivatePark() async {
     ShowToastDialog.showLoader("please_wait".tr);
 
-    // Check if privateParkImage is not empty and is a valid URL
     if (privateParkImage.value.isNotEmpty &&
-        Constant().hasValidUrl(privateParkImage.value) == false) {
-      // Retrieve the document ID from pendingDetailPassModel.value
+        !Constant().hasValidUrl(privateParkImage.value)) {
       String documentId = pendingDetailPassModel.value.id ?? '';
-
-      // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
       privateParkImage.value =
           await Constant.uploadPrivateParkImageToFireStorage(
         File(privateParkImage.value),
@@ -148,11 +156,10 @@ class PurchasePassPrivateController extends GetxController {
       );
     }
 
-    // Close loader after image upload
     ShowToastDialog.closeLoader();
   }
 
-  getProfileData() async {
+  Future<void> getProfileData() async {
     await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
         .then((value) {
       if (value != null) {
@@ -166,46 +173,28 @@ class PurchasePassPrivateController extends GetxController {
 
   Future<String> postReservePassData() async {
     try {
-      print('Add Reserve Pass...');
-
       Map<String, dynamic> rawData = await getRawData();
-
-      // Print each item of raw data
-      // rawData.forEach((key, value) {
-      //   print('$key: $value');
-      // });
-
       final response = await http.post(
         Uri.parse(APIList.reserveLot.toString()),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(rawData),
       );
 
       if (response.statusCode == 200) {
-        // Success
-        print('Reserve Pass added successfully.');
-        print(response.body);
         return response.body;
       } else {
-        // Error
-        print('Error occurred while adding Reserve Pass.');
-        print('Status Code: ${response.statusCode}');
-        print('Response Body: ${response.body}');
         ShowToastDialog.showToast(
             "Error occurred while making payment. Status Code: ${response.statusCode}");
         return '';
       }
     } catch (e, s) {
-      // Exception
       log("$e \n$s");
       ShowToastDialog.showToast("Error occurred while making payment: $e");
       return '';
     }
   }
 
-  addPrivatePassData() async {
+  Future<bool> addPrivatePassData() async {
     try {
       pendingDetailPassModel.value.id = Constant.getUuid();
       pendingDetailPassModel.value.customerId = FireStoreUtils.getCurrentUid();
@@ -222,9 +211,14 @@ class PurchasePassPrivateController extends GetxController {
       pendingDetailPassModel.value.companyRegistrationNo =
           companyRegistrationNoController.value.text;
       pendingDetailPassModel.value.address = addressController.value.text;
+      pendingDetailPassModel.value.zoneId =
+          selectedZone.value?.znId.toString() ?? '';
+      pendingDetailPassModel.value.zoneName = selectedZone.value?.znName;
+      pendingDetailPassModel.value.roadId =
+          selectedRoad.value?.jlnId.toString() ?? '';
+      pendingDetailPassModel.value.roadName = selectedRoad.value?.jlnNama;
       pendingDetailPassModel.value.countryCode =
           countryCode.reactive.toString();
-      // Convert DateTime values to String
       pendingDetailPassModel.value.startDate = DateTime.now();
       pendingDetailPassModel.value.createAt = DateTime.now();
       pendingDetailPassModel.value.endDate = DateTime.now().add(
@@ -236,20 +230,15 @@ class PurchasePassPrivateController extends GetxController {
       await postReservePassData();
       return true;
     } catch (e) {
-      // Handle any exceptions
       print('Error adding private pass data: $e');
       return false;
     }
   }
 
-  getRawData() async {
-    // Retrieve the filename from the privateParkImage path
+  Future<Map<String, dynamic>> getRawData() async {
     String imageName = privateParkImage.value.split('/').last;
-
-    // Convert the image to base64
     String base64Image = await convertImageToBase64(privateParkImage.value);
 
-    // Create a Map for privatePassModel
     Map<String, dynamic> privatePassData = {
       "availability": selectedPrivatePass.value.availability,
       "id": selectedPrivatePass.value.passId,
@@ -260,7 +249,6 @@ class PurchasePassPrivateController extends GetxController {
       "validity": selectedPrivatePass.value.validity,
     };
 
-    // Create the raw data JSON structure
     Map<String, dynamic> rawData = {
       "id": Constant.getUuid(),
       "customerId": FireStoreUtils.getCurrentUid(),
@@ -280,6 +268,10 @@ class PurchasePassPrivateController extends GetxController {
       "createAt": pendingDetailPassModel.value.createAt?.toString(),
       "endDate": pendingDetailPassModel.value.endDate?.toString(),
       "status": pendingDetailPassModel.value.status,
+      "zoneId": selectedZone.value?.znId,
+      "zoneName": selectedZone.value?.znName,
+      "roadId": selectedRoad.value?.jlnId,
+      "roadName": selectedRoad.value?.jlnNama,
       "paymentType": "",
       "imageBase64": base64Image,
       "imageFileName": imageName,
@@ -289,110 +281,79 @@ class PurchasePassPrivateController extends GetxController {
   }
 
   Future<String> convertImageToBase64(String imagePath) async {
-    // Read the bytes from the image file
     List<int> imageBytes = await File(imagePath).readAsBytes();
-
-    // Convert the bytes to base64
     String base64Image = base64Encode(imageBytes);
-
-    // Check if the base64 string starts with "/9j/"
-
     return base64Image;
   }
 
-  // Future<String> uploadPrivateParkImage() async {
-  //   // Check if privateParkImage is not empty and is a valid URL
-  //   if (privateParkImage.value.isNotEmpty &&
-  //       Constant().hasValidUrl(privateParkImage.value) == false) {
-  //     // Retrieve the document ID from pendingDetailPassModel.value
-  //     String documentId = pendingDetailPassModel.value.id ?? '';
-
-  //     // Upload the image to Firebase Storage using the folder path gs://nazifa-parking-29f2b.appspot.com/{documentId}
-  //     String imagePath = await Constant.uploadPrivateParkImageToFireStorage(
-  //       File(privateParkImage.value),
-  //       "parkinglot/$documentId",
-  //       File(privateParkImage.value).path.split('/').last,
-  //     );
-
-  //     return imagePath;
-  //   }
-
-  //   return ''; // Return empty string if no image uploaded
-  // }
-
-  checkDuration(String time) {
-    if (time == "1 Week") {
-      return 7;
-    } else if (time == "2 Weeks") {
-      return 14;
-    } else if (time == "3 Weeks") {
-      return 21;
-    } else if (time == "1 Month") {
-      return 30;
-    } else if (time == "3 Months") {
-      return 90;
-    } else if (time == "6 Months") {
-      return 182;
-    } else if (time == "12 Months") {
-      return 365;
+  int checkDuration(String time) {
+    switch (time) {
+      case "1 Week":
+        return 7;
+      case "2 Weeks":
+        return 14;
+      case "3 Weeks":
+        return 21;
+      case "1 Month":
+        return 30;
+      case "3 Months":
+        return 90;
+      case "6 Months":
+        return 182;
+      case "12 Months":
+        return 365;
+      default:
+        return 0;
     }
-  }
-
-  // pendingOrder() async {
-  //   await FireStoreUtils.setPendingPass(pendingDetailPassModel.value, imageFile)
-  //       .then((value) {
-  //     Get.back();
-  //     Get.toNamed(Routes.DASHBOARD_SCREEN);
-  //   });
-  // }
-
-  Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFileGallery =
-        await picker.pickImage(source: ImageSource.gallery);
-    final pickedFileCamera = await picker.pickImage(source: ImageSource.camera);
-
-    if (pickedFileGallery != null) {
-      final image = File(pickedFileGallery.path);
-      final compressedImage = await compressImage(image);
-      imageFile = compressedImage;
-      update();
-    } else if (pickedFileCamera != null) {
-      final image = File(pickedFileCamera.path);
-      final compressedImage = await compressImage(image);
-      imageFile = compressedImage;
-      update();
-    }
-  }
-
-  Future<XFile?> compressImage(File image) async {
-    final result = await FlutterImageCompress.compressAndGetFile(
-      image.absolute.path,
-      image.absolute.path,
-      quality: 50, // Adjust quality as needed
-    );
-    return result;
   }
 
   Future<void> onImageButtonPressed(ImageSource source,
       {required BuildContext context}) async {
     try {
       final picker = ImagePicker();
-      XFile? pickedFile;
-
-      if (source == ImageSource.camera) {
-        pickedFile = await picker.pickImage(source: ImageSource.camera);
-      } else {
-        pickedFile = await picker.pickImage(source: ImageSource.gallery);
-      }
+      XFile? pickedFile = await (source == ImageSource.camera
+          ? picker.pickImage(source: ImageSource.camera)
+          : picker.pickImage(source: ImageSource.gallery));
 
       if (pickedFile != null) {
         final imageFile = File(pickedFile.path);
-        imageFiles.add(imageFile); // Add the selected image to the list
-        update(); // Update the UI
+        imageFiles.add(imageFile);
+        update();
       }
     } catch (e) {
       print('Error picking image: $e');
+    }
+  }
+
+  Future<List<Zone>> getZone() async {
+    final response = await http.get(Uri.parse(APIList.zone.toString()));
+    if (response.statusCode == 200) {
+      // Parse the response body
+      Map<String, dynamic> responseData = json.decode(response.body);
+      List<dynamic> zoneData = responseData['data'];
+      // Convert zoneData into a list of Zone objects
+      List<Zone> zones = zoneData.map((zone) => Zone.fromJson(zone)).toList();
+      return zones;
+    } else {
+      ShowToastDialog.showToast(
+          "Error occurred while fetching zones. Status Code: ${response.statusCode}");
+      return []; // Return an empty list in case of error
+    }
+  }
+
+  Future<List<Road>> getRoad(int zoneId) async {
+    final response = await http.get(Uri.parse("${APIList.road}$zoneId"));
+    if (response.statusCode == 200) {
+      // Parse the response body
+      Map<String, dynamic> responseData = json.decode(response.body);
+      List<dynamic> roadData = responseData['data'];
+      // Convert roadData into a list of Road objects
+      List<Road> roads = roadData.map((road) => Road.fromJson(road)).toList();
+      return roads;
+    } else {
+      ShowToastDialog.showToast(
+          "Error occurred while fetching roads. Status Code: ${response.statusCode}");
+      return []; // Return an empty list in case of error
     }
   }
 }

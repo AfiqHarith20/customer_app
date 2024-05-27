@@ -76,8 +76,8 @@ class WebviewScreenController extends GetxController {
         String companyName = onlinePaymentModel.value.companyName ?? '';
         String totalPrice = onlinePaymentModel.value.totalPrice.toString();
         String userName = onlinePaymentModel.value.userName ?? '';
-        String identificationType =
-            onlinePaymentModel.value.identificationType ?? '';
+        int identificationType =
+            onlinePaymentModel.value.identificationType ?? 0;
         DateTime? endDate = onlinePaymentModel.value.endDate;
         DateTime? startDate = onlinePaymentModel.value.startDate;
       }
@@ -110,6 +110,10 @@ class WebviewScreenController extends GetxController {
       'lotNo': onlinePaymentData.lotNo ?? '',
       'vehicleNo': onlinePaymentData.vehicleNo ?? '',
       'passId': onlinePaymentData.selectedPassId ?? '',
+      'roadId': onlinePaymentData.roadId ?? '',
+      'roadName': onlinePaymentData.roadName ?? '',
+      'zoneId': onlinePaymentData.zoneId ?? '',
+      'zoneName': onlinePaymentData.zoneName ?? '',
     };
     body.forEach((key, value) {
       // print('$key: $value');

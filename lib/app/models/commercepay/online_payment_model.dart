@@ -17,10 +17,14 @@ class OnlinePaymentModel {
   String? mobileNumber;
   String? userName;
   String? identificationNo;
-  String? identificationType;
+  int? identificationType;
   String? vehicleNo;
   String? lotNo;
   String? selectedPassId;
+  int? zoneId;
+  int? roadId;
+  String? zoneName;
+  String? roadName;
 
   OnlinePaymentModel({
     this.accessToken,
@@ -42,6 +46,10 @@ class OnlinePaymentModel {
     this.vehicleNo,
     this.lotNo,
     this.selectedPassId,
+    this.zoneId,
+    this.roadId,
+    this.zoneName,
+    this.roadName,
   });
 
   // Helper method to convert Timestamp to DateTime
@@ -77,6 +85,10 @@ class OnlinePaymentModel {
   "lotNo": "$lotNo",
   "vehicleNo": "$vehicleNo",
   "passid": "$selectedPassId"
+  "zoneId": "$zoneId"
+  "roadId": "$roadId"
+  "zoneName": "$zoneName"
+  "roadName": "$roadName"
 }''';
   }
 
@@ -101,6 +113,10 @@ class OnlinePaymentModel {
     lotNo = json['lotNo'];
     vehicleNo = json['vehicleNo'];
     selectedPassId = json['passId'];
+    zoneId = json['zoneId'];
+    roadId = json['roadId'];
+    zoneName = json['zoneName'];
+    roadName = json['roadName'];
   }
 
   // Convert to JSON
@@ -129,6 +145,10 @@ class OnlinePaymentModel {
     data['lotNo'] = lotNo;
     data['vehicleNo'] = vehicleNo;
     data['passId'] = selectedPassId;
+    data['zoneId'] = zoneId;
+    data['zoneName'] = zoneName;
+    data['roadId'] = roadId;
+    data['roadName'] = roadName;
     return data;
   }
 }

@@ -70,13 +70,8 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                         children: [
                           // First tab: Notifications
                           Obx(() {
-                            return ListView.separated(
+                            return ListView.builder(
                               itemCount: controller.notifyList.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      const Divider(
-                                height: 2,
-                              ),
                               itemBuilder: (context, index) {
                                 var notification = controller.notifyList[index];
                                 final category = notification['category'];
@@ -170,13 +165,8 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                           }),
                           // Second tab: Activity
                           Obx(() {
-                            return ListView.separated(
+                            return ListView.builder(
                               itemCount: controller.notifyList.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      const Divider(
-                                height: 2,
-                              ),
                               itemBuilder: (context, index) {
                                 var notification = controller.notifyList[index];
                                 final category = notification['category'];

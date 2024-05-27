@@ -35,7 +35,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                   child: InkWell(
                     onTap: () {
                       Get.toNamed(Routes.SEASON_PASS);
-                      Get.find<SeasonPassController>().reload();
+                      // Get.find<SeasonPassController>().reload();
                     },
                     child: Container(
                       height: 40,
@@ -149,7 +149,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
         itemBuilder: (context, index) {
           DateTime endDate =
               controller.mySeasonPassList[index].endDate!.toDate();
-          int daysUntilExpired = endDate.difference(DateTime.now()).inDays + 1;
+          int daysUntilExpired = endDate.difference(DateTime.now()).inDays;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -212,10 +212,6 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                               ),
                             ),
                           ),
-                          itemStatusWidget(
-                            endDate: endDate,
-                            daysUntilExpired: daysUntilExpired,
-                          )
                         ],
                       ),
                     ),
@@ -247,11 +243,17 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                           '${controller.mySeasonPassList[index].vehicleNo}',
                       title: 'Plate Number:'.tr,
                       svgImage: 'assets/icons/ic_carsimple.svg'),
-                  itemPayWidget(
-                      subText:
-                          '${controller.mySeasonPassList[index].paymentType}',
-                      title: 'Payment Type:'.tr,
-                      svgImage: 'assets/icons/ic_payment.svg'),
+                  itemStatusWidget(
+                      endDate: endDate,
+                      daysUntilExpired: daysUntilExpired,
+                      title: '${'Status'.tr}:',
+                      image: 'assets/images/clipboard.png'),
+
+                  // itemPayWidget(
+                  //     subText:
+                  //         '${controller.mySeasonPassList[index].paymentType}',
+                  //     title: 'Payment Type:'.tr,
+                  //     svgImage: 'assets/icons/ic_payment.svg'),
                   const SizedBox(
                     height: 10,
                   ),
@@ -345,10 +347,6 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                               ),
                             ],
                           ),
-                          itemPendingWidget(
-                            title: controller.pendingPassList[index].status
-                                .toString(),
-                          ),
                         ],
                       ),
                     ),
@@ -372,25 +370,86 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                       title: '${'Lot No.'.tr}:',
                       svgImage: "assets/icons/ic_note.svg"),
                   itemWidget(
-                      subText: Constant.timestampToDate(
-                          controller.pendingPassList[index].createAt!),
-                      title: 'Create At:'.tr,
-                      svgImage: 'assets/icons/ic_timer.svg'),
+                    subText: Constant.timestampToDate(
+                        controller.pendingPassList[index].createAt!),
+                    title: 'Create At:'.tr,
+                    svgImage: 'assets/icons/ic_timer.svg',
+                  ),
+                  itemPendingWidget(
+                      subText:
+                          controller.pendingPassList[index].status.toString(),
+                      title: '${'Status'.tr}:',
+                      image: 'assets/images/clipboard.png'),
+                  // Conditionally render the Pay button if status is approved
+                  if (controller.pendingPassList[index].status!.toLowerCase() ==
+                      'approved')
+                    InkWell(
+                      onTap: () {
+                        final pendingPassModel =
+                            controller.pendingPassList[index];
+                        final myPurchasePassModel =
+                            controller.purchasePassModel.value;
 
-                  // itemExpiredWidget(
-                  //     daysUntilExpired: daysUntilExpired,
-                  //     title: 'Expired In (Day):'.tr,
-                  //     svgImage: 'assets/icons/ic_timer.svg'),
-                  // itemWidget(
-                  //     subText: '${controller.pendingPassList[index].vehicleNo}',
-                  //     title: 'Plate Number:'.tr,
-                  //     svgImage: 'assets/icons/ic_carsimple.svg'),
-                  // itemWidget(
-                  //     subText: '${controller.pendingPassList[index].paymentType}',
-                  //     title: 'Payment Type:'.tr,
-                  //     svgImage: 'assets/icons/ic_payment.svg'),
+                        Get.toNamed(Routes.PAY_PENDING_PASS, arguments: {
+                          "passId": pendingPassModel.id,
+                          "passName":
+                              pendingPassModel.privatePassModel!.passName,
+                          "passPrice": pendingPassModel.privatePassModel!.price
+                              .toString(),
+                          "privatePassId": pendingPassModel
+                              .privatePassModel!.passId
+                              .toString(),
+                          "passValidity":
+                              pendingPassModel.privatePassModel!.validity,
+                          'customerId': pendingPassModel.customerId,
+                          'name': pendingPassModel.fullName,
+                          'username': pendingPassModel.email,
+                          'address': pendingPassModel.address,
+                          'identificationNumber':
+                              pendingPassModel.identificationNo,
+                          'mobileNumber': pendingPassModel.mobileNumber,
+                          'vehicleNo': pendingPassModel.vehicleNo,
+                          'lotNo': pendingPassModel.lotNo,
+                          'image': pendingPassModel.image,
+                          'companyName': pendingPassModel.companyName,
+                          'companyRegistrationNo':
+                              pendingPassModel.companyRegistrationNo,
+                          'countryCode': pendingPassModel.countryCode,
+                          'startDate':
+                              pendingPassModel.startDate?.toDate().toString(),
+                          'endDate':
+                              pendingPassModel.endDate!.toDate().toString(),
+                          'status': pendingPassModel.status,
+                          'zoneId': pendingPassModel.zoneId,
+                          'zoneName': pendingPassModel.zoneName,
+                          'roadId': pendingPassModel.roadId,
+                          'roadName': pendingPassModel.roadName,
+                          "purchasePassModel": myPurchasePassModel
+                        });
+                      },
+                      child: Container(
+                        margin:
+                            const EdgeInsets.only(left: 15, right: 15, top: 10),
+                        height: 48,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: AppColors.yellow04,
+                          borderRadius: BorderRadius.circular(200),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Pay".tr,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontFamily: AppThemData.regular,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
                   const SizedBox(
-                    height: 5,
+                    height: 10,
                   ),
                 ],
               ),
@@ -442,16 +501,25 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
     );
   }
 
-  static Widget itemStatusWidget({
-    required DateTime endDate,
-    required int daysUntilExpired,
+  static Widget itemPendingWidget({
+    required String subText,
+    required String image,
+    required String title,
   }) {
-    bool isActive = DateTime.now().isBefore(endDate);
-    String status = isActive ? 'Active'.tr : 'Expired'.tr;
-
-    // If daysUntilExpired is less than or equal to 0, set status to Expired
-    if (daysUntilExpired <= 0) {
-      status = 'Expired'.tr;
+    // Define the color based on the title value
+    Color textColor;
+    switch (subText.toLowerCase()) {
+      case 'pending':
+        textColor = Colors.blueAccent;
+        break;
+      case 'rejected':
+        textColor = Colors.red;
+        break;
+      case 'approved':
+        textColor = Colors.green;
+        break;
+      default:
+        textColor = Colors.black;
     }
 
     return Padding(
@@ -459,35 +527,35 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            '($status)',
-            style: TextStyle(
-              fontSize: 16,
-              color: isActive ? Colors.green : Colors.red,
-            ),
+          Image.asset(
+            image,
+            color: AppColors.darkGrey05,
+            height: 20,
           ),
-        ],
-      ),
-    );
-  }
-
-  static Widget itemPendingWidget({
-    required String title,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+          const SizedBox(
+            width: 4,
+          ),
           Text(
-            '(${title.tr})',
+            title.tr,
             style: const TextStyle(
               fontSize: 14,
-              color: Colors.blueAccent,
+              color: Colors.black,
+            ),
+          ),
+          const Spacer(),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Text(
+              subText.tr,
+              style: TextStyle(
+                fontSize: 14,
+                color: textColor,
+              ),
             ),
           ),
         ],
-      ),
+      ).marginOnly(left: 10, right: 10),
     );
   }
 
@@ -533,47 +601,101 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
     );
   }
 
-  static Widget itemExpiredWidget({
-    required int daysUntilExpired,
-    required String svgImage,
-    required String title,
-  }) {
+  Widget itemExpiredWidget(
+      {required int daysUntilExpired,
+      required String title,
+      required String svgImage}) {
     return Padding(
-      padding: const EdgeInsets.all(9.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const SizedBox(
-            width: 9,
+          Container(
+            height: 24,
+            width: 24,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(200),
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                svgImage,
+                height: 20,
+              ),
+            ),
           ),
-          SvgPicture.asset(
-            svgImage,
-            color: AppColors.darkGrey05,
-            height: 20,
-          ),
           const SizedBox(
-            width: 5,
+            width: 8,
           ),
           Text(
-            title.tr, // Concatenate the daysUntilExpired to the subText
+            title.tr,
             style: const TextStyle(
               fontSize: 16,
-              color: AppColors.darkGrey09,
+              fontFamily: AppThemData.medium,
+              color: AppColors.darkGrey08,
             ),
           ),
           const Spacer(),
           Text(
-            "$daysUntilExpired", // Concatenate the daysUntilExpired to the subText
+            daysUntilExpired <= 0 ? '0' : '$daysUntilExpired',
             style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black,
+              fontSize: 16,
+              fontFamily: AppThemData.medium,
+              color: AppColors.darkGrey08,
+            ),
+          ),
+        ],
+      ).marginOnly(left: 10, right: 10),
+    );
+  }
+
+  Widget itemStatusWidget({
+    required DateTime endDate,
+    required int daysUntilExpired,
+    required String image,
+    required String title,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            height: 24,
+            width: 24,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(200),
+            ),
+            child: Center(
+              child: Image.asset(
+                image,
+                height: 18,
+              ),
             ),
           ),
           const SizedBox(
-            width: 40,
+            width: 8,
+          ),
+          Text(
+            title.tr,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: AppThemData.medium,
+              color: AppColors.darkGrey08,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            daysUntilExpired > 0 ? 'Active' : 'Expired',
+            style: TextStyle(
+              fontSize: 14,
+              fontFamily: AppThemData.medium,
+              color: daysUntilExpired > 0 ? Colors.green : Colors.red,
+            ),
           ),
         ],
-      ),
+      ).marginOnly(left: 10, right: 10),
     );
   }
 }

@@ -17,6 +17,10 @@ class PendingPassModel {
   String? countryCode;
   String? reference;
   String? status;
+  int? zoneId;
+  String? zoneName;
+  int? roadId;
+  String? roadName;
 
   String? paymentType;
   Timestamp? startDate;
@@ -47,6 +51,10 @@ class PendingPassModel {
     this.createAt,
     this.status,
     this.reference,
+    this.roadId,
+    this.roadName,
+    this.zoneId,
+    this.zoneName,
   });
 
   PendingPassModel.fromJson(Map<String, dynamic> json) {
@@ -72,6 +80,10 @@ class PendingPassModel {
         : PrivatePassModel();
     status = json['status'];
     reference = json['reference'];
+    zoneId = json['zoneId'];
+    zoneName = json['zoneName'];
+    roadId = json['roadId'];
+    roadName = json['roadName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -95,6 +107,10 @@ class PendingPassModel {
     data['paymentType'] = paymentType;
     data['reference'] = reference;
     data['status'] = status;
+    data['zoneId'] = zoneId;
+    data['roadId'] = roadId;
+    data['zoneName'] = zoneName;
+    data['roadName'] = roadName;
     if (privatePassModel != null) {
       data['privatePassModel'] = privatePassModel!.toJson();
     }

@@ -280,7 +280,7 @@ class _PaymentCompoundScreenViewState extends State<PaymentCompoundScreenView> {
                       createdDate: Timestamp.now(),
                       paymentType: controller.selectedPaymentMethod.value,
                       transactionId: controller.paymentCompoundModel.value.id,
-                      note: "Season pass ".tr,
+                      note: "Pay Compound ".tr,
                       type: "customer",
                       userId: FireStoreUtils.getCurrentUid(),
                       isCredit: false,

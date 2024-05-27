@@ -1,4 +1,5 @@
 import 'package:customer_app/app/models/season_pass_model.dart';
+import 'package:customer_app/app/modules/select_payment_screen/views/select_payment_screen_view.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
 import 'package:customer_app/constant/constant.dart';
@@ -28,10 +29,19 @@ class PurchasePassView extends GetView<PurchasePassController> {
         builder: (controller) {
           return Scaffold(
             backgroundColor: AppColors.lightGrey02,
-            appBar: UiInterface().customAppBar(
+            appBar: AppBar(
+              title: Text(
+                "Pass and Contact Info".tr,
+                style: const TextStyle(color: AppColors.darkGrey07),
+              ),
               backgroundColor: AppColors.white,
-              context,
-              "Pass and Contact Info".tr,
+              leading: IconButton(
+                color: AppColors.darkGrey07,
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () async {
+                  await Get.offAllNamed(Routes.SEASON_PASS);
+                },
+              ),
             ),
             body: SingleChildScrollView(
               child: Form(
@@ -193,8 +203,9 @@ class PurchasePassView extends GetView<PurchasePassController> {
                       TextFieldWidgetPrefix(
                         prefix: Padding(
                           padding: const EdgeInsets.all(12.0),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_hash.svg",
+                          child: Image.asset(
+                            "assets/images/certificate.png",
+                            height: 4,
                           ),
                         ),
                         title: "Company Registration No.".tr,
@@ -206,8 +217,9 @@ class PurchasePassView extends GetView<PurchasePassController> {
                       TextFieldWidgetPrefix(
                         prefix: Padding(
                           padding: const EdgeInsets.all(12.0),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_map_redirect.svg",
+                          child: Image.asset(
+                            "assets/images/location.png",
+                            height: 4,
                           ),
                         ),
                         title: "Address".tr,
@@ -234,7 +246,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                       if (controller.formKeyPurchase.value.currentState!
                           .validate()) {
                         await controller.addSeasonPassData();
-                        Get.toNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
+                        Get.offNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
                           "addSeasonPassData": controller.addSeasonPassData,
                           "purchasePassModel":
                               controller.purchasePassModel.value,

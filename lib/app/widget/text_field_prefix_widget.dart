@@ -59,7 +59,7 @@ class TextFieldWidgetPrefix extends StatelessWidget {
             keyboardType: textInputType ?? TextInputType.text,
             onTap: onPress,
             readOnly: readOnly ?? false,
-            textCapitalization: TextCapitalization.characters,
+            // textCapitalization: TextCapitalization.characters,
             controller: controller,
             textAlign: TextAlign.start,
             inputFormatters: inputFormatters,

@@ -334,275 +334,274 @@ class _WalletScreenViewState extends State<WalletScreenView> {
         );
       },
     );
-    //   return showModalBottomSheet(
-    //       context: context,
-    //       isScrollControlled: true,
-    //       isDismissible: true,
-    //       shape: const RoundedRectangleBorder(
-    //         borderRadius: BorderRadius.vertical(
-    //           top: Radius.circular(30),
-    //         ),
+    // return showModalBottomSheet(
+    //     context: context,
+    //     isScrollControlled: true,
+    //     isDismissible: true,
+    //     shape: const RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.vertical(
+    //         top: Radius.circular(30),
     //       ),
-    //       clipBehavior: Clip.antiAliasWithSaveLayer,
-    //       builder: (context) => FractionallySizedBox(
-    //             heightFactor: 0.9,
-    //             child: StatefulBuilder(builder: (context1, setState) {
-    //               return Obx(
-    //                 () => Scaffold(
-    //                   body: Column(
-    //                     crossAxisAlignment: CrossAxisAlignment.start,
-    //                     mainAxisSize: MainAxisSize.min,
-    //                     children: [
-    //                       Container(
-    //                         color: AppColors.grey01,
-    //                         child: Column(
-    //                           children: [
-    //                             Padding(
-    //                               padding:
-    //                                   const EdgeInsets.symmetric(vertical: 10),
-    //                               child: Center(
-    //                                 child: Container(
-    //                                   width: 134,
-    //                                   height: 5,
-    //                                   margin: const EdgeInsets.only(bottom: 6),
-    //                                   decoration: ShapeDecoration(
-    //                                     color: AppColors.labelColorLightPrimary,
-    //                                     shape: RoundedRectangleBorder(
-    //                                       borderRadius: BorderRadius.circular(3),
-    //                                     ),
+    //     ),
+    //     clipBehavior: Clip.antiAliasWithSaveLayer,
+    //     builder: (context) => FractionallySizedBox(
+    //           heightFactor: 0.9,
+    //           child: StatefulBuilder(builder: (context1, setState) {
+    //             return Obx(
+    //               () => Scaffold(
+    //                 body: Column(
+    //                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                   mainAxisSize: MainAxisSize.min,
+    //                   children: [
+    //                     Container(
+    //                       color: AppColors.grey01,
+    //                       child: Column(
+    //                         children: [
+    //                           Padding(
+    //                             padding:
+    //                                 const EdgeInsets.symmetric(vertical: 10),
+    //                             child: Center(
+    //                               child: Container(
+    //                                 width: 134,
+    //                                 height: 5,
+    //                                 margin: const EdgeInsets.only(bottom: 6),
+    //                                 decoration: ShapeDecoration(
+    //                                   color: AppColors.labelColorLightPrimary,
+    //                                   shape: RoundedRectangleBorder(
+    //                                     borderRadius: BorderRadius.circular(3),
     //                                   ),
     //                                 ),
     //                               ),
     //                             ),
-    //                             Padding(
-    //                               padding: const EdgeInsets.symmetric(
-    //                                   horizontal: 16, vertical: 10),
-    //                               child: Row(
-    //                                 children: [
-    //                                   Expanded(
-    //                                     child: Text(
-    //                                       'Add Money to Wallet'.tr,
-    //                                       style: const TextStyle(
-    //                                         fontSize: 20,
-    //                                         fontFamily: AppThemData.medium,
-    //                                         color: AppColors.grey10,
-    //                                       ),
-    //                                     ),
-    //                                   ),
-    //                                   InkWell(
-    //                                     onTap: () {
-    //                                       Get.back();
-    //                                     },
-    //                                     child: const Icon(
-    //                                       Icons.close,
+    //                           ),
+    //                           Padding(
+    //                             padding: const EdgeInsets.symmetric(
+    //                                 horizontal: 16, vertical: 10),
+    //                             child: Row(
+    //                               children: [
+    //                                 Expanded(
+    //                                   child: Text(
+    //                                     'Add Money to Wallet'.tr,
+    //                                     style: const TextStyle(
+    //                                       fontSize: 20,
+    //                                       fontFamily: AppThemData.medium,
     //                                       color: AppColors.grey10,
     //                                     ),
     //                                   ),
-    //                                 ],
+    //                                 ),
+    //                                 InkWell(
+    //                                   onTap: () {
+    //                                     Get.back();
+    //                                   },
+    //                                   child: const Icon(
+    //                                     Icons.close,
+    //                                     color: AppColors.grey10,
+    //                                   ),
+    //                                 ),
+    //                               ],
+    //                             ),
+    //                           ),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                     const SizedBox(
+    //                       height: 10,
+    //                     ),
+    //                     Padding(
+    //                       padding: const EdgeInsets.symmetric(horizontal: 16),
+    //                       child: TextFieldWidgetPrefix(
+    //                         title: 'Enter Amount'.tr,
+    //                         onPress: () {},
+    //                         controller: controller.amountController.value,
+    //                         hintText: 'Enter Amount'.tr,
+    //                         textInputType:
+    //                             const TextInputType.numberWithOptions(
+    //                                 decimal: true, signed: true),
+    //                         inputFormatters: [
+    //                           FilteringTextInputFormatter.allow(
+    //                               RegExp('[0-9]')),
+    //                         ],
+    //                         prefix: Padding(
+    //                           padding: const EdgeInsets.all(12.0),
+    //                           child: Text(
+    //                               Constant.currencyModel!.symbol.toString(),
+    //                               style: const TextStyle(
+    //                                   fontSize: 20,
+    //                                   color: AppColors.darkGrey06)),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                     Expanded(
+    //                       child: SingleChildScrollView(
+    //                         child: Column(
+    //                           children: [
+    //                             Visibility(
+    //                               visible: controller
+    //                                           .paymentModel.value.commercePay !=
+    //                                       null &&
+    //                                   controller.paymentModel.value.commercePay!
+    //                                           .enable ==
+    //                                       true,
+    //                               child: paymentOnlineDecoration(
+    //                                 controller: controller,
+    //                                 value: controller.paymentModel.value
+    //                                         .commercePay?.name ??
+    //                                     '',
+    //                                 image: "assets/images/online_banking.png",
+    //                                 selectedBankName:
+    //                                     widget.selectedBankName ?? '',
+    //                                 updateSelectedBankName: (bankName) {
+    //                                   // Define the callback function
+    //                                   setState(() {
+    //                                     widget.selectedBankName =
+    //                                         bankName!; // Update the selectedBankName state
+    //                                   });
+    //                                 },
+    //                                 selectedBankId: widget.selectedBankId,
+    //                                 updateSelectedBankId: (bankId) {
+    //                                   setState(() {
+    //                                     selectedBankId = bankId ??
+    //                                         ""; // Update selected bank ID
+    //                                   });
+    //                                 },
     //                               ),
+    //                             ),
+    //                             Visibility(
+    //                               visible:
+    //                                   controller.paymentModel.value.strip !=
+    //                                           null &&
+    //                                       controller.paymentModel.value.strip!
+    //                                               .enable ==
+    //                                           true,
+    //                               child: cardDecoration(
+    //                                   controller,
+    //                                   controller.paymentModel.value.strip!.name
+    //                                       .toString(),
+    //                                   "assets/images/commercepay.png"),
+    //                             ),
+    //                             Visibility(
+    //                               visible:
+    //                                   controller.paymentModel.value.paypal !=
+    //                                           null &&
+    //                                       controller.paymentModel.value.paypal!
+    //                                               .enable ==
+    //                                           true,
+    //                               child: cardDecoration(
+    //                                   controller,
+    //                                   controller.paymentModel.value.paypal!.name
+    //                                       .toString(),
+    //                                   "assets/images/paypal.png"),
+    //                             ),
+    //                             const SizedBox(
+    //                               height: 10,
     //                             ),
     //                           ],
     //                         ),
     //                       ),
-    //                       const SizedBox(
-    //                         height: 10,
-    //                       ),
-    //                       Padding(
-    //                         padding: const EdgeInsets.symmetric(horizontal: 16),
-    //                         child: TextFieldWidgetPrefix(
-    //                           title: 'Enter Amount'.tr,
-    //                           onPress: () {},
-    //                           controller: controller.amountController.value,
-    //                           hintText: 'Enter Amount'.tr,
-    //                           textInputType:
-    //                               const TextInputType.numberWithOptions(
-    //                                   decimal: true, signed: true),
-    //                           inputFormatters: [
-    //                             FilteringTextInputFormatter.allow(
-    //                                 RegExp('[0-9]')),
-    //                           ],
-    //                           prefix: Padding(
-    //                             padding: const EdgeInsets.all(12.0),
-    //                             child: Text(
-    //                                 Constant.currencyModel!.symbol.toString(),
-    //                                 style: const TextStyle(
-    //                                     fontSize: 20,
-    //                                     color: AppColors.darkGrey06)),
-    //                           ),
-    //                         ),
-    //                       ),
-    //                       Expanded(
-    //                         child: SingleChildScrollView(
-    //                           child: Column(
-    //                             children: [
-    //                               Visibility(
-    //                                 visible: controller
-    //                                             .paymentModel.value.commercePay !=
-    //                                         null &&
-    //                                     controller.paymentModel.value.commercePay!
-    //                                             .enable ==
-    //                                         true,
-    //                                 child: paymentOnlineDecoration(
-    //                                   controller: controller,
-    //                                   value: controller.paymentModel.value
-    //                                           .commercePay?.name ??
-    //                                       '',
-    //                                   image: "assets/images/online_banking.png",
-    //                                   selectedBankName:
-    //                                       widget.selectedBankName ?? '',
-    //                                   updateSelectedBankName: (bankName) {
-    //                                     // Define the callback function
-    //                                     setState(() {
-    //                                       widget.selectedBankName =
-    //                                           bankName!; // Update the selectedBankName state
-    //                                     });
-    //                                   },
-    //                                   selectedBankId: widget.selectedBankId,
-    //                                   updateSelectedBankId: (bankId) {
-    //                                     setState(() {
-    //                                       selectedBankId = bankId ??
-    //                                           ""; // Update selected bank ID
-    //                                     });
-    //                                   },
-    //                                 ),
-    //                               ),
-    //                               Visibility(
-    //                                 visible:
-    //                                     controller.paymentModel.value.strip !=
-    //                                             null &&
-    //                                         controller.paymentModel.value.strip!
-    //                                                 .enable ==
-    //                                             true,
-    //                                 child: cardDecoration(
-    //                                     controller,
-    //                                     controller.paymentModel.value.strip!.name
-    //                                         .toString(),
-    //                                     "assets/images/commercepay.png"),
-    //                               ),
-    //                               Visibility(
-    //                                 visible:
-    //                                     controller.paymentModel.value.paypal !=
-    //                                             null &&
-    //                                         controller.paymentModel.value.paypal!
-    //                                                 .enable ==
-    //                                             true,
-    //                                 child: cardDecoration(
-    //                                     controller,
-    //                                     controller.paymentModel.value.paypal!.name
-    //                                         .toString(),
-    //                                     "assets/images/paypal.png"),
-    //                               ),
-    //                               const SizedBox(
-    //                                 height: 10,
-    //                               ),
-    //                             ],
-    //                           ),
-    //                         ),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                   bottomNavigationBar: Padding(
-    //                     padding: const EdgeInsets.symmetric(
-    //                         vertical: 20, horizontal: 20),
-    //                     child: ButtonThem.buildButton(
-    //                       fontWeight: FontWeight.w700,
-    //                       btnHeight: 56,
-    //                       txtSize: 16,
-    //                       btnWidthRatio: .60,
-    //                       context,
-    //                       title: "Topup".tr,
-    //                       txtColor: AppColors.lightGrey01,
-    //                       bgColor: AppColors.darkGrey10,
-    //                       onPress: () async {
-    //                         ShowToastDialog.showToast(
-    //                             "Sorry, This Page is Disable at moment".tr);
-    //                         // if (controller
-    //                         //     .amountController.value.text.isNotEmpty) {
-    //                         //   Get.back();
-    //                         //   if (double.parse(
-    //                         //           controller.amountController.value.text) >=
-    //                         //       double.parse(Constant.minimumAmountToDeposit
-    //                         //           .toString())) {
-    //                         //     if (controller.selectedPaymentMethod.value ==
-    //                         //         controller.paymentModel.value.strip!.name) {
-    //                         //       controller.stripeMakePayment(
-    //                         //           amount:
-    //                         //               controller.amountController.value.text);
-    //                         //     } else if (controller
-    //                         //             .selectedPaymentMethod.value ==
-    //                         //         controller.paymentModel.value.paypal!.name) {
-    //                         //       controller.paypalPaymentSheet(
-    //                         //           controller.amountController.value.text);
-    //                         //     } else {
-    //                         //   if (controller.selectedPaymentMethod.value ==
-    //                         //       controller
-    //                         //           .paymentModel.value.commercePay!.name) {
-    //                         //     final amount = walletTopupModel.amount ?? '';
-
-    //                         //     await controller.commercepayWalletTopup(
-    //                         //       amount:
-    //                         //           double.parse(amount).toStringAsFixed(
-    //                         //         Constant.currencyModel!.decimalDigits!,
-    //                         //       ),
-    //                         //     );
-    //                         //     String? accessToken =
-    //                         //         controller.authResultModel.accessToken;
-
-    //                         //     walletTopupModel = WalletTopupModel(
-    //                         //       accessToken: accessToken,
-    //                         //       customerId: FireStoreUtils.getCurrentUid(),
-    //                         //       selectedBankId: selectedBankId,
-    //                         //       amount: amount,
-    //                         //       channelId: 2,
-    //                         //       identificationType: 1,
-    //                         //       identificationNumber: controller
-    //                         //           .customerModel.value.identificationNo
-    //                         //           .toString(),
-    //                         //       name: controller
-    //                         //           .customerModel.value.fullName
-    //                         //           .toString(),
-    //                         //       email: controller.customerModel.value.email
-    //                         //           .toString(),
-    //                         //       mobileNumber: controller
-    //                         //           .customerModel.value.phoneNumber
-    //                         //           .toString(),
-    //                         //       username: controller
-    //                         //           .customerModel.value.email
-    //                         //           .toString(),
-    //                         //     );
-    //                         //     print(accessToken);
-    //                         //     print(walletTopupModel.selectedBankId);
-    //                         //     print(walletTopupModel.amount);
-    //                         //     print(walletTopupModel.name);
-    //                         //     print(walletTopupModel.mobileNumber);
-    //                         //     print(walletTopupModel.username);
-    //                         //     Get.toNamed(
-    //                         //       Routes.WEBVIEW_WALLET_SCREEN,
-    //                         //       arguments: {
-    //                         //         'walletTopupModel': walletTopupModel,
-    //                         //       },
-    //                         //     );
-    //                         //   }
-    //                         // }
-    //                         //       ShowToastDialog.showToast(
-    //                         //           "Please Enter minimum amount of ${Constant.amountShow(amount: Constant.minimumAmountToDeposit)}"
-    //                         //               .tr);
-    //                         //     }
-    //                         //   } else {
-    //                         //     ShowToastDialog.showToast(
-    //                         //         "Dissable ${Constant.amountShow(amount: Constant.minimumAmountToDeposit)}"
-    //                         //             .tr);
-    //                         //   }
-    //                         // } else {
-    //                         //   ShowToastDialog.showToast("Please enter amount".tr);
-    //                         // }
-    //                       },
     //                     ),
+    //                   ],
+    //                 ),
+    //                 bottomNavigationBar: Padding(
+    //                   padding: const EdgeInsets.symmetric(
+    //                       vertical: 20, horizontal: 20),
+    //                   child: ButtonThem.buildButton(
+    //                     fontWeight: FontWeight.w700,
+    //                     btnHeight: 56,
+    //                     txtSize: 16,
+    //                     btnWidthRatio: .60,
+    //                     context,
+    //                     title: "Topup".tr,
+    //                     txtColor: AppColors.lightGrey01,
+    //                     bgColor: AppColors.darkGrey10,
+    //                     onPress: () async {
+    //                       // ShowToastDialog.showToast(
+    //                       //     "Sorry, This Page is Disable at moment".tr);
+    //                       if (controller
+    //                           .amountController.value.text.isNotEmpty) {
+    //                         Get.back();
+    //                         if (double.parse(
+    //                                 controller.amountController.value.text) >=
+    //                             double.parse(Constant.minimumAmountToDeposit
+    //                                 .toString())) {
+    //                           if (controller.selectedPaymentMethod.value ==
+    //                               controller.paymentModel.value.strip!.name) {
+    //                             controller.stripeMakePayment(
+    //                                 amount:
+    //                                     controller.amountController.value.text);
+    //                           } else if (controller
+    //                                   .selectedPaymentMethod.value ==
+    //                               controller.paymentModel.value.paypal!.name) {
+    //                             controller.paypalPaymentSheet(
+    //                                 controller.amountController.value.text);
+    //                           } else {
+    //                             if (controller.selectedPaymentMethod.value ==
+    //                                 controller
+    //                                     .paymentModel.value.commercePay!.name) {
+    //                               final amount = walletTopupModel.amount ?? '';
+
+    //                               await controller.commercepayWalletTopup(
+    //                                 amount:
+    //                                     double.parse(amount).toStringAsFixed(
+    //                                   Constant.currencyModel!.decimalDigits!,
+    //                                 ),
+    //                               );
+    //                               String? accessToken =
+    //                                   controller.authResultModel.accessToken;
+
+    //                               walletTopupModel = WalletTopupModel(
+    //                                 accessToken: accessToken,
+    //                                 customerId: FireStoreUtils.getCurrentUid(),
+    //                                 selectedBankId: selectedBankId,
+    //                                 amount: amount,
+    //                                 channelId: 2,
+    //                                 identificationType: 1,
+    //                                 identificationNumber: controller
+    //                                     .customerModel.value.identificationNo
+    //                                     .toString(),
+    //                                 name: controller
+    //                                     .customerModel.value.fullName
+    //                                     .toString(),
+    //                                 email: controller.customerModel.value.email
+    //                                     .toString(),
+    //                                 mobileNumber: controller
+    //                                     .customerModel.value.phoneNumber
+    //                                     .toString(),
+    //                                 username: controller
+    //                                     .customerModel.value.email
+    //                                     .toString(),
+    //                               );
+    //                               print(accessToken);
+    //                               print(walletTopupModel.selectedBankId);
+    //                               print(walletTopupModel.amount);
+    //                               print(walletTopupModel.name);
+    //                               print(walletTopupModel.mobileNumber);
+    //                               print(walletTopupModel.username);
+    //                               Get.toNamed(
+    //                                 Routes.WEBVIEW_WALLET_SCREEN,
+    //                                 arguments: {
+    //                                   'walletTopupModel': walletTopupModel,
+    //                                 },
+    //                               );
+    //                             }
+    //                           }
+    //                           ShowToastDialog.showToast(
+    //                               "Please Enter minimum amount of ${Constant.amountShow(amount: Constant.minimumAmountToDeposit)}"
+    //                                   .tr);
+    //                         } else {
+    //                           ShowToastDialog.showToast(
+    //                               "Dissable ${Constant.amountShow(amount: Constant.minimumAmountToDeposit)}"
+    //                                   .tr);
+    //                         }
+    //                       } else {
+    //                         ShowToastDialog.showToast("Please enter amount".tr);
+    //                       }
+    //                     },
     //                   ),
     //                 ),
-    //               );
-    //             }),
-    //           ));
+    //               ),
+    //             );
+    //           }),
+    //         ));
   }
 
   Widget paymentOnlineDecoration({
@@ -618,6 +617,13 @@ class _WalletScreenViewState extends State<WalletScreenView> {
       padding: const EdgeInsets.only(bottom: 16),
       child: InkWell(
         onTap: () async {
+          final topupWallet = controller.amountController.value;
+
+          // Make payment based on the selected method
+          controller.commercepayMakePayment(
+            amount: double.parse(topupWallet.text)
+                .toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+          );
           controller.selectedPaymentMethod.value = value.toString();
           if (value == "Online Banking") {
             final result =

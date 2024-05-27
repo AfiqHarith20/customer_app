@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
+import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/app/widget/svg_image_widget.dart';
 import 'package:customer_app/constant/constant.dart';
@@ -69,7 +70,7 @@ class SelectPaymentScreenView extends StatefulWidget {
     required this.vehicleNo,
     required this.identificationType,
     required this.lotNo,
-  }) : super(key: key);
+  }) : super(key: ValueKey<String>(passId));
 
   @override
   State<SelectPaymentScreenView> createState() =>
@@ -90,13 +91,22 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
   @override
   void initState() {
     super.initState();
+
     onlinePaymentModel = OnlinePaymentModel();
-    controller = Get.put(SelectPaymentScreenController());
-    controller.onInit(); // Call onInit manually
+
+    // Initialize controller only if it hasn't been initialized yet
+    if (!Get.isRegistered<SelectPaymentScreenController>()) {
+      controller = Get.put(SelectPaymentScreenController());
+      controller.onInit(); // Call onInit manually
+    } else {
+      controller = Get.find<SelectPaymentScreenController>();
+    }
 
     // Retrieve arguments and assign addSeasonPassData
-    final Map<String, dynamic> args = Get.arguments;
+    final Map<String, dynamic> args = Get.arguments as Map<String, dynamic>;
+
     addSeasonPassData = args["addSeasonPassData"];
+    // pendingPassList = args['pendingPassModel'];
 
     final passPrice =
         controller.purchasePassModel.value.seasonPassModel!.price!;
@@ -115,15 +125,40 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
   }
 
   @override
+  void dispose() {
+    // Dispose of the controller only if it was created in this widget
+    if (Get.isRegistered<SelectPaymentScreenController>()) {
+      Get.delete<SelectPaymentScreenController>();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GetX<SelectPaymentScreenController>(
       init: SelectPaymentScreenController(),
+      dispose: (state) => state.dispose(),
       builder: (controller) {
         return Scaffold(
-          appBar: UiInterface().customAppBar(
-            context,
-            "Checkout".tr,
+          appBar: AppBar(
+            title: Text(
+              "Checkout".tr,
+              style: const TextStyle(color: AppColors.darkGrey07),
+            ),
             backgroundColor: AppColors.white,
+            leading: IconButton(
+              color: AppColors.darkGrey07,
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () async {
+                final result = await Get.offAllNamed(Routes.SEASON_PASS);
+                if (result != null && result is Map<String, dynamic>) {
+                  setState(() {
+                    controller.passId = result['passId'];
+                    widget.selectedBankName = result['bankName'];
+                  });
+                }
+              },
+            ),
           ),
           body: controller.isLoading.value
               ? Constant.loader()
@@ -148,19 +183,45 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                               color: AppColors.darkGrey08,
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           _buildDetailRow("Pass Name".tr, widget.passName),
+                          const SizedBox(height: 5),
                           _buildDetailRow(
                             "Price".tr,
                             "RM ${widget.passPrice}",
                           ),
-                          _buildDetailRow("Validity".tr, widget.passValidity),
+                          const SizedBox(height: 5),
+                          _buildDetailRow(
+                              "Validity".tr, widget.passValidity.tr),
+                          const SizedBox(height: 5),
+                          _buildDetailRow(
+                            "Start Time".tr,
+                            Constant.timestampToDate(
+                              Timestamp.fromDate(DateTime.now()),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          _buildDetailRow(
+                            "End Time".tr,
+                            Constant.timestampToDate(
+                              Timestamp.fromDate(
+                                DateTime.timestamp().add(
+                                  Duration(
+                                    days: controller.checkDuration(
+                                      widget.passValidity.toString(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
                         ],
                       ),
                       const Divider(
                         color: Colors.black,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 5),
                       // Payment methods
                       // PaymentMethodsSections(
                       //   controller: controller,
@@ -264,6 +325,19 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   : AppColors.darkGrey10,
               onPress: () async {
                 if (!controller.isPaymentCompleted.value) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.darkGrey10,
+                          ),
+                        ),
+                      );
+                    },
+                    barrierDismissible: false,
+                  );
                   return;
                 }
                 // Check if no payment method is selected
@@ -345,7 +419,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                     mobileNumber: passData['mobileNumber'],
                     userName: passData['email'],
                     identificationNo: passData['identificationNo'],
-                    identificationType: '2',
+                    identificationType: 2,
                     vehicleNo: passData['vehicleNo'],
                     lotNo: passData['lotNo'],
                     selectedPassId: widget.passId,

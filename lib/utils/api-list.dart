@@ -15,4 +15,6 @@ class APIList {
   static String? searchCompound =
       "https://mptemerloh.epa-lits.com.my/search_compound_vendor.php";
   static String? reserveLot = "${baseUrl!}/api/v1/firebase/reservelot";
+  static String? zone = "${baseUrl!}/api/v1/Parking/Zone";
+  static String? road = "${baseUrl!}/api/v1/Parking/Road?ZoneId=";
 }

@@ -51,6 +51,7 @@ abstract class Routes {
   static const RESET_PASS_SCREEN = _Paths.RESET_PASS_SCREEN;
   static const NEWS_SCREEN = _Paths.NEWS_SCREEN;
   static const NEWS_DETAIL_SCREEN = _Paths.NEWS_DETAIL_SCREEN;
+  static const PAY_PENDING_PASS = _Paths.PAY_PENDING_PASS;
 }
 
 abstract class _Paths {
@@ -101,4 +102,5 @@ abstract class _Paths {
   static const RESET_PASS_SCREEN = '/reset-pass-screen';
   static const NEWS_SCREEN = '/news-screen';
   static const NEWS_DETAIL_SCREEN = '/news-detail-screen';
+  static const PAY_PENDING_PASS = '/pay-pending-pass';
 }

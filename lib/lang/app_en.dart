@@ -241,6 +241,8 @@ const Map<String, String> enUS = {
   "Your request has been sent with status 'Pending'":
       "Your request has been sent with status 'Pending'",
   "pending": "Pending",
+  "approved": "Approved",
+  "rejected": "Rejected",
   "Pay": "Pay",
   'Create At:': 'Create At:',
   "Reset Password": "Reset Password",
@@ -286,4 +288,7 @@ const Map<String, String> enUS = {
       "Connection problem. Please try again.",
   "No Compound": "No Compound",
   "No Connection": "No Connection",
+  "Zone*": "Zone*",
+  "Road*": "Road*",
+  "Status": "Status",
 };

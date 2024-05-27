@@ -42,6 +42,11 @@ class NotificationScreenController extends GetxController {
           "isRead": doc.data()['isRead'].toString(),
         };
       }).toList();
+      // Sort notifications by createAt in descending order
+      fetchedNotifications.sort((a, b) {
+        return b['createAt'].compareTo(a['createAt']);
+      });
+
       notifyList.assignAll(fetchedNotifications);
     } catch (e) {
       print('Error fetching information: $e');

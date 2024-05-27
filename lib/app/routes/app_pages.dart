@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/news_detail_screen/bindings/news_detail_screen_binding.dart';
 import 'package:customer_app/app/modules/news_detail_screen/views/news_detail_screen_view.dart';
 import 'package:customer_app/app/modules/news_screen/bindings/news_screen_binding.dart';
@@ -5,6 +6,8 @@ import 'package:customer_app/app/modules/news_screen/views/news_screen_view.dart
 import 'package:customer_app/app/modules/notification_screen/views/notification_screen_view.dart';
 import 'package:customer_app/app/modules/pay_compound_screen/bindings/pay_compound_screen_binding.dart';
 import 'package:customer_app/app/modules/pay_compound_screen/views/pay_compound_screen_view.dart';
+import 'package:customer_app/app/modules/pay_pending_pass_screen/bindings/pay_pending_pass_screen_binding.dart';
+import 'package:customer_app/app/modules/pay_pending_pass_screen/views/pay_pending_pass_screen_view.dart';
 import 'package:customer_app/app/modules/purchase_pass_private/bindings/purchase_pass_private_binding.dart';
 import 'package:customer_app/app/modules/purchase_pass_private/views/purchase_pass_private_view.dart';
 import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
@@ -394,6 +397,37 @@ class AppPages {
       name: _Paths.NEWS_DETAIL_SCREEN,
       page: () => const NewsDetailScreenView(),
       binding: NewsDetailScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAY_PENDING_PASS,
+      page: () => PayPendingPassScreenView(
+        passId: Get.arguments['passId'] ?? '',
+        passName: Get.arguments["passName"] ?? '',
+        passPrice: Get.arguments["passPrice"] ?? '',
+        passValidity: Get.arguments["passValidity"] ?? '',
+        selectedBankName: Get.arguments["bankName"] ?? '',
+        selectedBankId: Get.arguments["selectedBankId"] ?? '',
+        accessToken: Get.arguments["accessToken"] ?? '',
+        customerId: Get.arguments["customerId"] ?? '',
+        totalPrice: double.parse(Get.arguments["totalPrice"] ?? '0.0'),
+        address: Get.arguments["address"] ?? '',
+        companyName: Get.arguments["companyName"] ?? '',
+        companyRegistrationNo: Get.arguments["companyRegistrationNo"] ?? '',
+        endDate:
+            Timestamp.fromDate(DateTime.parse(Get.arguments["endDate"] ?? '')),
+        startDate: Timestamp.fromDate(
+            DateTime.parse(Get.arguments["startDate"] ?? '')),
+        fullName: Get.arguments["name"] ?? '',
+        email: Get.arguments["email"] ?? '',
+        mobileNumber: Get.arguments["mobileNumber"] ?? '',
+        userName: Get.arguments["username"] ?? '',
+        identificationNo: Get.arguments["identificationNumber"] ?? '',
+        identificationType: Get.arguments["identificationType"] ?? '',
+        vehicleNo: Get.arguments["vehicleNo"] ?? '',
+        lotNo: Get.arguments["lotNo"] ?? '',
+        selectedPassId: Get.arguments["passId"] ?? '',
+      ),
+      binding: PayPendingPassScreenBinding(),
     ),
   ];
 }

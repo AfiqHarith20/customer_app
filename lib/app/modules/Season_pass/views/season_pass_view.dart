@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks
+// ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks, library_private_types_in_public_api
 
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
@@ -17,45 +17,49 @@ import '../../../models/season_pass_model.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/season_pass_controller.dart';
 
-class SeasonPassView extends GetView<SeasonPassController> {
+class SeasonPassView extends StatefulWidget {
   const SeasonPassView({Key? key}) : super(key: key);
+
+  @override
+  _SeasonPassViewState createState() => _SeasonPassViewState();
+}
+
+class _SeasonPassViewState extends State<SeasonPassView> {
+  late SeasonPassController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(SeasonPassController()); // Initialize the controller
+  }
+
+  // @override
+  // void dispose() {
+  //   Get.delete<
+  //       SeasonPassController>(); // Don't forget to delete the controller when the widget is disposed
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return GetX<SeasonPassController>(
-      init: SeasonPassController(),
+      init: controller,
       builder: (controller) {
         return Scaffold(
           backgroundColor: AppColors.lightGrey02,
-          appBar: UiInterface().customAppBar(
+          appBar: AppBar(
+            title: Text(
+              "Season Pass".tr,
+              style: const TextStyle(color: AppColors.darkGrey07),
+            ),
             backgroundColor: AppColors.white,
-            context,
-            "Season Pass".tr,
-            // actions: [
-            //   Padding(
-            //     padding: const EdgeInsets.all(8.0),
-            //     child: InkWell(
-            //       onTap: () {
-            //         Get.toNamed(Routes.MY_SEASON_PASS);
-            //       },
-            //       child: Container(
-            //         height: 40,
-            //         width: 100,
-            //         decoration: BoxDecoration(color: AppColors.yellow04, borderRadius: BorderRadius.circular(20)),
-            //         child: const Center(
-            //           child: Text(
-            //             "My Pass",
-            //             style: TextStyle(
-            //               fontSize: 13,
-            //               fontFamily: AppThemData.bold,
-            //               color: AppColors.darkGrey08,
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   )
-            // ],
+            leading: IconButton(
+              color: AppColors.darkGrey07,
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () async {
+                await Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+              },
+            ),
           ),
           body: controller.isLoading.value
               ? Constant.loader()
@@ -63,6 +67,9 @@ class SeasonPassView extends GetView<SeasonPassController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Custom sliding segmented control
+                    const SizedBox(
+                      height: 10,
+                    ),
                     _buildCustomSliding(controller),
                     // Content based on selected segment
                     _buildContent(context, controller.seasonPassList,

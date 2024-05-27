@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:customer_app/app/models/zone_road_model.dart';
 import 'package:customer_app/app/modules/MySeason_Pass/controllers/my_season_pass_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,10 +35,19 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
       builder: (controller) {
         return Scaffold(
           backgroundColor: AppColors.lightGrey02,
-          appBar: UiInterface().customAppBar(
+          appBar: AppBar(
+            title: Text(
+              "Pass and Contact Info".tr,
+              style: const TextStyle(color: AppColors.darkGrey07),
+            ),
             backgroundColor: AppColors.white,
-            context,
-            "Pass and Contact Info".tr,
+            leading: IconButton(
+              color: AppColors.darkGrey07,
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () async {
+                await Get.offAllNamed(Routes.SEASON_PASS);
+              },
+            ),
           ),
           body: SingleChildScrollView(
             child: Form(
@@ -177,7 +187,7 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       prefix: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: SvgPicture.asset(
-                          "assets/icons/ic_note.svg",
+                          "assets/icons/ic_hash.svg",
                         ),
                       ),
                       title: "Lot No.*".tr,
@@ -295,8 +305,9 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                     TextFieldWidgetPrefix(
                       prefix: Padding(
                         padding: const EdgeInsets.all(12.0),
-                        child: SvgPicture.asset(
-                          "assets/icons/ic_hash.svg",
+                        child: Image.asset(
+                          "assets/images/certificate.png",
+                          height: 4,
                         ),
                       ),
                       title: "Company Registration No.*".tr,
@@ -311,8 +322,9 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                     TextFieldWidgetPrefix(
                       prefix: Padding(
                         padding: const EdgeInsets.all(12.0),
-                        child: SvgPicture.asset(
-                          "assets/icons/ic_map_redirect.svg",
+                        child: Image.asset(
+                          "assets/images/location.png",
+                          height: 4,
                         ),
                       ),
                       title: "Address".tr,
@@ -320,18 +332,97 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       controller: controller.addressController.value,
                       onPress: () {},
                     ),
-                    TextFieldWidgetPrefix(
-                      prefix: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: SvgPicture.asset(
-                          "assets/icons/ic_ticket.svg",
+                    Obx(() {
+                      return DropdownButtonFormField<Zone>(
+                        decoration: InputDecoration(
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: SvgPicture.asset(
+                              "assets/icons/ic_map_redirect.svg",
+                            ),
+                          ),
+                          labelText: "Zone*".tr,
+                          fillColor: AppColors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(
+                                color: AppColors.white, width: 1),
+                          ),
                         ),
-                      ),
-                      title: "Referral".tr,
-                      hintText: "Enter Referral".tr,
-                      controller: controller.referenceController.value,
-                      onPress: () {},
+                        items: controller.zones.map((Zone zone) {
+                          return DropdownMenuItem<Zone>(
+                            value: zone,
+                            child: Text(
+                              zone.znName ?? '',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (Zone? newValue) {
+                          controller.selectedZone.value = newValue;
+                          if (newValue != null) {
+                            controller.fetchRoads(newValue.znId!);
+                          }
+                        },
+                        value: controller.selectedZone.value,
+                        validator: (value) =>
+                            value != null ? null : 'Zone required'.tr,
+                      );
+                    }),
+                    const SizedBox(
+                      height: 10,
                     ),
+                    // Road Dropdown
+                    Obx(() {
+                      return DropdownButtonFormField<Road>(
+                        decoration: InputDecoration(
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Image.asset(
+                              "assets/images/road.png",
+                              height: 4,
+                            ),
+                          ),
+                          labelText: "Road*".tr,
+                          fillColor: AppColors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(
+                                color: AppColors.white, width: 1),
+                          ),
+                        ),
+                        items: controller.roads.map((Road road) {
+                          return DropdownMenuItem<Road>(
+                            value: road,
+                            child: Text(
+                              road.jlnNama ?? '',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (Road? newValue) {
+                          controller.selectedRoad.value = newValue;
+                        },
+                        value: controller.selectedRoad.value,
+                        validator: (value) =>
+                            value != null ? null : 'Road required'.tr,
+                      );
+                    }),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    // TextFieldWidgetPrefix(
+                    //   prefix: Padding(
+                    //     padding: const EdgeInsets.all(12.0),
+                    //     child: SvgPicture.asset(
+                    //       "assets/icons/ic_ticket.svg",
+                    //     ),
+                    //   ),
+                    //   title: "Referral".tr,
+                    //   hintText: "Enter Referral".tr,
+                    //   controller: controller.referenceController.value,
+                    //   onPress: () {},
+                    // ),
                   ],
                 ),
               ),

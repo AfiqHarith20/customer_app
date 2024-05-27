@@ -241,6 +241,8 @@ const Map<String, String> msMY = {
   "Pending Pass": "Pas Belum Aktif",
   "Active": "Aktif",
   "pending": "Menunggu Pengesahan",
+  "approved": "Diterima",
+  "rejected": "Ditolak",
   "Your request has been sent with status 'Pending'":
       "Permintaan Petak Khas anda telah pun dihantar dengan status 'Belum Aktif'",
   "Pay": "Bayar",
@@ -287,4 +289,7 @@ const Map<String, String> msMY = {
       "Masalah Sambungan Internet. Sila cuba sekali lagi.",
   "No Compound": "Tiada Kompoun",
   "No Connection": "Tiada Sambungan",
+  "Zone*": "Zon*",
+  "Road*": "Jalan*",
+  "Status": "Status",
 };

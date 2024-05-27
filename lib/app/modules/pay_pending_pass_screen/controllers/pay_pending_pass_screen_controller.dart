@@ -1,16 +1,13 @@
-// ignore_for_file: depend_on_referenced_packages, unused_field
-
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
-import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_model.dart';
-import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
+import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/models/tax_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
@@ -32,64 +29,100 @@ import 'package:http/http.dart' as http;
 
 import '../../../../utils/server.dart';
 
-class SelectPaymentScreenController extends GetxController {
-  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
-  Rx<CustomerModel> customerModel = CustomerModel().obs;
+class PayPendingPassScreenController extends GetxController {
+  RxBool isLoading = true.obs;
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
-  Rx<TaxModel> taxModel = TaxModel().obs;
-  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
+  Rx<CustomerModel> customerModel = CustomerModel().obs;
   RxString selectedPaymentMethod = "".obs;
   RxString selectedBankId = "".obs;
   RxBool isPaymentCompleted = true.obs;
-  RxBool isLoading = true.obs;
   AuthResultModel authResultModel = AuthResultModel();
   Server server = Server();
   late String _selectedBankId;
-  String? passId;
   String? amount;
   RxDouble tax = RxDouble(0.0);
-  Rx<String> passValidity = ''.obs;
+  Rx<TaxModel> taxModel = TaxModel().obs;
   String? taxId;
+  Rx<String> passId = ''.obs;
+  Rx<String> privatePassId = ''.obs;
+  Rx<String> passName = ''.obs;
+  Rx<String> passPrice = '0.0'.obs;
+  Rx<String> passValidity = ''.obs;
+  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
+  Rx<PrivatePassModel> privatePassModel = PrivatePassModel().obs;
+
+  // Additional arguments
+  Rx<String> customerId = ''.obs;
+  Rx<String> name = ''.obs;
+  Rx<String> email = ''.obs;
+  Rx<String> username = ''.obs;
+  Rx<String> address = ''.obs;
+  Rx<String> identificationNumber = ''.obs;
+  Rx<String> mobileNumber = ''.obs;
+  Rx<String> vehicleNo = ''.obs;
+  Rx<String> lotNo = ''.obs;
+  Rx<String> image = ''.obs;
+  Rx<String> companyName = ''.obs;
+  Rx<String> companyRegistrationNo = ''.obs;
+  Rx<String> countryCode = ''.obs;
+  Rx<Timestamp> startDate = Timestamp.now().obs;
+  Rx<Timestamp> endDate = Timestamp.now().obs;
+  Rx<String> status = ''.obs;
+  Rx<int> zoneId = 0.obs;
+  Rx<String> zoneName = ''.obs;
+  Rx<int> roadId = 0.obs;
+  Rx<String> roadName = ''.obs;
 
   @override
   Future<void> onInit() async {
-    getArgument();
+    await getArgument();
+    await getPaymentData();
     super.onInit();
   }
 
-  // Future<TaxModel?> fetchTaxData() async {
-  //   // Ensure that fetchTax() returns a Future<TaxModel?>
-  //   return await fetchTax(id);
-  // }
-
   @override
   void onClose() {
-    passId = null;
     super.onClose();
   }
 
-  getArgument() async {
-    final bankName = Get.arguments?['bankName'] ?? "Default Bank Name";
+  Future<void> getArgument() async {
     dynamic argumentData = Get.arguments;
-    passId = argumentData?['passId'];
     if (argumentData != null) {
       if (argumentData['purchasePassModel'] != null) {
         purchasePassModel.value = argumentData['purchasePassModel'];
       } else {
         ShowToastDialog.showToast("Error: Purchase pass data is missing");
       }
-
-      getPaymentData();
+      passId.value = argumentData['passId'];
+      privatePassId.value = argumentData['privatePassId'];
+      passName.value = argumentData['passName'];
+      passPrice.value = argumentData['passPrice'];
+      passValidity.value = argumentData['passValidity'];
+      customerId.value = argumentData['customerId'];
+      name.value = argumentData['name'];
+      email.value = argumentData['username'];
+      username.value = argumentData['username'];
+      address.value = argumentData['address'];
+      identificationNumber.value = argumentData['identificationNumber'];
+      mobileNumber.value = argumentData['mobileNumber'];
+      vehicleNo.value = argumentData['vehicleNo'];
+      lotNo.value = argumentData['lotNo'];
+      image.value = argumentData['image'];
+      companyName.value = argumentData['companyName'];
+      companyRegistrationNo.value = argumentData['companyRegistrationNo'];
+      countryCode.value = argumentData['countryCode'];
+      startDate.value =
+          Timestamp.fromDate(DateTime.parse(argumentData["startDate"] ?? ''));
+      endDate.value =
+          Timestamp.fromDate(DateTime.parse(argumentData["endDate"] ?? ''));
+      status.value = argumentData['status'];
+      zoneId.value = argumentData['zoneId'];
+      zoneName.value = argumentData['zoneName'];
+      roadId.value = argumentData['roadId'];
+      roadName.value = argumentData['roadName'];
+    } else {
+      ShowToastDialog.showToast("Error: Data is missing");
     }
-  }
-
-  SelectPaymentScreenController({String? selectedBankId}) {
-    _selectedBankId = selectedBankId ?? ""; // Initialize with provided value
-  }
-
-  // Update the selected bank ID
-  void updateSelectedBankId(String bankId) {
-    _selectedBankId = bankId;
   }
 
   checkDuration(String time) {
@@ -109,6 +142,15 @@ class SelectPaymentScreenController extends GetxController {
       return 364;
     }
     return 0;
+  }
+
+  PayPendingPassScreenController({String? selectedBankId}) {
+    _selectedBankId = selectedBankId ?? ""; // Initialize with provided value
+  }
+
+  // Update the selected bank ID
+  void updateSelectedBankId(String bankId) {
+    _selectedBankId = bankId;
   }
 
   getPaymentData() async {
@@ -137,12 +179,18 @@ class SelectPaymentScreenController extends GetxController {
   }
 
   completeOrder() async {
-    purchasePassModel.value.paymentType = selectedPaymentMethod.value;
-    await FireStoreUtils.setPurchasePass(purchasePassModel.value).then((value) {
-      Get.back();
-      Get.toNamed(Routes.DASHBOARD_SCREEN);
-      ShowToastDialog.showToast("Season pass purchase successfully");
-    });
+    try {
+      isLoading.value = true;
+      purchasePassModel.value.paymentType = selectedPaymentMethod.value;
+      await FireStoreUtils.setPurchasePass(purchasePassModel.value)
+          .then((value) {
+        Get.back();
+        Get.toNamed(Routes.DASHBOARD_SCREEN);
+        ShowToastDialog.showToast("Season pass purchase successfully");
+      });
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<String?> commercepayMakePayment({required String amount}) async {

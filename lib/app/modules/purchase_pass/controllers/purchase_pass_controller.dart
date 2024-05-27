@@ -58,6 +58,19 @@ class PurchasePassController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    fullNameController.value.dispose();
+    emailController.value.dispose();
+    phoneNumberController.value.dispose();
+    vehicleNoController.value.dispose();
+    companyNameController.value.dispose();
+    companyRegistrationNoController.value.dispose();
+    addressController.value.dispose();
+    addressController.value.dispose();
+    super.onClose();
+  }
+
   getArgument() async {
     await FireStoreUtils.getSeasonPassData().then((value) {
       if (value != null) {
@@ -133,19 +146,19 @@ class PurchasePassController extends GetxController {
 
   checkDuration(String time) {
     if (time == "1 Week") {
-      return 7;
+      return 6;
     } else if (time == "2 Weeks") {
-      return 14;
+      return 13;
     } else if (time == "3 Weeks") {
-      return 21;
+      return 20;
     } else if (time == "1 Month") {
-      return 30;
+      return 29;
     } else if (time == "3 Months") {
-      return 90;
+      return 89;
     } else if (time == "6 Months") {
-      return 182;
+      return 181;
     } else if (time == "12 Months") {
-      return 365;
+      return 364;
     }
     return 0;
   }

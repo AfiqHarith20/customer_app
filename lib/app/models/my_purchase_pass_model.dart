@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/models/season_pass_model.dart';
 
 class MyPurchasePassModel {
@@ -22,11 +23,13 @@ class MyPurchasePassModel {
   Timestamp? createAt;
 
   SeasonPassModel? seasonPassModel;
+  PrivatePassModel? privatePassModel;
 
   MyPurchasePassModel({
     this.id,
     this.customerId,
     this.seasonPassModel,
+    this.privatePassModel,
     this.fullName,
     this.email,
     this.identificationNo,
@@ -63,6 +66,9 @@ class MyPurchasePassModel {
     seasonPassModel = json['seasonPassModel'] != null
         ? SeasonPassModel.fromJson(json['seasonPassModel'])
         : SeasonPassModel();
+    privatePassModel = json['privatePassModel'] != null
+        ? PrivatePassModel.fromJson(json['privatePassModel'])
+        : PrivatePassModel();
   }
 
   Map<String, dynamic> toJson() {
@@ -85,6 +91,9 @@ class MyPurchasePassModel {
     data['paymentType'] = paymentType;
     if (seasonPassModel != null) {
       data['seasonPassModel'] = seasonPassModel!.toJson();
+    }
+    if (privatePassModel != null) {
+      data['privatePassModel'] = privatePassModel!.toJson();
     }
     return data;
   }
