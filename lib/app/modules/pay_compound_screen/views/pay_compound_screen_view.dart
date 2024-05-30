@@ -248,6 +248,19 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                   : AppColors.darkGrey10,
               onPress: () async {
                 if (!controller.isPaymentCompleted.value) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.darkGrey10,
+                          ),
+                        ),
+                      );
+                    },
+                    barrierDismissible: false,
+                  );
                   return;
                 }
                 // Check if no payment method is selected

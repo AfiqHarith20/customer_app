@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>customer_app</string>
+	<string>Nazifa Parking</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleURLTypes</key>
@@ -29,6 +29,10 @@
 	</array>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App needs access to photo library to use for profile and private lot</string>
+	<key>NSCameraUsageDescription</key>
+	<string>To capture photo for profile and private lot please grant camera access</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>

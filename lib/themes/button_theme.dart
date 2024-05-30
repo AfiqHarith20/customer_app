@@ -17,27 +17,33 @@ class ButtonThem {
       fontWeight = FontWeight.w700}) {
     return Container(
       height: btnHeight,
-      width: MediaQuery.of(context).size.width * btnWidthRatio ,
+      width: MediaQuery.of(context).size.width * btnWidthRatio,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: MaterialButton(
         color: bgColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius)),
         onPressed: onPress,
         elevation: 0,
-        child: Row(mainAxisSize: MainAxisSize.min,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (imageAsset != null)
               Padding(
-                padding: const EdgeInsets.only(right: 8.0,left: 6),
+                padding: const EdgeInsets.only(right: 8.0, left: 6),
                 child: SvgPicture.asset(imageAsset),
               ),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: AppThemData.semiBold, fontSize: txtSize, color: txtColor, fontWeight: fontWeight),
+              style: TextStyle(
+                  fontFamily: AppThemData.semiBold,
+                  fontSize: txtSize,
+                  color: txtColor,
+                  fontWeight: fontWeight),
             ),
           ],
         ),

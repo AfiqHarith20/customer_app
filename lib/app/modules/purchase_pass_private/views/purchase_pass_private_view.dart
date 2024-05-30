@@ -275,11 +275,11 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                         ),
                         if (controller.privateParkImage
                             .isEmpty) // Show warning if lot image is not selected
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Text(
-                              "Please select a lot image",
-                              style: TextStyle(color: Colors.red),
+                              "Please select a lot image".tr,
+                              style: const TextStyle(color: Colors.red),
                             ),
                           ),
                       ],
