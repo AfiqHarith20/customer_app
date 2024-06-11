@@ -994,7 +994,7 @@ PODS:
     - Firebase/Storage (= 10.18.0)
     - firebase_core
     - Flutter
-  - FirebaseAppCheckInterop (10.25.0)
+  - FirebaseAppCheckInterop (10.27.0)
   - FirebaseAuth (10.18.0):
     - FirebaseAppCheckInterop (~> 10.17)
     - FirebaseCore (~> 10.0)
@@ -1002,21 +1002,21 @@ PODS:
     - GoogleUtilities/Environment (~> 7.8)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
     - RecaptchaInterop (~> 100.0)
-  - FirebaseAuthInterop (10.25.0)
+  - FirebaseAuthInterop (10.27.0)
   - FirebaseCore (10.18.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.12)
     - GoogleUtilities/Logger (~> 7.12)
-  - FirebaseCoreExtension (10.25.0):
+  - FirebaseCoreExtension (10.27.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseCoreInternal (10.25.0):
+  - FirebaseCoreInternal (10.27.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
   - FirebaseFirestore (10.18.0):
     - FirebaseCore (~> 10.0)
     - FirebaseCoreExtension (~> 10.0)
     - FirebaseFirestoreInternal (~> 10.17)
     - FirebaseSharedSwift (~> 10.0)
-  - FirebaseFirestoreInternal (10.25.0):
+  - FirebaseFirestoreInternal (10.27.0):
     - abseil/algorithm (~> 1.20240116.1)
     - abseil/base (~> 1.20240116.1)
     - abseil/container/flat_hash_map (~> 1.20240116.1)
@@ -1031,7 +1031,7 @@ PODS:
     - gRPC-Core (~> 1.62.0)
     - leveldb-library (~> 1.22)
     - nanopb (< 2.30911.0, >= 2.30908.0)
-  - FirebaseInstallations (10.25.0):
+  - FirebaseInstallations (10.27.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
@@ -1045,7 +1045,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseSharedSwift (10.25.0)
+  - FirebaseSharedSwift (10.27.0)
   - FirebaseStorage (10.18.0):
     - FirebaseAppCheckInterop (~> 10.0)
     - FirebaseAuthInterop (~> 10.0)
@@ -1437,17 +1437,17 @@ SPEC CHECKSUMS:
   firebase_core: 0af4a2b24f62071f9bf283691c0ee41556dcb3f5
   firebase_messaging: 90e8a6db84b6e1e876cebce4f30f01dc495e7014
   firebase_storage: 2b932fa5461f4efac36a2dcfbe240898b190b5b1
-  FirebaseAppCheckInterop: 5da5ce93e8797a215e3f677fb0654b74e736c8b8
+  FirebaseAppCheckInterop: 0dd062c9926a76332ca5711dbed6f1a9ac540b54
   FirebaseAuth: 12314b438fa76048540c8fb86d6cfc9e08595176
-  FirebaseAuthInterop: 2753ef68cb3cd5aefebe0f58082671cede78350f
+  FirebaseAuthInterop: 0344acef098654eaf59f6add4c93254349bc5de4
   FirebaseCore: 2322423314d92f946219c8791674d2f3345b598f
-  FirebaseCoreExtension: 8a47811d0b155501559ef05d089518152a0a1677
-  FirebaseCoreInternal: 910a81992c33715fec9263ca7381d59ab3a750b7
+  FirebaseCoreExtension: 4ec89dd0c6de93d6becde32122d68b7c35f6bf5d
+  FirebaseCoreInternal: 4b297a2d56063dbea2c1d0d04222d44a8d058862
   FirebaseFirestore: 171bcbb57a1a348dd171a0d5e382c03ef85a77bb
-  FirebaseFirestoreInternal: 04b8afa77b4e5b84e86ab5ad985193e9573239fa
-  FirebaseInstallations: 91950fe859846fff0fbd296180909dd273103b09
+  FirebaseFirestoreInternal: 7ba63f170a554ae49392da44f9430e5b7915a7ff
+  FirebaseInstallations: 766dabca09fd94aef922538aaf144cc4a6fb6869
   FirebaseMessaging: 9bc34a98d2e0237e1b121915120d4d48ddcf301e
-  FirebaseSharedSwift: 0274086954b1b2d5fd7e829eccc587044d72a4ba
+  FirebaseSharedSwift: a03fe7a59ee646fef71099a887f774fe25d745b8
   FirebaseStorage: 8333c4b183764cdd170d9539a61322b71c23adff
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_fgbg: 31c0d1140a131daea2d342121808f6aa0dcd879d

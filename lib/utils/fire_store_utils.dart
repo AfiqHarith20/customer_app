@@ -42,6 +42,20 @@ class FireStoreUtils {
     return FirebaseAuth.instance.currentUser!.uid;
   }
 
+  static Future<bool> updateUserProfile(
+      String userId, Map<String, dynamic> data) async {
+    try {
+      await fireStore
+          .collection(CollectionName.customers)
+          .doc(userId)
+          .update(data);
+      return true;
+    } catch (e) {
+      print("Error updating user profile: $e");
+      return false;
+    }
+  }
+
   static Future<bool> userExistOrNot(String uid) async {
     bool isExist = false;
 

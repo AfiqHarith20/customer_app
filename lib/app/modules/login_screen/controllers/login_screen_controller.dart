@@ -3,14 +3,17 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
+import 'package:customer_app/utils/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -19,7 +22,11 @@ class LoginScreenController extends GetxController {
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> passwordController = TextEditingController().obs;
+  Rx<TextEditingController> identificationNoController =
+      TextEditingController().obs;
   RxString countryCode = "+60".obs;
+  RxString selectedGender = "".obs;
+  RxString selectedIc = "1".obs;
 
   Rx<GlobalKey<FormState>> loginformKey = GlobalKey<FormState>().obs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -244,47 +251,100 @@ class LoginScreenController extends GetxController {
 
   loginWithApple() async {
     ShowToastDialog.showLoader("please_wait".tr);
-    await signInWithApple().then((value) {
+    await signInWithApple().then((value) async {
       ShowToastDialog.closeLoader();
       if (value != null) {
+        String fcmToken = await NotificationService.getToken();
+
         if (value.additionalUserInfo!.isNewUser) {
+          String? email = value.user!.email;
+          String initialName = email != null ? email.split('@')[0] : 'User';
+
           CustomerModel customerModel = CustomerModel();
-          customerModel.id = value.user!.uid;
-          customerModel.email = value.user!.email;
-          customerModel.profilePic = value.user!.photoURL;
+          customerModel.id = value.user!.uid ?? '';
+          customerModel.email = email ?? '';
+          customerModel.fullName = initialName;
+          customerModel.profilePic = value.user!.photoURL ?? '';
           customerModel.loginType = Constant.appleLoginType;
+          customerModel.countryCode = countryCode.value;
+          customerModel.phoneNumber = phoneNumberController.value.text ?? '';
+          customerModel.fcmToken = fcmToken ?? '';
+          customerModel.gender = selectedGender.value ?? '';
+          customerModel.identificationType = selectedIc.value;
+          customerModel.identificationNo =
+              identificationNoController.value.text ?? '';
+          customerModel.createdAt = Timestamp.now();
 
-          ShowToastDialog.closeLoader();
-          Get.toNamed(Routes.INFORMATION_SCREEN,
-              arguments: {"customerModel": customerModel});
+          // Update user information in Firestore
+          await FireStoreUtils.updateUser(customerModel).then((success) async {
+            if (success) {
+              // Send email verification
+              await sendEmailVerification();
+              Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+            } else {
+              ShowToastDialog.showToast(
+                  "Failed to create user. Please try again.");
+            }
+          });
         } else {
-          FireStoreUtils.userExistOrNot(value.user!.uid).then((userExit) async {
-            ShowToastDialog.closeLoader();
-
-            if (userExit == true) {
+          // User already exists, check if it exists in Firestore
+          FireStoreUtils.userExistOrNot(value.user!.uid)
+              .then((userExists) async {
+            if (userExists == true) {
+              // User exists in Firestore, retrieve user profile
               CustomerModel? customerModel =
                   await FireStoreUtils.getUserProfile(value.user!.uid);
               if (customerModel != null) {
+                // Update FCM token if needed
+                if (customerModel.fcmToken != fcmToken) {
+                  customerModel.fcmToken = fcmToken;
+                  await FireStoreUtils.updateUser(customerModel);
+                }
+
                 if (customerModel.active == true) {
                   Get.offAllNamed(Routes.DASHBOARD_SCREEN);
                 } else {
                   ShowToastDialog.showToast(
-                      "Unable to Log In?  Please Contact the Admin for Assistance");
+                      "Unable to Log In? Please Contact the Admin for Assistance");
                 }
               }
             } else {
-              CustomerModel customerModel = CustomerModel();
-              customerModel.id = value.user!.uid;
-              customerModel.email = value.user!.email;
-              customerModel.profilePic = value.user!.photoURL;
-              customerModel.loginType = Constant.googleLoginType;
-
-              Get.toNamed(Routes.INFORMATION_SCREEN,
-                  arguments: {"customerModel": customerModel});
+              // User does not exist, this should not happen in the Apple sign-in flow
+              ShowToastDialog.showToast(
+                  "User does not exist. Please try again.");
             }
           });
         }
       }
     });
+  }
+
+  Future<void> sendEmailVerification() async {
+    try {
+      String email = FirebaseAuth.instance.currentUser?.email ?? '';
+      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+      _showEmailVerifiedSnackbar("A verification email has been sent to ".tr +
+          email +
+          ". Please verify your email to make sure you can make any transaction."
+              .tr);
+    } catch (error) {
+      print('Error sending verification email: $error');
+      ShowToastDialog.showToast('Error sending verification email');
+    }
+  }
+
+  void _showEmailVerifiedSnackbar(String message) {
+    Get.snackbar(
+      "Email Verification".tr,
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 8),
+      backgroundColor: Colors.grey[900],
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16.0),
+      borderRadius: 10.0,
+      snackStyle: SnackStyle.FLOATING,
+      animationDuration: const Duration(milliseconds: 500),
+    );
   }
 }

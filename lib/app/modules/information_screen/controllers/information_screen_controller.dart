@@ -45,17 +45,12 @@ class InformationScreenController extends GetxController {
 
   // ActionCodeSettings for email verification
   final ActionCodeSettings acs = ActionCodeSettings(
-    // URL you want to redirect back to. The domain (www.example.com) for this
-    // URL must be whitelisted in the Firebase Console.
     url:
         'https://nazifa-parking-29f2b.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
-    // This must be true
     handleCodeInApp: true,
     iOSBundleId: 'com.example.ios',
     androidPackageName: 'com.terasoft.nazifaparking',
-    // installIfNotAvailable
     androidInstallApp: true,
-    // minimumVersion
     androidMinimumVersion: '12',
   );
 
@@ -76,7 +71,6 @@ class InformationScreenController extends GetxController {
         countryCode.value = customerModel.value.countryCode.toString();
       } else {
         emailController.value.text = customerModel.value.email.toString();
-        // Check if fullName is not null before assigning
         if (customerModel.value.fullName != null) {
           fullNameController.value.text =
               customerModel.value.fullName.toString();
@@ -87,7 +81,6 @@ class InformationScreenController extends GetxController {
   }
 
   void goToDashboardScreen() {
-    // Navigate user to DASHBOARD_SCREEN
     Get.offAllNamed(Routes.DASHBOARD_SCREEN);
   }
 
@@ -106,10 +99,8 @@ class InformationScreenController extends GetxController {
     }
 
     if (isVerified) {
-      // Email is already verified, proceed to DASHBOARD_SCREEN
       goToDashboardScreen();
     } else {
-      // Email is not verified, send verification email
       await sendEmailVerification();
     }
 
@@ -119,114 +110,66 @@ class InformationScreenController extends GetxController {
           .then((value) async {
         if (value == true) {
           ShowToastDialog.showLoader("please_wait".tr);
-          CustomerModel customerModelData = customerModel.value;
-          customerModelData.fullName = fullNameController.value.text;
-          customerModelData.email = emailController.value.text;
-          customerModelData.countryCode = countryCode.value;
-          customerModelData.phoneNumber = phoneNumberController.value.text;
-          customerModelData.profilePic = profileImage.value;
-          customerModelData.gender = selectedGender.value;
-          customerModelData.identificationNo =
-              identificationNoController.value.text;
-          customerModelData.identificationType = selectedIc.value;
-          customerModelData.fcmToken = fcmToken;
-          customerModelData.createdAt = Timestamp.now();
-          Constant.customerName = customerModelData.fullName!;
-
-          FireStoreUtils.getReferralUserByCode(
-                  referralCodeController.value.text)
-              .then((value) async {
-            if (value != null) {
-              ReferralModel ownReferralModel = ReferralModel(
-                  id: FireStoreUtils.getCurrentUid(),
-                  referralBy: value.id,
-                  referralCode: Constant.getReferralCode(firstTwoChar));
-              await FireStoreUtils.referralAdd(ownReferralModel);
-            } else {
-              ReferralModel referralModel = ReferralModel(
-                  id: FireStoreUtils.getCurrentUid(),
-                  referralBy: "",
-                  referralCode: Constant.getReferralCode(firstTwoChar));
-              await FireStoreUtils.referralAdd(referralModel);
-            }
-          });
-
-          await FireStoreUtils.updateUser(customerModelData).then((value) {
-            ShowToastDialog.closeLoader();
-            if (value == true) {
-              Get.offAllNamed(Routes.DASHBOARD_SCREEN);
-            }
-          });
+          await updateUserProfile(fcmToken, firstTwoChar);
         } else {
           ShowToastDialog.showToast("referral_code_invalid".tr);
         }
       });
     } else {
       ShowToastDialog.showLoader("please_wait".tr);
-      CustomerModel customerModelData = customerModel.value;
-      customerModelData.fullName = fullNameController.value.text;
-      customerModelData.email = emailController.value.text;
-      customerModelData.countryCode = countryCode.value;
-      customerModelData.phoneNumber = phoneNumberController.value.text;
-      customerModelData.identificationNo =
-          identificationNoController.value.text;
-      customerModelData.identificationType = selectedIc.value;
-      customerModelData.profilePic = profileImage.value;
-      customerModelData.gender = selectedGender.value;
-      customerModelData.fcmToken = fcmToken;
-      customerModelData.createdAt = Timestamp.now();
-      Constant.customerName = customerModelData.fullName!;
-
-      ReferralModel referralModel = ReferralModel(
-          id: FireStoreUtils.getCurrentUid(),
-          referralBy: "",
-          referralCode: Constant.getReferralCode(firstTwoChar));
-      await FireStoreUtils.referralAdd(referralModel);
-
-      await FireStoreUtils.updateUser(customerModelData).then((value) {
-        ShowToastDialog.closeLoader();
-        if (value == true) {
-          Get.offAllNamed(Routes.DASHBOARD_SCREEN);
-        }
-      });
+      await updateUserProfile(fcmToken, firstTwoChar);
     }
+  }
+
+  Future<void> updateUserProfile(String fcmToken, String firstTwoChar) async {
+    CustomerModel customerModelData = customerModel.value;
+    customerModelData.fullName = fullNameController.value.text;
+    customerModelData.email = emailController.value.text;
+    customerModelData.countryCode = countryCode.value;
+    customerModelData.phoneNumber = phoneNumberController.value.text;
+    customerModelData.identificationNo = identificationNoController.value.text;
+    customerModelData.identificationType = selectedIc.value;
+    customerModelData.profilePic = profileImage.value;
+    customerModelData.gender = selectedGender.value;
+    customerModelData.fcmToken = fcmToken;
+    customerModelData.createdAt = Timestamp.now();
+    Constant.customerName = customerModelData.fullName!;
+
+    ReferralModel referralModel = ReferralModel(
+        id: FireStoreUtils.getCurrentUid(),
+        referralBy: "",
+        referralCode: Constant.getReferralCode(firstTwoChar));
+    await FireStoreUtils.referralAdd(referralModel);
+
+    await FireStoreUtils.updateUser(customerModelData).then((value) {
+      ShowToastDialog.closeLoader();
+      if (value == true) {
+        Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+      }
+    });
   }
 
   Future<bool> isEmailVerified(String email) async {
     User? user = FirebaseAuth.instance.currentUser;
-    await user?.reload(); // Reloads the user to ensure the latest data
-    user = FirebaseAuth.instance.currentUser; // Refresh user object
+    await user?.reload();
+    user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      return user
-          .emailVerified; // Returns true if email is verified, false otherwise
+      return user.emailVerified;
     } else {
-      return false; // User is null, indicating not logged in
+      return false;
     }
   }
 
   Future<void> sendEmailVerification() async {
     try {
-      // Get the email from the registration form
       String email = emailController.value.text;
-
       await FirebaseAuth.instance.currentUser?.sendEmailVerification();
-
-      // Send email verification
-      // await FirebaseAuth.instance
-      //     .sendSignInLinkToEmail(email: email, actionCodeSettings: acs)
-      //     .catchError(
-      //         (onError) => print('Error sending email verification $onError'))
-      //     .then((value) => print('Successfully sent email verification'));
-
-      // Print a message or perform any other action upon successful sending of verification email
-      // print('Verification email sent to $email');
       _showEmailVerifiedSnackbar("A verification email has been sent to ".tr +
           email +
           ".Please verify your email to make sure you can make any transaction."
               .tr);
     } catch (error) {
-      // Handle errors if any
       print('Error sending verification email: $error');
       ShowToastDialog.showToast('Error sending verification email');
     }

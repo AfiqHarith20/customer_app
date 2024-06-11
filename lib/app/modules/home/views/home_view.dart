@@ -1,28 +1,16 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:customer_app/app/models/location_lat_lng.dart';
-import 'package:customer_app/app/models/parking_model.dart';
-import 'package:customer_app/app/modules/profile_screen/controllers/profile_screen_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
-import 'package:customer_app/app/widget/network_image_widget.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
-import 'package:customer_app/utils/fire_store_utils.dart';
-import 'package:customer_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:place_picker/entities/entities.dart';
 import '../controllers/home_controller.dart';
-import 'carousel_loading.dart';
-import 'carousel_slider_data_found.dart';
 
 int _currentIndex = 0;
 
