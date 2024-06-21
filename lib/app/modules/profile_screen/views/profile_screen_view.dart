@@ -65,9 +65,9 @@ class ProfileScreenView extends StatelessWidget {
                                             child: Image.asset(
                                               Constant.userPlaceHolder,
                                               height:
-                                                  Responsive.width(30, context),
+                                                  Responsive.width(40, context),
                                               width:
-                                                  Responsive.width(30, context),
+                                                  Responsive.width(40, context),
                                               fit: BoxFit.fill,
                                             ),
                                           ),
@@ -97,7 +97,7 @@ class ProfileScreenView extends StatelessWidget {
                                                   height: Responsive.width(
                                                       40, context),
                                                   width: Responsive.width(
-                                                      30, context),
+                                                      40, context),
                                                   fit: BoxFit.fill,
                                                 ),
                                               ),
@@ -125,7 +125,7 @@ class ProfileScreenView extends StatelessWidget {
                                                   height: Responsive.width(
                                                       40, context),
                                                   width: Responsive.width(
-                                                      30, context),
+                                                      40, context),
                                                   fit: BoxFit.fill,
                                                 ),
                                               ),

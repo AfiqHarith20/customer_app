@@ -22,10 +22,13 @@ class NewsScreenController extends GetxController {
           "link": doc.data()['link'].toString(),
           "read": doc.data()['read'].toString(),
           "title": doc.data()['title'].toString(),
-          "pubDate": doc.data()['date'].toString(),
+          "pubDate": doc.data()['date'], // Store as dynamic
           "categories": doc.data()['categories'].toString(),
         };
       }).toList();
+      fetchedItems.sort((a, b) {
+        return b['pubDate'].compareTo(a['pubDate']);
+      });
       newsList.assignAll(fetchedItems);
     } catch (e) {
       print('Error fetching information: $e');

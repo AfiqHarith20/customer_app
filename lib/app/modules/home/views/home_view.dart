@@ -5,9 +5,9 @@ import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../controllers/home_controller.dart';
 
 int _currentIndex = 0;
@@ -19,14 +19,6 @@ final List<String> titles = [
   ' Bread ',
   ' Gelato ',
   ' Ice Cream ',
-];
-
-final List<String> listViewItems = [
-  'List Item 1',
-  'List Item 2',
-  'List Item 3',
-  'List Item 4',
-  'List Item 5',
 ];
 
 class HomeView extends StatefulWidget {
@@ -75,11 +67,13 @@ class _HomeViewState extends State<HomeView> {
           "link": doc.data()['link'].toString(),
           "read": doc.data()['read'].toString(),
           "title": doc.data()['title'].toString(),
-          "pubDate": doc.data()['date'].toString(),
+          "pubDate": doc.data()['date'], // Store as dynamic
           "categories": doc.data()['categories'].toString(),
         };
       }).toList();
-
+      fetchedItems.sort((a, b) {
+        return b['pubDate'].compareTo(a['pubDate']);
+      });
       setState(() {
         items = fetchedItems;
       });
@@ -302,8 +296,7 @@ class _HomeViewState extends State<HomeView> {
                                     'Latest News'.tr,
                                     style: const TextStyle(
                                       fontFamily: AppThemData.medium,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      fontSize: 14,
                                     ),
                                   ),
                                   GestureDetector(
@@ -317,9 +310,8 @@ class _HomeViewState extends State<HomeView> {
                                           'More News'.tr,
                                           style: const TextStyle(
                                             fontFamily: AppThemData.medium,
-                                            fontWeight: FontWeight.normal,
                                             color: AppColors.darkGrey04,
-                                            fontSize: 18,
+                                            fontSize: 14,
                                           ),
                                         ),
                                         const SizedBox(
@@ -341,14 +333,13 @@ class _HomeViewState extends State<HomeView> {
                                 (index) {
                                   final itemData = items[index];
                                   final title = itemData['title'] as String?;
-                                  final pubDate =
-                                      itemData['pubDate'] as String?;
+                                  final pubDate = itemData['pubDate'];
                                   final des = itemData['des'];
                                   return GestureDetector(
                                     onTap: () {
                                       final titleValue = title ?? '';
                                       final desValue = des ?? '';
-                                      final dateValue = pubDate ?? '';
+                                      final dateValue = pubDate;
 
                                       Get.toNamed(
                                         Routes.NEWS_DETAIL_SCREEN,
@@ -362,30 +353,47 @@ class _HomeViewState extends State<HomeView> {
                                     child: Card(
                                       elevation: 4,
                                       margin: const EdgeInsets.symmetric(
-                                        horizontal: 16,
+                                        horizontal: 10,
                                         vertical: 3,
                                       ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
+                                        padding: const EdgeInsets.all(10.0),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               title ?? '',
+                                              textAlign: TextAlign.justify,
                                               style: const TextStyle(
-                                                fontSize: 16,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.normal,
                                               ),
                                             ),
-                                            const SizedBox(height: 8),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
                                             Text(
-                                              '$pubDate',
+                                              des ?? '',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.justify,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontStyle: FontStyle.normal,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              formatDate(pubDate),
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 12,
                                                 color: Colors.grey[600],
                                               ),
                                             ),
@@ -397,52 +405,27 @@ class _HomeViewState extends State<HomeView> {
                                 },
                               ),
                             ),
-
-                            // ListView.builder(
-                            //   shrinkWrap: true,
-                            //   physics: const NeverScrollableScrollPhysics(),
-                            //   itemCount: listViewItems.length,
-                            //   itemBuilder: (context, index) {
-                            //     return Padding(
-                            //       padding: const EdgeInsets.all(10.0),
-                            //       child: Container(
-                            //         color: Colors.white,
-                            //         child: ListTile(
-                            //           leading: CircleAvatar(
-                            //             backgroundColor: AppColors
-                            //                 .yellow04, // Adjust the color as needed
-                            //             child: Text(
-                            //               (index + 1).toString(),
-                            //               style: const TextStyle(
-                            //                 color: Colors.black,
-                            //                 fontFamily: AppThemData.bold,
-                            //               ),
-                            //             ),
-                            //           ),
-                            //           title: Text(
-                            //             listViewItems[index],
-                            //             style: const TextStyle(
-                            //               color: Colors.black,
-                            //               fontFamily: AppThemData.medium,
-                            //               fontWeight: FontWeight.bold,
-                            //             ),
-                            //           ),
-                            //           subtitle: const Text(
-                            //             'Description',
-                            //             style: TextStyle(
-                            //               color: Colors.black54,
-                            //               fontFamily: AppThemData.regular,
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     );
-                            //   },
-                            // ),
                           ],
                         ),
                       )),
           );
         });
+  }
+
+  String formatDate(dynamic date) {
+    try {
+      DateTime dateTime;
+      if (date is Timestamp) {
+        dateTime = date.toDate();
+      } else if (date is String) {
+        dateTime = DateTime.parse(date);
+      } else {
+        return ''; // Handle unexpected date type
+      }
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    } catch (e) {
+      print('Error parsing date: $e');
+      return ''; // Return empty string if parsing fails
+    }
   }
 }

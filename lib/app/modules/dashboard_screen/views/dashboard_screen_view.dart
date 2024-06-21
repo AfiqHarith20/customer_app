@@ -58,9 +58,14 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
               label: '',
             ),
             BottomNavigationBarItem(
-                activeIcon:
-                    SvgPicture.asset("assets/icons/ic_notepad_active.svg"),
-                icon: SvgPicture.asset("assets/icons/ic_notepad.svg"),
+                activeIcon: SvgPicture.asset(
+                  "assets/icons/txn_active.svg",
+                  height: 22,
+                ),
+                icon: SvgPicture.asset(
+                  "assets/icons/txn.svg",
+                  height: 22,
+                ),
                 label: "History".tr),
             BottomNavigationBarItem(
                 activeIcon:

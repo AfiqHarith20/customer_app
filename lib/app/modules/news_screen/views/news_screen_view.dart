@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/news_screen/controllers/news_screen_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/constant/constant.dart';
@@ -5,6 +6,7 @@ import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/common_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class NewsScreenView extends StatefulWidget {
   const NewsScreenView({super.key});
@@ -38,28 +40,27 @@ class _NewsScreenViewState extends State<NewsScreenView> {
                           final date = itemData['pubDate'];
                           return GestureDetector(
                             onTap: () {
-                              // print(
-                              //     'Title: $title, Description: $des, Date: $date');
-                              final titleValue = title ?? '';
-                              final desValue = des ?? '';
-                              final dateValue = date ?? '';
-
                               Get.toNamed(
                                 Routes.NEWS_DETAIL_SCREEN,
                                 arguments: {
-                                  'title': titleValue,
-                                  'des': desValue,
-                                  'date': dateValue,
+                                  'title': title,
+                                  'des': des,
+                                  'date': date,
                                 },
                               );
                             },
                             child: Card(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0.0),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   left: 10,
+                                  right: 10,
                                   top: 10,
                                   bottom: 10,
                                 ),
@@ -68,13 +69,10 @@ class _NewsScreenViewState extends State<NewsScreenView> {
                                   children: [
                                     Text(
                                       title ?? '',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.left,
+                                      textAlign: TextAlign.justify,
                                       style: const TextStyle(
-                                        fontSize: 16,
-                                        fontStyle: FontStyle.normal,
-                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
                                       ),
                                     ),
                                     const SizedBox(
@@ -84,9 +82,9 @@ class _NewsScreenViewState extends State<NewsScreenView> {
                                       des ?? '',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.left,
+                                      textAlign: TextAlign.justify,
                                       style: const TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 12,
                                         fontStyle: FontStyle.normal,
                                         color: Colors.grey,
                                       ),
@@ -99,13 +97,11 @@ class _NewsScreenViewState extends State<NewsScreenView> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          date ?? '',
-                                          maxLines: 1,
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                              fontSize: 14,
-                                              fontStyle: FontStyle.normal,
-                                              color: Colors.blueGrey),
+                                          formatDate(date),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
                                         ),
                                       ],
                                     )
@@ -118,5 +114,22 @@ class _NewsScreenViewState extends State<NewsScreenView> {
                   ));
       },
     );
+  }
+
+  String formatDate(dynamic date) {
+    try {
+      DateTime dateTime;
+      if (date is Timestamp) {
+        dateTime = date.toDate();
+      } else if (date is String) {
+        dateTime = DateTime.parse(date);
+      } else {
+        return ''; // Handle unexpected date type
+      }
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    } catch (e) {
+      print('Error parsing date: $e');
+      return ''; // Return empty string if parsing fails
+    }
   }
 }

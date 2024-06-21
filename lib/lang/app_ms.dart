@@ -310,4 +310,6 @@ const Map<String, String> msMY = {
   'No transactions yet': 'Tiada Transaksi lagi',
   'You currently have no transactions.\nBut, when you do, they\'ll show up here!':
       'Anda sekarang belum mempunyai transaksi.\nTapi bila ada, ia akan keluar di sini!',
+  'Buy Pass': "Beli Pas",
+  'Pay Compound': 'Bayar Kompaun',
 };

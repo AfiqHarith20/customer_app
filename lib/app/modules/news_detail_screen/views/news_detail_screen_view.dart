@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/news_detail_screen/controllers/news_detail_screen_controller.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/themes/app_colors.dart';
+import 'package:customer_app/themes/app_them_data.dart';
 import 'package:customer_app/themes/common_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
+import 'package:intl/intl.dart';
 
 class NewsDetailScreenView extends StatelessWidget {
   const NewsDetailScreenView({super.key});
@@ -28,26 +31,29 @@ class NewsDetailScreenView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        controller.titleValue.value,
+                        controller.title,
+                        textAlign: TextAlign.justify,
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          fontFamily: AppThemData.medium,
                           color: Colors.black,
                         ),
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        controller.dateValue.value,
+                        controller.date,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           color: Colors.grey[600],
                         ),
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        controller.desValue.value,
+                        controller.des.toString(),
+                        textAlign: TextAlign.justify,
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
+                          fontFamily: AppThemData.regular,
                           color: Colors.black,
                         ),
                       ),
@@ -57,5 +63,22 @@ class NewsDetailScreenView extends StatelessWidget {
         );
       },
     );
+  }
+
+  String formatDate(dynamic date) {
+    try {
+      DateTime dateTime;
+      if (date is Timestamp) {
+        dateTime = date.toDate();
+      } else if (date is String) {
+        dateTime = DateTime.parse(date);
+      } else {
+        return ''; // Handle unexpected date type
+      }
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    } catch (e) {
+      print('Error parsing date: $e');
+      return ''; // Return empty string if parsing fails
+    }
   }
 }

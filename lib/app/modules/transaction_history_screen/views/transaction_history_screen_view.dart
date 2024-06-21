@@ -112,7 +112,7 @@ class _TransactionHistoryScreenViewState
       appBar: UiInterface().customAppBar(
         isBack: false,
         context,
-        "Transaction History".tr,
+        "History".tr,
         backgroundColor: AppColors.lightGrey02,
       ),
       body: Column(
@@ -152,7 +152,10 @@ class _TransactionHistoryScreenViewState
                         fontSize: 14,
                       ),
                     ),
-                    const Icon(Icons.calendar_today),
+                    Image.asset(
+                      "assets/images/filter.png",
+                      height: 25,
+                    ),
                   ],
                 ),
               ),
@@ -446,19 +449,16 @@ class _TransactionHistoryScreenViewState
                             children: [
                               const SizedBox(height: 10),
                               itemWidget(
-                                subText: formatDate(createAt),
-                                title: transactionNumber
-                                        .substring(0, 8)
-                                        .toUpperCase() ??
-                                    '-',
+                                subText: '',
+                                title: formatDate(createAt),
                               ),
-                              itemWidget(
-                                subText: paymentType ?? '-',
-                                title: providerPaymentMethod ?? '-',
-                              ),
-                              itemWidget(
+                              itemWidget2(
                                 subText: 'RM${amount ?? '0.00'}',
                                 title: transactionType ?? '-',
+                              ),
+                              itemWidget(
+                                subText: '',
+                                title: providerPaymentMethod ?? '-',
                               ),
                               const SizedBox(height: 10),
                             ],
@@ -493,7 +493,7 @@ class _TransactionHistoryScreenViewState
               child: Text(
                 title.tr,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 12,
                   fontFamily: AppThemData.regular,
                   color: AppColors.darkGrey09,
                 ),
@@ -515,7 +515,51 @@ class _TransactionHistoryScreenViewState
               ),
             ),
           ],
-        ),
+        ).marginOnly(left: 10, right: 10),
+      ),
+    );
+  }
+
+  static Widget itemWidget2({
+    required String subText,
+    required String title,
+    Color? subTextColor,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Text(
+                title.tr,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontFamily: AppThemData.medium,
+                  color: AppColors.darkGrey09,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Text(
+                subText.tr,
+                style: TextStyle(
+                    fontSize: 14,
+                    color: subTextColor ?? Colors.black,
+                    fontFamily: AppThemData.medium),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+              ),
+            ),
+          ],
+        ).marginOnly(left: 10, right: 10),
       ),
     );
   }

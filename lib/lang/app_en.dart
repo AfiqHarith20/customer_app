@@ -151,7 +151,7 @@ const Map<String, String> enUS = {
   "Sign Up": "Sign Up",
   "Already have an account?": "Already have an account?",
   "Don't have an account?": "Don't have an account?",
-  "My Season Pass": "My Season Pass",
+  "My Season Pass": "My Pass",
   "Let's Start": "Let's Start",
   "Next": "Next",
   "Search & Pay Compound": "Search & Pay Compound",
@@ -309,4 +309,6 @@ const Map<String, String> enUS = {
   'No transactions yet': 'No transactions yet',
   'You currently have no transactions.\nBut, when you do, they\'ll show up here!':
       'You currently have no transactions.\nBut, when you do, they\'ll show up here!',
+  'Buy Pass': "Buy Pass",
+  'Pay Compound': 'Pay Compound',
 };

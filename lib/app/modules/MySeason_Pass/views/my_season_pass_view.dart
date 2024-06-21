@@ -27,7 +27,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
             appBar: UiInterface().customAppBar(
               backgroundColor: AppColors.lightGrey02,
               context,
-              "My Season Pass".tr,
+              "My Pass".tr,
               isBack: false,
               actions: [
                 Padding(

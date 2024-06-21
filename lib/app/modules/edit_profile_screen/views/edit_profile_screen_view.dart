@@ -75,9 +75,9 @@ class EditProfileScreenView extends StatelessWidget {
                                                   child: Image.asset(
                                                     Constant.userPlaceHolder,
                                                     height: Responsive.width(
-                                                        40, context),
+                                                        45, context),
                                                     width: Responsive.width(
-                                                        40, context),
+                                                        45, context),
                                                     fit: BoxFit.fill,
                                                   ),
                                                 ),
@@ -111,11 +111,11 @@ class EditProfileScreenView extends StatelessWidget {
                                                             .profileImage.value,
                                                         height:
                                                             Responsive.width(
-                                                          40,
+                                                          45,
                                                           context,
                                                         ),
                                                         width: Responsive.width(
-                                                          40,
+                                                          45,
                                                           context,
                                                         ),
                                                         fit: BoxFit.cover,
@@ -150,11 +150,11 @@ class EditProfileScreenView extends StatelessWidget {
                                                             .value),
                                                         height:
                                                             Responsive.width(
-                                                          40,
+                                                          45,
                                                           context,
                                                         ),
                                                         width: Responsive.width(
-                                                          40,
+                                                          45,
                                                           context,
                                                         ),
                                                         fit: BoxFit.cover,
