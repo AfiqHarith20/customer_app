@@ -291,4 +291,22 @@ const Map<String, String> enUS = {
   "Zone*": "Zone*",
   "Road*": "Road*",
   "Status": "Status",
+  "Your request is not successfully sent, please try again":
+      "Your request is not successfully sent, please try again",
+  "Error": "Error",
+  "History": "History",
+  'Select Date': 'Select Date',
+  "Select Date Range": "Select Date Range",
+  "Transaction History up to 30 days only":
+      "Transaction History up to 30 days only",
+  "Today": "Today",
+  "Yesterday": "Yesterday",
+  'Last 7 days': 'Last 7 days',
+  'Last 30 days': 'Last 30 days',
+  "Custom Date Range": "Custom Date Range",
+  'Select Start Date': 'Select Start Date',
+  'Select End Date': 'Select End Date',
+  'No transactions yet': 'No transactions yet',
+  'You currently have no transactions.\nBut, when you do, they\'ll show up here!':
+      'You currently have no transactions.\nBut, when you do, they\'ll show up here!',
 };

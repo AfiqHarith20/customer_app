@@ -134,7 +134,7 @@ const Map<String, String> msMY = {
   "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING":
       "Nikmati pengalaman parkir yang lancar dan bebas tekanan dengan NAZIFA PARKING",
   "Log in with Mobile Number": "Log masuk dengan Nombor Telefon",
-  "Effortless Parking": "Cepat, Mesra & Efektif",
+  "Effortless Parking": "Mesra, Mudah & Efektif",
   "Season Pass": "Pas Bermusim",
   "My Pass": "Pas Saya",
   "Validity:": "Tempoh Sah:",
@@ -292,4 +292,22 @@ const Map<String, String> msMY = {
   "Zone*": "Zon*",
   "Road*": "Jalan*",
   "Status": "Status",
+  "Error": "Ralat",
+  "Your request is not successfully sent, please try again":
+      "Permintaan anda tidak dapat dihantar, sila cuba sekali lagi",
+  "History": "Sejarah",
+  'Select Date': 'Pilih Tarikh',
+  "Select Date Range": "Pilih Julat Tarikh",
+  "Transaction History up to 30 days only":
+      "Sejarah Transaksi hanya 30 hari sahaja",
+  "Today": "Harini",
+  "Yesterday": "Semalam",
+  'Last 7 days': '7 Hari sebelumnya',
+  'Last 30 days': '30 Hari sebelumnya',
+  "Custom Date Range": "Julat Tarikh Tersendiri",
+  'Select Start Date': 'Pilih Tarikh Mula',
+  'Select End Date': 'Pilih Tarikh Tamat',
+  'No transactions yet': 'Tiada Transaksi lagi',
+  'You currently have no transactions.\nBut, when you do, they\'ll show up here!':
+      'Anda sekarang belum mempunyai transaksi.\nTapi bila ada, ia akan keluar di sini!',
 };

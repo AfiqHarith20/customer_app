@@ -171,28 +171,36 @@ class PurchasePassPrivateController extends GetxController {
     });
   }
 
-  Future<String> postReservePassData() async {
-    try {
-      Map<String, dynamic> rawData = await getRawData();
-      final response = await http.post(
-        Uri.parse(APIList.reserveLot.toString()),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(rawData),
-      );
+  // Future<bool> postReservePassData() async {
+  //   try {
+  //     Map<String, dynamic> rawData = await getRawData();
 
-      if (response.statusCode == 200) {
-        return response.body;
-      } else {
-        ShowToastDialog.showToast(
-            "Error occurred while making payment. Status Code: ${response.statusCode}");
-        return '';
-      }
-    } catch (e, s) {
-      log("$e \n$s");
-      ShowToastDialog.showToast("Error occurred while making payment: $e");
-      return '';
-    }
-  }
+  //     // Print each key-value pair in rawData
+  //     rawData.forEach((key, value) {
+  //       print('Raw Data Key: $key, Value: $value');
+  //     });
+
+  //     final response = await http.post(
+  //       Uri.parse(APIList.reserveLot.toString()),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode(rawData),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       return true;
+  //     } else {
+  //       ShowToastDialog.showToast(
+  //           "Error occurred while making payment. Status Code: ${response.statusCode}");
+  //       print('Raw Data: $rawData');
+  //       print('Response Body: ${response.body}');
+  //       return false;
+  //     }
+  //   } catch (e, s) {
+  //     log("$e \n$s");
+  //     ShowToastDialog.showToast("Error occurred while making payment: $e");
+  //     return false;
+  //   }
+  // }
 
   Future<bool> addPrivatePassData() async {
     try {
@@ -219,18 +227,43 @@ class PurchasePassPrivateController extends GetxController {
       pendingDetailPassModel.value.roadName = selectedRoad.value?.jlnNama;
       pendingDetailPassModel.value.countryCode =
           countryCode.reactive.toString();
+
+      // Set the dates and status
       pendingDetailPassModel.value.startDate = DateTime.now();
       pendingDetailPassModel.value.createAt = DateTime.now();
       pendingDetailPassModel.value.endDate = DateTime.now().add(
         Duration(
-            days: checkDuration(selectedPrivatePass.value.validity.toString())),
+          days: checkDuration(selectedPrivatePass.value.validity.toString()),
+        ),
       );
       pendingDetailPassModel.value.status = "pending";
 
-      await postReservePassData();
-      return true;
-    } catch (e) {
-      print('Error adding private pass data: $e');
+      // Now call getRawData()
+      Map<String, dynamic> rawData = await getRawData();
+
+      // Print each key-value pair in rawData
+      rawData.forEach((key, value) {
+        print('Raw Data Key: $key, Value: $value');
+      });
+
+      final response = await http.post(
+        Uri.parse(APIList.reserveLot.toString()),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(rawData),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        ShowToastDialog.showToast(
+            "Error occurred while making payment. Status Code: ${response.statusCode}");
+        print('Raw Data: $rawData');
+        print('Response Body: ${response.body}');
+        return false;
+      }
+    } catch (e, s) {
+      log("$e \n$s");
+      ShowToastDialog.showToast("Error occurred while making payment: $e");
       return false;
     }
   }
@@ -264,9 +297,9 @@ class PurchasePassPrivateController extends GetxController {
       "companyRegistrationNo": companyRegistrationNoController.value.text,
       "address": addressController.value.text,
       "countryCode": countryCode.value,
-      "startDate": pendingDetailPassModel.value.startDate?.toString(),
-      "createAt": pendingDetailPassModel.value.createAt?.toString(),
-      "endDate": pendingDetailPassModel.value.endDate?.toString(),
+      "startDate": pendingDetailPassModel.value.startDate?.toIso8601String(),
+      "createAt": pendingDetailPassModel.value.createAt?.toIso8601String(),
+      "endDate": pendingDetailPassModel.value.endDate?.toIso8601String(),
       "status": pendingDetailPassModel.value.status,
       "zoneId": selectedZone.value?.znId,
       "zoneName": selectedZone.value?.znName,

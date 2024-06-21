@@ -19,4 +19,5 @@ class CollectionName {
   static const String pendingPass = "pending_pass";
   static const String notifications = "notifications";
   static const String messages = "messages";
+  static const String transacHistory = "consolidate_transaction";
 }

@@ -432,79 +432,77 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: ButtonThem.buildButton(
-                context,
-                btnHeight: 48,
-                title: "Submit".tr,
-                txtColor: Colors.black,
-                bgColor: AppColors.yellow04,
-                onPress: () async {
-                  if (controller.formKeyPurchasePrivate.value.currentState!
-                          .validate() &&
-                      controller.privateParkImage.value.isNotEmpty) {
-                    // Show loading indicator
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.darkGrey10,
-                            ),
+              child: ButtonThem.buildButton(context,
+                  btnHeight: 48,
+                  title: "Submit".tr,
+                  txtColor: Colors.black,
+                  bgColor: AppColors.yellow04, onPress: () async {
+                if (controller.formKeyPurchasePrivate.value.currentState!
+                        .validate() &&
+                    controller.privateParkImage.value.isNotEmpty) {
+                  // Show loading indicator
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.darkGrey10,
                           ),
-                        );
-                      },
-                    );
+                        ),
+                      );
+                    },
+                  );
 
-                    // Call addPrivatePassData asynchronously
-                    bool success = await controller.addPrivatePassData();
+                  // Call postReservePassData asynchronously
+                  bool success = await controller.addPrivatePassData();
 
-                    // Hide loading indicator
-                    Navigator.of(context).pop();
+                  // Hide loading indicator
+                  Navigator.of(context).pop();
 
-                    // Show success or error dialog based on the result
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return success
-                            ? DialogBoxNotify(
-                                imageAsset: "assets/images/ic_parking.png",
-                                onPressConfirm: () async {
-                                  // Close the dialog
-                                  Navigator.pop(context);
+                  // Show success or error dialog based on the result
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return success
+                          ? DialogBoxNotify(
+                              imageAsset: "assets/images/ic_parking.png",
+                              onPressConfirm: () async {
+                                // Close the dialog
+                                Navigator.pop(context);
 
-                                  // Navigate to dashboard page
-                                  Get.offAndToNamed(
-                                    Routes.DASHBOARD_SCREEN,
-                                  );
-                                  // Reload the DASHBOARD_SCREEN
-                                  Get.find<MySeasonPassController>().reload();
-                                },
-                                onPressConfirmBtnName: "Ok".tr,
-                                onPressConfirmColor: AppColors.green04,
-                                content:
-                                    "Your request has been sent with status 'Pending'"
-                                        .tr,
-                                subTitle: "Success".tr,
-                              )
-                            : DialogBoxNotify(
-                                imageAsset: "assets/images/ic_parking.png",
-                                onPressConfirm: () async {
-                                  // Close the dialog
-                                  Navigator.pop(context);
-                                },
-                                onPressConfirmBtnName: "Ok".tr,
-                                onPressConfirmColor: AppColors.red04,
-                                content:
-                                    "Your request is not successfully sent, please try again"
-                                        .tr,
-                                subTitle: "Error".tr,
-                              );
-                      },
-                    );
-                  }
-                },
-              ),
+                                // Navigate to dashboard page
+                                Get.offAndToNamed(
+                                  Routes.DASHBOARD_SCREEN,
+                                );
+                                // Reload the DASHBOARD_SCREEN
+                                Get.find<MySeasonPassController>().reload();
+                              },
+                              onPressConfirmBtnName: "Ok".tr,
+                              onPressConfirmColor: AppColors.green04,
+                              content:
+                                  "Your request has been sent with status 'Pending'"
+                                      .tr,
+                              subTitle: "Success".tr,
+                            )
+                          : DialogBoxNotify(
+                              imageAsset: "assets/images/ic_parking.png",
+                              onPressConfirm: () async {
+                                // Close the dialog
+                                Navigator.pop(context);
+                              },
+                              onPressConfirmBtnName: "Ok".tr,
+                              onPressConfirmColor: AppColors.red04,
+                              content:
+                                  "Your request is not successfully sent, please try again"
+                                      .tr
+                                      .tr,
+                              subTitle: "Error".tr,
+                            );
+                    },
+                  );
+                }
+              }),
             ),
           ),
         );

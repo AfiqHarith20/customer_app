@@ -3,6 +3,7 @@ import 'package:customer_app/app/modules/home/views/home_view.dart';
 import 'package:customer_app/app/modules/profile_screen/views/profile_screen_view.dart';
 import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
 import 'package:customer_app/app/modules/search_summon_screen/views/search_summon_screen_view.dart';
+import 'package:customer_app/app/modules/transaction_history_screen/views/transaction_history_screen_view.dart';
 import 'package:customer_app/app/modules/wallet_screen/views/wallet_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,24 +21,11 @@ class DashboardScreenController extends GetxController {
   // Define the expected types for each page
   final List<Widget> pageList = [
     const HomeView(),
-    MySeasonPassView(),
+    const MySeasonPassView(),
     SearchSummonScreenView(
       controller: SearchSummonScreenController(),
     ),
-    WalletScreenView(
-      selectedBankName: '',
-      accessToken: '',
-      customerId: '',
-      channelId: 0,
-      selectedBankId: '',
-      amount: '',
-      email: '',
-      mobileNumber: '',
-      name: '',
-      username: '',
-      identificationNumber: '',
-      identificationType: 0,
-    ),
+    const TransactionHistoryScreenView(),
     const ProfileScreenView(),
   ];
 

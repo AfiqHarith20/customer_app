@@ -52,6 +52,9 @@ abstract class Routes {
   static const NEWS_SCREEN = _Paths.NEWS_SCREEN;
   static const NEWS_DETAIL_SCREEN = _Paths.NEWS_DETAIL_SCREEN;
   static const PAY_PENDING_PASS = _Paths.PAY_PENDING_PASS;
+  static const TRANSACTION_HISTORY_SCREEN = _Paths.TRANSACTION_HISTORY_SCREEN;
+  static const TRANSACTION_HISTORY_DETAIL_SCREEN =
+      _Paths.TRANSACTION_HISTORY_DETAIL_SCREEN;
 }
 
 abstract class _Paths {
@@ -103,4 +106,7 @@ abstract class _Paths {
   static const NEWS_SCREEN = '/news-screen';
   static const NEWS_DETAIL_SCREEN = '/news-detail-screen';
   static const PAY_PENDING_PASS = '/pay-pending-pass';
+  static const TRANSACTION_HISTORY_SCREEN = '/transaction-history-screen';
+  static const TRANSACTION_HISTORY_DETAIL_SCREEN =
+      '/transaction-history-detail-screen';
 }

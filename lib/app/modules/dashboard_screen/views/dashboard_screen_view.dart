@@ -49,7 +49,8 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
                 icon: SvgPicture.asset("assets/icons/ic_home.svg"),
                 label: "Home".tr),
             BottomNavigationBarItem(
-                activeIcon: SvgPicture.asset("assets/icons/ic_mypass_active.svg"),
+                activeIcon:
+                    SvgPicture.asset("assets/icons/ic_mypass_active.svg"),
                 icon: SvgPicture.asset("assets/icons/ic_mypass.svg"),
                 label: "My Pass".tr),
             const BottomNavigationBarItem(
@@ -57,11 +58,13 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
               label: '',
             ),
             BottomNavigationBarItem(
-                activeIcon: SvgPicture.asset("assets/icons/ic_wallet_active.svg"),
-                icon: SvgPicture.asset("assets/icons/ic_wallet.svg"),
-                label: "Wallet".tr),
+                activeIcon:
+                    SvgPicture.asset("assets/icons/ic_notepad_active.svg"),
+                icon: SvgPicture.asset("assets/icons/ic_notepad.svg"),
+                label: "History".tr),
             BottomNavigationBarItem(
-                activeIcon: SvgPicture.asset("assets/icons/ic_myprofile_active.svg"),
+                activeIcon:
+                    SvgPicture.asset("assets/icons/ic_myprofile_active.svg"),
                 icon: SvgPicture.asset(
                   "assets/icons/ic_myprofile.svg",
                   color: AppColors.darkGrey04,
@@ -72,7 +75,9 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
         floatingActionButton: Visibility(
           visible: !keyboardIsOpen,
           child: Container(
-            decoration: BoxDecoration(color: AppColors.lightGrey02, borderRadius: BorderRadius.circular(50)),
+            decoration: BoxDecoration(
+                color: AppColors.lightGrey02,
+                borderRadius: BorderRadius.circular(50)),
             padding: const EdgeInsets.all(8),
             child: FloatingActionButton(
               shape: const CircleBorder(),
@@ -80,14 +85,15 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
               onPressed: () async {
                 //LocationResult? result = await Utils.showPlacePicker(context);
                 //if (result != null) {
-                  DashboardScreenController dashboardScreenController = Get.put(DashboardScreenController());
-                  dashboardScreenController.selectedIndex(2);
-                  //Get.toNamed(Routes.SEARCH_SUMMON_SCREEN);
+                DashboardScreenController dashboardScreenController =
+                    Get.put(DashboardScreenController());
+                dashboardScreenController.selectedIndex(2);
+                //Get.toNamed(Routes.SEARCH_SUMMON_SCREEN);
 
-                  //HomeController controller = Get.put(HomeController());
-                  //controller.addressController.value.text = result.formattedAddress.toString();
-                  //controller.locationLatLng.value = LocationLatLng(latitude: result.latLng!.latitude, longitude: result.latLng!.longitude);
-                  //await controller.getNearbyParking();
+                //HomeController controller = Get.put(HomeController());
+                //controller.addressController.value.text = result.formattedAddress.toString();
+                //controller.locationLatLng.value = LocationLatLng(latitude: result.latLng!.latitude, longitude: result.latLng!.longitude);
+                //await controller.getNearbyParking();
                 //}
               },
               child: SvgPicture.asset(
@@ -99,7 +105,8 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
             ),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniCenterDocked,
       ),
     );
   }

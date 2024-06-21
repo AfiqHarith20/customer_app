@@ -159,8 +159,19 @@ class WebviewScreenController extends GetxController {
           final String redirectUrl = responseBody['redirectUrl'] ?? '';
           final String clientScript = responseBody['clientScript'] ?? '';
 
-          // Update the flag to indicate that payment is fetched
-          isPaymentFetched = true;
+          // Handle redirection based on the type
+          if (redirectionType == 1) {
+            // Redirect using URL
+            print('Redirecting using URL: $redirectUrl');
+            // Handle redirection using URL here
+          } else if (redirectionType == 2) {
+            // Redirect using client script
+            print('Redirecting using client script: $clientScript');
+            // Handle redirection using client script here
+          } else {
+            print('Invalid redirection type');
+            // Handle invalid redirection type here
+          }
 
           // Return WebViewResponse object
           return WebViewResponse(
@@ -179,6 +190,7 @@ class WebviewScreenController extends GetxController {
       } else {
         // If response status code is not 200, handle the error
         print('Error: ${response.statusCode}');
+        print("redirect: ${response.isRedirect}");
         // Return an empty WebViewResponse
         return WebViewResponse(
           redirectionType: 0,

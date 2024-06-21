@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/admin_commission.dart';
@@ -11,13 +10,12 @@ import 'package:customer_app/app/models/currency_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/language_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
-import 'package:customer_app/app/models/notification_model.dart';
 import 'package:customer_app/app/models/owner_model.dart';
 import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
+import 'package:customer_app/app/models/transaction_history_model.dart';
 import 'package:customer_app/app/models/wallet_topup_model.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/models/referral_model.dart';
 import 'package:customer_app/app/models/review_model.dart';
@@ -28,7 +26,6 @@ import 'package:customer_app/constant/collection_name.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 import '../app/models/carousel_model.dart';
 import '../app/models/my_payment_compound_model.dart';
@@ -950,29 +947,4 @@ class FireStoreUtils {
     });
     return carouselData;
   }
-
-  // static Future<List<NotificationModel>> getNotification() async {
-  //   List<NotificationModel> notificationsData = [];
-
-  //   // QuerySnapshot<Map<String, dynamic>> querySnapshot =
-  //   //     await FirebaseFirestore.instance.collection('notifications').get();
-  //   await fireStore
-  //       .collection(CollectionName.notifications)
-  //       .where('customerId', isEqualTo: getCurrentUid())
-  //       .where(CollectionName.messages)
-  //       .get()
-  //       .then((value) {
-  //     for (var element in value.docs) {
-  //       NotificationModel notificationsModel =
-  //           NotificationModel.fromJson(element.data());
-  //       notificationsData.add(notificationsModel);
-  //       print('-------length----->${notificationsData.length}');
-  //     }
-  //   }).catchError((error) {
-  //     log("Failed to get data: $error");
-  //     return null;
-  //   });
-
-  //   return notificationsData;
-  // }
 }

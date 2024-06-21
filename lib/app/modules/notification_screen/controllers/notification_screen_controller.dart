@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/notification_model.dart';
+import 'package:customer_app/constant/collection_name.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
@@ -26,7 +27,7 @@ class NotificationScreenController extends GetxController {
       isLoading.value = true;
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
-              .collection('notifications')
+              .collection(CollectionName.notifications)
               .doc(getCurrentUid())
               .collection('messages')
               .get();

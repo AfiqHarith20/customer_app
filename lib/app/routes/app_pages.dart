@@ -21,6 +21,10 @@ import 'package:customer_app/app/modules/search_summon_screen/controllers/search
 import 'package:customer_app/app/modules/search_summon_screen/views/search_summon_screen_view.dart';
 import 'package:customer_app/app/modules/select_bank_provider_screen/bindings/select_bank_provider_screen_binding.dart';
 import 'package:customer_app/app/modules/select_bank_provider_screen/views/select_bank_provider_screen_view.dart';
+import 'package:customer_app/app/modules/transaction_history_detail_screen/bindings/transaction_history_detail_screen_binding.dart';
+import 'package:customer_app/app/modules/transaction_history_detail_screen/views/transaction_history_detail_screen_view.dart';
+import 'package:customer_app/app/modules/transaction_history_screen/bindings/transaction_history_screen_binding.dart';
+import 'package:customer_app/app/modules/transaction_history_screen/views/transaction_history_screen_view.dart';
 import 'package:customer_app/app/modules/webview/bindings/webview_screen_binding.dart';
 import 'package:customer_app/app/modules/webview/views/webview_screen_view.dart';
 import 'package:customer_app/app/modules/webview_compound_screen/bindings/webview_compound_screen_binding.dart';
@@ -428,6 +432,16 @@ class AppPages {
         selectedPassId: Get.arguments["passId"] ?? '',
       ),
       binding: PayPendingPassScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.TRANSACTION_HISTORY_SCREEN,
+      page: () => const TransactionHistoryScreenView(),
+      binding: TransactionHistoryScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.TRANSACTION_HISTORY_DETAIL_SCREEN,
+      page: () => const TransactionHistoryDetailScreenView(),
+      binding: TransactionHistoryDetailScreenBinding(),
     ),
   ];
 }
