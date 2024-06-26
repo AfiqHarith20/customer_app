@@ -136,7 +136,7 @@ const Map<String, String> enUS = {
   "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING":
       "Enjoy a seamless and stress-free parking experience with NAZIFA PARKING",
   "Log in with Mobile Number": "Log in with Mobile Number",
-  "Effortless Parking": "Effortless Parking",
+  "Effortless Parking": "Friendly, Easy & Effective",
   "Season Pass": "Season Pass",
   "My Pass": "My Pass",
   "Validity:": "Validity:",
@@ -311,4 +311,12 @@ const Map<String, String> enUS = {
       'You currently have no transactions.\nBut, when you do, they\'ll show up here!',
   'Buy Pass': "Buy Pass",
   'Pay Compound': 'Pay Compound',
+  "Transaction Fee": "Transaction Fee",
+  "Please download the latest version of the apps in Google Play Store (for Android)/ App Store (for iOS).":
+      "Please download the latest version of the apps in Google Play Store (for Android)/ App Store (for iOS).",
+  "Update Available": "Update Available",
+  "TRANSACTION FEE": "TRANSACTION FEE",
+  "Please contact nazifa parking admin for further assistance.":
+      "Please contact nazifa parking admin for further assistance.",
+  "Dissable": "Dissable",
 };

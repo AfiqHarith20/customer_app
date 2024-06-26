@@ -2,7 +2,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
+import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
+import 'package:customer_app/app/models/tax_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/app/widget/svg_image_widget.dart';
 import 'package:customer_app/constant/constant.dart';
@@ -155,6 +157,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   setState(() {
                     controller.passId = result['passId'];
                     widget.selectedBankName = result['bankName'];
+                    controller.purchasePassModel.value.startDate;
+                    controller.purchasePassModel.value.endDate;
                   });
                 }
               },
@@ -197,22 +201,14 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                           _buildDetailRow(
                             "Start Time".tr,
                             Constant.timestampToDate(
-                              Timestamp.fromDate(DateTime.now()),
+                              controller.purchasePassModel.value.startDate!,
                             ),
                           ),
                           const SizedBox(height: 5),
                           _buildDetailRow(
                             "End Time".tr,
                             Constant.timestampToDate(
-                              Timestamp.fromDate(
-                                DateTime.timestamp().add(
-                                  Duration(
-                                    days: controller.checkDuration(
-                                      widget.passValidity.toString(),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              controller.purchasePassModel.value.endDate!,
                             ),
                           ),
                           const SizedBox(height: 5),
@@ -302,10 +298,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                       ),
                       _buildPaymentInformation(
                         widget.passPrice,
-                        controller.taxModel.value.value != null
-                            ? double.parse(controller.taxModel.value.value!)
-                            : 0.0,
-                        controller.taxModel.value.name ?? 'SST',
+                        controller.taxModel,
+                        controller.transactionFeeModel,
                       ),
                       const Divider(
                         color: Colors.black,
@@ -381,8 +375,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   // Calculate total price using the passPrice
                   double totalPrice = calculateTotalPrice(
                     passPrice,
-                    controller.taxModel.value.value != null
-                        ? double.parse(controller.taxModel.value.value!)
+                    controller.taxModel!.value! != null
+                        ? double.parse(controller.taxModel!.value!)
                         : 0.0,
                   );
 
@@ -426,7 +420,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                     channelId: '18',
                   );
                   // print('Online Payment Data: $onlinePaymentModel');
-                  // print('customerId ${passData['customerId']}');
+                  print('startDate ${passData['startDate']}');
+                  print('endDate ${passData['endDate']}');
                   Get.toNamed(
                     Routes.WEBVIEW_SCREEN,
                     arguments: {
@@ -508,15 +503,24 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
 }
 
 Widget _buildPaymentInformation(
-    String passPrice, double taxValue, String taxName) {
+    String passPrice, TaxModel? taxModel, TransactionFeeModel? transactionFee) {
   // Convert passPrice to a double
   double price = double.parse(passPrice);
 
   // Calculate tax (based on the fetched tax value)
-  double tax = taxValue * price;
+  double tax = double.parse(taxModel!.value!) * price;
+  double taxValue = 0.0;
+  if (taxModel != null) {
+    taxValue = double.parse(taxModel.value!);
+  }
+  // Convert transaction fee from String to double and calculate the amount
+  double transactionFeeAmount = 0.0;
+  if (transactionFee != null) {
+    transactionFeeAmount = double.parse(transactionFee.value!);
+  }
 
   // Calculate total amount
-  double totalPrice = price + tax;
+  double totalPrice = price + tax + transactionFeeAmount;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,8 +537,11 @@ Widget _buildPaymentInformation(
       const SizedBox(height: 20),
       _buildDetailRow("Sub Total".tr,
           "RM ${price.toStringAsFixed(2)}"), // Convert price to string
-      _buildDetailRow("$taxName(${(taxValue * 100).toStringAsFixed(0)}%)",
-          "RM ${tax.toStringAsFixed(2)}"),
+      // _buildDetailRow(
+      //     "${taxModel.name}(${(taxValue * 100).toStringAsFixed(0)}%)",
+      //     "RM ${tax.toStringAsFixed(2)}"),
+      _buildDetailRow("Transaction Fee".tr,
+          "RM ${transactionFeeAmount.toStringAsFixed(2)}"),
       const Divider(),
       _buildTotalRow("Total Amount".tr, "RM ${totalPrice.toStringAsFixed(2)}"),
     ],

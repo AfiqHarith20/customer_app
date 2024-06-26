@@ -204,10 +204,28 @@ class _SeasonPassViewState extends State<SeasonPassView> {
                     Get.toNamed(Routes.PURCHASE_PASS,
                         arguments: {"seasonPassModel": passModel});
                   } else if (passModel is PrivatePassModel) {
-                    Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {
-                      "privatePassModel": passModel,
-                      "selectedSegment": controller.selectedSegment.value,
-                    });
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DialogBoxNotify(
+                          imageAsset: "assets/images/certificate.png",
+                          onPressConfirm: () async {
+                            // Close the app when the user clicks "Ok"
+                            Navigator.of(context).pop();
+                          },
+                          onPressConfirmBtnName: "Ok".tr,
+                          onPressConfirmColor: AppColors.red04,
+                          content:
+                              "Please contact nazifa parking admin for further assistance."
+                                  .tr,
+                          subTitle: "Dissable".tr,
+                        );
+                      },
+                    );
+                    // Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {
+                    //   "privatePassModel": passModel,
+                    //   "selectedSegment": controller.selectedSegment.value,
+                    // });
                   }
                 } else {
                   // Show a message to inform the user to verify their email

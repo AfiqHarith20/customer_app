@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/compound_model.dart';
 import 'package:customer_app/app/models/my_payment_compound_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
@@ -34,7 +35,6 @@ class PayCompoundScreenController extends GetxController {
   Rx<CompoundModel> compoundModel = CompoundModel().obs;
   Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
       MyPaymentCompoundModel().obs;
-  Rx<TaxModel> taxModel = TaxModel().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
   RxString selectedPaymentMethod = "".obs;
@@ -48,10 +48,14 @@ class PayCompoundScreenController extends GetxController {
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
   Rx<TextEditingController> countryCode = TextEditingController().obs;
+  TaxModel? taxModel = TaxModel();
+  TransactionFeeModel? transactionFeeModel = TransactionFeeModel();
 
   @override
   Future<void> onInit() async {
     getArgument();
+    fetchTax();
+    fetchTransactionFee();
     getProfileData();
     super.onInit();
   }
@@ -116,6 +120,22 @@ class PayCompoundScreenController extends GetxController {
     isLoading.value = false;
 
     update();
+  }
+
+  Future<void> fetchTax() async {
+    taxModel = await FireStoreUtils.getTaxModel();
+    if (taxModel != null) {
+      print('Fetched tax: ${taxModel!.value}');
+    }
+    update(); // Notify the UI to rebuild with the fetched data
+  }
+
+  Future<void> fetchTransactionFee() async {
+    transactionFeeModel = await FireStoreUtils.getTransactionFee();
+    if (transactionFeeModel != null) {
+      print('Fetched Transaction Fee: ${transactionFeeModel!.value}');
+    }
+    update(); // Notify the UI to rebuild with the fetched data
   }
 
   completeOrder() async {

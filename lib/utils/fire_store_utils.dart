@@ -3,7 +3,9 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/admin_commission.dart';
+import 'package:customer_app/app/models/app_version_model.dart';
 import 'package:customer_app/app/models/booking_model.dart';
+import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/contact_us_model.dart';
 import 'package:customer_app/app/models/coupon_model.dart';
 import 'package:customer_app/app/models/currency_model.dart';
@@ -189,24 +191,24 @@ class FireStoreUtils {
     return couponList;
   }
 
-  Future<List<TaxModel>?> getTaxList() async {
-    List<TaxModel> taxList = [];
+  // Future<List<TaxModel>?> getTaxList() async {
+  //   List<TaxModel> taxList = [];
 
-    await fireStore
-        .collection(CollectionName.countryTax)
-        .where('country', isEqualTo: Constant.country)
-        .where('active', isEqualTo: true)
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        TaxModel taxModel = TaxModel.fromJson(element.data());
-        taxList.add(taxModel);
-      }
-    }).catchError((error) {
-      log(error.toString());
-    });
-    return taxList;
-  }
+  //   await fireStore
+  //       .collection(CollectionName.countryTax)
+  //       .where('country', isEqualTo: Constant.country)
+  //       .where('active', isEqualTo: true)
+  //       .get()
+  //       .then((value) {
+  //     for (var element in value.docs) {
+  //       TaxModel taxModel = TaxModel.fromJson(element.data());
+  //       taxList.add(taxModel);
+  //     }
+  //   }).catchError((error) {
+  //     log(error.toString());
+  //   });
+  //   return taxList;
+  // }
 
   static Future<bool?> checkReferralCodeValidOrNot(String referralCode) async {
     bool? isExit;
@@ -262,27 +264,6 @@ class FireStoreUtils {
       referralModel = null;
     });
     return referralModel;
-  }
-
-  static Future<TaxModel?> fetchTaxModel(String taxId) async {
-    TaxModel? taxModel;
-
-    try {
-      print('Firestore collection name: ${CollectionName.countryTax}');
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await fireStore
-          .collection(CollectionName.countryTax)
-          .doc(taxId) // Use the provided taxId as the document ID
-          .get();
-
-      if (snapshot.exists) {
-        taxModel = TaxModel.fromJson(snapshot.data()!);
-      }
-    } catch (error) {
-      log("Failed to fetch tax model: $error");
-      return null;
-    }
-
-    return taxModel;
   }
 
   static Future<bool?> setWalletTransaction(
@@ -946,5 +927,65 @@ class FireStoreUtils {
       return null;
     });
     return carouselData;
+  }
+
+  static Future<TaxModel?> getTaxModel() async {
+    TaxModel? taxModel;
+    try {
+      final querySnapshot = await fireStore
+          .collection(CollectionName.countryTax)
+          .where("active", isEqualTo: true)
+          .get();
+
+      for (var element in querySnapshot.docs) {
+        taxModel = TaxModel.fromJson(element.data());
+        print('${taxModel}');
+      }
+    } catch (error) {
+      log("Failed to fetch tax model: $error");
+      return null;
+    }
+
+    return taxModel;
+  }
+
+  static Future<TransactionFeeModel?> getTransactionFee() async {
+    TransactionFeeModel? transactionFeeModel;
+    try {
+      final querySnapshot = await fireStore
+          .collection(CollectionName.transactionFee)
+          .where("active", isEqualTo: true)
+          .get();
+
+      for (var element in querySnapshot.docs) {
+        transactionFeeModel = TransactionFeeModel.fromJson(element.data());
+        print('${transactionFeeModel}');
+      }
+    } catch (error) {
+      log("Failed to get data: $error");
+      return null;
+    }
+    return transactionFeeModel;
+  }
+
+  static Future<PlatformInfo?> fetchPlatformInfo() async {
+    PlatformInfo? platformInfo;
+
+    try {
+      final documentSnapshot = await fireStore
+          .collection(CollectionName.settings)
+          .doc('app_version')
+          .get();
+
+      if (documentSnapshot.exists) {
+        platformInfo = PlatformInfo.fromJson(documentSnapshot.data()!);
+        print('Fetched Platform Info: ${platformInfo.toJson()}');
+      }
+    } catch (error) {
+      print("Failed to get data: $error");
+      return null;
+    }
+
+    return platformInfo;
   }
 }

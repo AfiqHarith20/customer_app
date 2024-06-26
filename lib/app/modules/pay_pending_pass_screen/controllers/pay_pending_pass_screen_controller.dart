@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
+import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
@@ -41,7 +42,6 @@ class PayPendingPassScreenController extends GetxController {
   late String _selectedBankId;
   String? amount;
   RxDouble tax = RxDouble(0.0);
-  Rx<TaxModel> taxModel = TaxModel().obs;
   String? taxId;
   Rx<String> passId = ''.obs;
   Rx<String> privatePassId = ''.obs;
@@ -50,6 +50,8 @@ class PayPendingPassScreenController extends GetxController {
   Rx<String> passValidity = ''.obs;
   Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
   Rx<PrivatePassModel> privatePassModel = PrivatePassModel().obs;
+  TaxModel? taxModel = TaxModel();
+  TransactionFeeModel? transactionFeeModel = TransactionFeeModel();
 
   // Additional arguments
   Rx<String> customerId = ''.obs;
@@ -76,6 +78,8 @@ class PayPendingPassScreenController extends GetxController {
   @override
   Future<void> onInit() async {
     await getArgument();
+    fetchTax();
+    fetchTransactionFee();
     await getPaymentData();
     super.onInit();
   }
@@ -176,6 +180,22 @@ class PayPendingPassScreenController extends GetxController {
     isLoading.value = false;
 
     update();
+  }
+
+  Future<void> fetchTax() async {
+    taxModel = await FireStoreUtils.getTaxModel();
+    if (taxModel != null) {
+      print('Fetched tax: ${taxModel!.value}');
+    }
+    update(); // Notify the UI to rebuild with the fetched data
+  }
+
+  Future<void> fetchTransactionFee() async {
+    transactionFeeModel = await FireStoreUtils.getTransactionFee();
+    if (transactionFeeModel != null) {
+      print('Fetched Transaction Fee: ${transactionFeeModel!.value}');
+    }
+    update(); // Notify the UI to rebuild with the fetched data
   }
 
   completeOrder() async {

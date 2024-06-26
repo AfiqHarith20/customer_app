@@ -20,4 +20,5 @@ class CollectionName {
   static const String notifications = "notifications";
   static const String messages = "messages";
   static const String transacHistory = "consolidate_transaction";
+  static const String transactionFee = "transaction_fee";
 }

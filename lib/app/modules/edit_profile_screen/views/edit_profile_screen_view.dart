@@ -21,247 +21,163 @@ class EditProfileScreenView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetX<EditProfileScreenController>(
-        init: EditProfileScreenController(),
-        builder: (controller) {
-          return Scaffold(
-              backgroundColor: AppColors.lightGrey02,
-              appBar: UiInterface().customAppBar(
-                backgroundColor: AppColors.white,
-                context,
-                "Edit Profile".tr,
-              ),
-              body: controller.isLoading.value
-                  ? SingleChildScrollView(
-                      child: Form(
-                        key: controller.formKeyEdit.value,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 24,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  buildBottomSheet(context, controller);
-                                },
-                                child: Center(
-                                  child: SizedBox(
-                                    height: Responsive.width(40, context),
-                                    width: Responsive.width(40, context),
-                                    child: Stack(
-                                      children: [
-                                        controller.profileImage.isEmpty
-                                            ? Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            60),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                          offset: const Offset(
-                                                              5, 2),
-                                                          spreadRadius: .2,
-                                                          blurRadius: 12,
-                                                          color: AppColors
-                                                              .darkGrey02
-                                                              .withOpacity(.5))
-                                                    ]),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(60),
-                                                  child: Image.asset(
-                                                    Constant.userPlaceHolder,
-                                                    height: Responsive.width(
-                                                        45, context),
-                                                    width: Responsive.width(
-                                                        45, context),
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                ),
-                                              )
-                                            : (Constant().hasValidUrl(controller
-                                                    .profileImage.value))
-                                                ? Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(60),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                              offset:
-                                                                  const Offset(
-                                                                      5, 2),
-                                                              spreadRadius: .2,
-                                                              blurRadius: 12,
-                                                              color: AppColors
-                                                                  .darkGrey02
-                                                                  .withOpacity(
-                                                                      .5))
-                                                        ]),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        60,
-                                                      ),
-                                                      child: NetworkImageWidget(
-                                                        imageUrl: controller
-                                                            .profileImage.value,
-                                                        height:
-                                                            Responsive.width(
-                                                          45,
-                                                          context,
-                                                        ),
-                                                        width: Responsive.width(
-                                                          45,
-                                                          context,
-                                                        ),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(60),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                              offset:
-                                                                  const Offset(
-                                                                      5, 2),
-                                                              spreadRadius: .2,
-                                                              blurRadius: 12,
-                                                              color: AppColors
-                                                                  .darkGrey02
-                                                                  .withOpacity(
-                                                                      .5))
-                                                        ]),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        60,
-                                                      ),
-                                                      child: Image.file(
-                                                        File(controller
-                                                            .profileImage
-                                                            .value),
-                                                        height:
-                                                            Responsive.width(
-                                                          45,
-                                                          context,
-                                                        ),
-                                                        width: Responsive.width(
-                                                          45,
-                                                          context,
-                                                        ),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                        Positioned(
-                                          right: 0,
-                                          bottom: 0,
-                                          child: SvgPicture.asset(
-                                              "assets/icons/ic_camera.svg"),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              TextFieldWidgetPrefix(
-                                prefix: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: SvgPicture.asset(
-                                    "assets/icons/ic_user.svg",
-                                  ),
-                                ),
-                                title: "Full Name".tr,
-                                hintText: "Enter Full Name".tr,
-                                controller: controller.fullNameController.value,
-                                onPress: () {},
-                              ),
-                              TextFieldWidgetPrefix(
-                                prefix: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: SvgPicture.asset(
-                                    "assets/icons/ic_email.svg",
-                                  ),
-                                ),
-                                title: "Email".tr,
-                                hintText: "Enter Email Address".tr,
-                                controller: controller.emailController.value,
-                                onPress: () {},
-                              ),
-                              MobileNumberTextField(
-                                title: "Mobile Number".tr,
-                                controller:
-                                    controller.phoneNumberController.value,
-                                countryCode: controller.countryCode.value,
-                                onPress: () {},
-                              ),
-                              Text(
-                                "Select Gender".tr,
-                                style: const TextStyle(
-                                    fontFamily: AppThemData.regular,
-                                    color: AppColors.darkGrey06),
-                              ),
-                              Row(
-                                  children: List.generate(
-                                      controller.genderList.length, (index) {
-                                return Row(
-                                  children: [
-                                    Obx(() => Radio(
-                                          activeColor: AppColors.darkGrey09,
-                                          value: controller.genderList[index],
-                                          groupValue:
-                                              controller.selectedGender.value,
-                                          onChanged: (value) {
-                                            controller.selectedGender.value =
-                                                value.toString();
-                                          },
-                                        )),
-                                    Text(
-                                      controller.genderList[index].tr,
-                                      style: const TextStyle(
-                                          fontFamily: AppThemData.medium,
-                                          color: AppColors.darkGrey04,
-                                          fontSize: 15),
-                                    ),
-                                    const SizedBox(width: 20)
-                                  ],
-                                );
-                              })),
-                            ],
+      init: EditProfileScreenController(),
+      builder: (controller) {
+        return Scaffold(
+          backgroundColor: AppColors.lightGrey02,
+          appBar: UiInterface().customAppBar(
+            backgroundColor: AppColors.white,
+            context,
+            "Edit Profile".tr,
+          ),
+          body: controller.isLoading.value
+              ? SingleChildScrollView(
+                  child: Form(
+                    key: controller.formKeyEdit.value,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 24,
                           ),
-                        ),
+                          GestureDetector(
+                            onTap: () {
+                              buildBottomSheet(context, controller);
+                            },
+                            child: Center(
+                              child: Stack(
+                                children: [
+                                  controller.profileImage.isEmpty
+                                      ? CircleAvatar(
+                                          radius: Responsive.width(20, context),
+                                          backgroundImage: const AssetImage(
+                                            'assets/images/user_placeholder.png',
+                                          ),
+                                        )
+                                      : (Constant().hasValidUrl(
+                                              controller.profileImage.value))
+                                          ? CircleAvatar(
+                                              radius:
+                                                  Responsive.width(20, context),
+                                              backgroundImage: NetworkImage(
+                                                controller.profileImage.value,
+                                              ),
+                                              backgroundColor: Colors
+                                                  .transparent, // Ensure the background is transparent
+                                            )
+                                          : CircleAvatar(
+                                              radius:
+                                                  Responsive.width(20, context),
+                                              backgroundImage: FileImage(
+                                                File(controller
+                                                    .profileImage.value),
+                                              ),
+                                              backgroundColor: Colors
+                                                  .transparent, // Ensure the background is transparent
+                                            ),
+                                  Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: SvgPicture.asset(
+                                        "assets/icons/ic_camera.svg"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          TextFieldWidgetPrefix(
+                            prefix: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: SvgPicture.asset(
+                                "assets/icons/ic_user.svg",
+                              ),
+                            ),
+                            title: "Full Name".tr,
+                            hintText: "Enter Full Name".tr,
+                            controller: controller.fullNameController.value,
+                            onPress: () {},
+                          ),
+                          TextFieldWidgetPrefix(
+                            prefix: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: SvgPicture.asset(
+                                "assets/icons/ic_email.svg",
+                              ),
+                            ),
+                            title: "Email".tr,
+                            hintText: "Enter Email Address".tr,
+                            controller: controller.emailController.value,
+                            onPress: () {},
+                          ),
+                          MobileNumberTextField(
+                            title: "Mobile Number".tr,
+                            controller: controller.phoneNumberController.value,
+                            countryCode: controller.countryCode.value,
+                            onPress: () {},
+                          ),
+                          Text(
+                            "Select Gender".tr,
+                            style: const TextStyle(
+                                fontFamily: AppThemData.regular,
+                                color: AppColors.darkGrey06),
+                          ),
+                          Row(
+                              children: List.generate(
+                                  controller.genderList.length, (index) {
+                            return Row(
+                              children: [
+                                Obx(() => Radio(
+                                      activeColor: AppColors.darkGrey09,
+                                      value: controller.genderList[index],
+                                      groupValue:
+                                          controller.selectedGender.value,
+                                      onChanged: (value) {
+                                        controller.selectedGender.value =
+                                            value.toString();
+                                      },
+                                    )),
+                                Text(
+                                  controller.genderList[index].tr,
+                                  style: const TextStyle(
+                                      fontFamily: AppThemData.medium,
+                                      color: AppColors.darkGrey04,
+                                      fontSize: 15),
+                                ),
+                                const SizedBox(width: 20)
+                              ],
+                            );
+                          })),
+                        ],
                       ),
-                    )
-                  : Constant.loader(),
-              bottomNavigationBar: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 70, vertical: 16),
-                child: ButtonThem.buildButton(
-                  btnHeight: 56,
-                  txtSize: 16,
-                  context,
-                  title: "Save".tr,
-                  txtColor: AppColors.lightGrey01,
-                  bgColor: AppColors.darkGrey10,
-                  onPress: () {
-                    if (controller.formKeyEdit.value.currentState!.validate()) {
-                      controller.updateProfile();
-                    }
-                  },
-                ),
-              ));
-        });
+                    ),
+                  ),
+                )
+              : Constant.loader(),
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 16),
+            child: ButtonThem.buildButton(
+              btnHeight: 56,
+              txtSize: 16,
+              context,
+              title: "Save".tr,
+              txtColor: AppColors.lightGrey01,
+              bgColor: AppColors.darkGrey10,
+              onPress: () {
+                if (controller.formKeyEdit.value.currentState!.validate()) {
+                  controller.updateProfile();
+                }
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 

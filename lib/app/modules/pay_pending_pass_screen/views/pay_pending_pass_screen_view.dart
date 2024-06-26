@@ -4,8 +4,10 @@ import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
+import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
+import 'package:customer_app/app/models/tax_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/app/modules/pay_pending_pass_screen/controllers/pay_pending_pass_screen_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
@@ -252,10 +254,8 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                 ),
                 _buildPaymentInformation(
                   controller.passPrice.value,
-                  controller.taxModel.value.value != null
-                      ? double.parse(controller.taxModel.value.value!)
-                      : 0.0,
-                  controller.taxModel.value.name ?? 'SST',
+                  controller.taxModel,
+                  controller.transactionFeeModel,
                 ),
                 const Divider(
                   color: Colors.black,
@@ -333,8 +333,8 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                     // Calculate total price using the passPrice
                     double totalPrice = calculateTotalPrice(
                       passPrice,
-                      controller.taxModel.value.value != null
-                          ? double.parse(controller.taxModel.value.value!)
+                      controller.taxModel!.value != null
+                          ? double.parse(controller.taxModel!.value!)
                           : 0.0,
                     );
 
@@ -475,15 +475,25 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
 }
 
 Widget _buildPaymentInformation(
-    String passPrice, double taxValue, String taxName) {
+    String passPrice, TaxModel? taxModel, TransactionFeeModel? transactionFee) {
   // Convert passPrice to a double
   double price = double.parse(passPrice);
 
   // Calculate tax (based on the fetched tax value)
-  double tax = taxValue * price;
+  double tax = double.parse(taxModel!.value!) * price;
+
+  double taxValue = 0.0;
+  if (taxModel != null) {
+    taxValue = double.parse(taxModel.value!);
+  }
+  // Convert transaction fee from String to double and calculate the amount
+  double transactionFeeAmount = 0.0;
+  if (transactionFee != null) {
+    transactionFeeAmount = double.parse(transactionFee.value!);
+  }
 
   // Calculate total amount
-  double totalPrice = price + tax;
+  double totalPrice = price + tax + transactionFeeAmount;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,8 +510,11 @@ Widget _buildPaymentInformation(
       const SizedBox(height: 20),
       _buildDetailRow("Sub Total".tr,
           "RM ${price.toStringAsFixed(2)}"), // Convert price to string
-      _buildDetailRow("$taxName(${(taxValue * 100).toStringAsFixed(0)}%)",
+      _buildDetailRow(
+          "${taxModel.name}(${(taxValue * 100).toStringAsFixed(0)}%)",
           "RM ${tax.toStringAsFixed(2)}"),
+      _buildDetailRow("Transaction Fee".tr,
+          "RM ${transactionFeeAmount.toStringAsFixed(2)}"),
       const Divider(),
       _buildTotalRow("Total Amount".tr, "RM ${totalPrice.toStringAsFixed(2)}"),
     ],

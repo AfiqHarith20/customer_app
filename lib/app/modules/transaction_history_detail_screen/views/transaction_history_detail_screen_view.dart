@@ -292,6 +292,39 @@ class _TransactionHistoryDetailScreenViewState
                           ),
                           const SizedBox(height: 8),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // const Expanded(flex: 1, child: SizedBox()),
+                              Expanded(
+                                flex: 11,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'TRANSACTION FEE',
+                                      style: TextStyle(
+                                        color: AppColors.darkGrey06,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'RM${controller.transactionFeeModel.value ?? '0.60'}',
+                                      style: const TextStyle(
+                                        color: AppColors.darkGrey06,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
                             children: [
                               const Text(
                                 "TOTAL",
@@ -304,7 +337,7 @@ class _TransactionHistoryDetailScreenViewState
                               ),
                               const Spacer(),
                               Text(
-                                'RM${controller.transactionHistoryModel.amount!}',
+                                'RM${calculateTotalAmount().toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   color: AppColors.darkGrey06,
                                   fontWeight: FontWeight.w400,
@@ -383,5 +416,15 @@ class _TransactionHistoryDetailScreenViewState
   String formatDate(DateTime dateTime) {
     final formatter = DateFormat('dd/MM/yyyy hh:mm a');
     return formatter.format(dateTime);
+  }
+
+  double calculateTotalAmount() {
+    final double subtotal = double.tryParse(
+            controller.transactionHistoryModel.amount?.toString() ?? '0') ??
+        0;
+    final double transactionFee = double.tryParse(
+            controller.transactionFeeModel!.value.toString() ?? '0') ??
+        0;
+    return subtotal + transactionFee;
   }
 }

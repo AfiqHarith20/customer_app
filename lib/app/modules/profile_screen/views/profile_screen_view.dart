@@ -46,90 +46,35 @@ class ProfileScreenView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Center(
-                                  child: controller.profileImage.isEmpty
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(60),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    offset: const Offset(5, 4),
-                                                    spreadRadius: .2,
-                                                    blurRadius: 12,
-                                                    color: AppColors.darkGrey02
-                                                        .withOpacity(.5))
-                                              ]),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(60),
-                                            child: Image.asset(
-                                              Constant.userPlaceHolder,
-                                              height:
-                                                  Responsive.width(40, context),
-                                              width:
-                                                  Responsive.width(40, context),
-                                              fit: BoxFit.fill,
+                                child: controller.profileImage.isEmpty
+                                    ? CircleAvatar(
+                                        radius: Responsive.width(20, context),
+                                        backgroundImage: const AssetImage(
+                                          'assets/images/user_placeholder.png',
+                                        ),
+                                      )
+                                    : (Constant().hasValidUrl(
+                                            controller.profileImage.value))
+                                        ? CircleAvatar(
+                                            radius:
+                                                Responsive.width(20, context),
+                                            backgroundImage: NetworkImage(
+                                              controller.profileImage.value,
                                             ),
+                                            backgroundColor: Colors
+                                                .transparent, // Ensure the background is transparent
+                                          )
+                                        : CircleAvatar(
+                                            radius:
+                                                Responsive.width(20, context),
+                                            backgroundImage: FileImage(
+                                              File(controller
+                                                  .profileImage.value),
+                                            ),
+                                            backgroundColor: Colors
+                                                .transparent, // Ensure the background is transparent
                                           ),
-                                        )
-                                      : (Constant().hasValidUrl(
-                                              controller.profileImage.value))
-                                          ? Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(60),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        offset:
-                                                            const Offset(5, 4),
-                                                        spreadRadius: .2,
-                                                        blurRadius: 12,
-                                                        color: AppColors
-                                                            .darkGrey02
-                                                            .withOpacity(.5))
-                                                  ]),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(60),
-                                                child: NetworkImageWidget(
-                                                  imageUrl: controller
-                                                      .profileImage.value,
-                                                  height: Responsive.width(
-                                                      40, context),
-                                                  width: Responsive.width(
-                                                      40, context),
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(60),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        offset:
-                                                            const Offset(5, 4),
-                                                        spreadRadius: .2,
-                                                        blurRadius: 12,
-                                                        color: AppColors
-                                                            .darkGrey02
-                                                            .withOpacity(.5))
-                                                  ]),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(60),
-                                                child: Image.file(
-                                                  File(controller
-                                                      .profileImage.value),
-                                                  height: Responsive.width(
-                                                      40, context),
-                                                  width: Responsive.width(
-                                                      40, context),
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                            )),
+                              ),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -179,32 +124,6 @@ class ProfileScreenView extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // menuItemWidget(
-                              //   onTap: () {
-                              //     controller.isBookingScreen.value = true;
-                              //     Get.toNamed(Routes.BOOKING_SCREEN);
-                              //   },
-                              //   title: "My Booking List".tr,
-                              //   svgImage: "assets/icons/ic_notepad.svg",
-                              // ),
-                              // const Divider(height: 0, color: AppColors.lightGrey05),
-                              // menuItemWidget(
-                              //   onTap: () {
-                              //     controller.isWalletScreen.value = true;
-                              //     Get.toNamed(Routes.WALLET_SCREEN);
-                              //   },
-                              //   title: "Wallet".tr,
-                              //   svgImage: "assets/icons/ic_wallet.svg",
-                              // ),
-                              // const Divider(height: 0, color: AppColors.lightGrey05),
-                              // menuItemWidget(
-                              //   onTap: () {
-                              //
-                              //     Get.toNamed(Routes.SEASON_PASS);
-                              //   },
-                              //   title: "Season Pass".tr,
-                              //   svgImage: "assets/icons/ic_ticket.svg",
-                              // ),
                               const SizedBox(
                                 height: 16,
                               ),
@@ -220,14 +139,6 @@ class ProfileScreenView extends StatelessWidget {
                                 title: "Language".tr,
                                 svgImage: "assets/icons/ic_language.svg",
                               ),
-                              // const Divider(height: 0, color: AppColors.lightGrey05),
-                              // menuItemWidget(
-                              //   onTap: () {
-                              //     Get.toNamed(Routes.REFER_SCREEN);
-                              //   },
-                              //   title: "Refer and Earn".tr,
-                              //   svgImage: "assets/icons/ic_ticket.svg",
-                              // ),
                               const Divider(
                                   height: 0, color: AppColors.lightGrey05),
                               menuItemWidget(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:customer_app/app/models/season_pass_model.dart';
 import 'package:customer_app/app/modules/select_payment_screen/views/select_payment_screen_view.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
@@ -245,6 +247,21 @@ class PurchasePassView extends GetView<PurchasePassController> {
                     onPress: () async {
                       if (controller.formKeyPurchase.value.currentState!
                           .validate()) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.darkGrey10,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                        await controller.getQueryPass();
+                        Navigator.of(context).pop();
                         await controller.addSeasonPassData();
                         Get.offNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
                           "addSeasonPassData": controller.addSeasonPassData,

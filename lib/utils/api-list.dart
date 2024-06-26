@@ -17,4 +17,5 @@ class APIList {
   static String? reserveLot = "${baseUrl!}/api/v1/firebase/reservelot";
   static String? zone = "${baseUrl!}/api/v1/Parking/Zone";
   static String? road = "${baseUrl!}/api/v1/Parking/Road?ZoneId=";
+  static String? queryPass = "${baseUrl!}/api/v1/Parking/QueryPass?";
 }

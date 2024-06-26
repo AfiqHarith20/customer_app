@@ -149,7 +149,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
         itemBuilder: (context, index) {
           DateTime endDate =
               controller.mySeasonPassList[index].endDate!.toDate();
-          int daysUntilExpired = endDate.difference(DateTime.now()).inDays;
+          int daysUntilExpired = endDate.difference(DateTime.now()).inDays + 1;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),

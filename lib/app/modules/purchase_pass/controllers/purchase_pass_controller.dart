@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:customer_app/app/models/customer_model.dart';
+import 'package:customer_app/app/models/query_pass_model.dart';
 import 'package:customer_app/app/models/season_pass_model.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
+import 'package:customer_app/utils/api-list.dart';
+import 'package:customer_app/utils/server.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -11,7 +15,6 @@ import '../../../../utils/fire_store_utils.dart';
 import '../../../models/my_purchase_pass_model.dart';
 
 class PurchasePassController extends GetxController {
-  //TODO: Implement PurchasePassController
   Rx<GlobalKey<FormState>> formKeyPurchase = GlobalKey<FormState>().obs;
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
@@ -25,6 +28,8 @@ class PurchasePassController extends GetxController {
       TextEditingController().obs;
   Rx<TextEditingController> addressController = TextEditingController().obs;
   RxString countryCode = "+60".obs;
+  RxBool isLoading = false.obs;
+  Server server = Server();
   List<String> type = [
     "Pas Mingguan 1",
     "Pas Mingguan 2",
@@ -36,6 +41,7 @@ class PurchasePassController extends GetxController {
   Rx<SeasonPassModel> selectedSessionPass = SeasonPassModel().obs;
 
   Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
+  Rx<QueryPass> queryPassModel = QueryPass().obs;
   final FirebaseAuth auth = FirebaseAuth.instance;
   RxList<SeasonPassModel> seasonPassList = <SeasonPassModel>[].obs;
 
@@ -67,7 +73,6 @@ class PurchasePassController extends GetxController {
     companyNameController.value.dispose();
     companyRegistrationNoController.value.dispose();
     addressController.value.dispose();
-    addressController.value.dispose();
     super.onClose();
   }
 
@@ -98,53 +103,94 @@ class PurchasePassController extends GetxController {
     });
   }
 
-  Future<Map<String, dynamic>> addSeasonPassData() async {
-    // Populate purchasePassModel
-    purchasePassModel.value.id = Constant.getUuid();
-    purchasePassModel.value.customerId = FireStoreUtils.getCurrentUid();
-    purchasePassModel.value.seasonPassModel = selectedSessionPass.value;
-    purchasePassModel.value.fullName = fullNameController.value.text;
-    purchasePassModel.value.email = emailController.value.text;
-    purchasePassModel.value.identificationNo =
-        identificationNoController.value.text;
-    purchasePassModel.value.mobileNumber = phoneNumberController.value.text;
-    purchasePassModel.value.vehicleNo = vehicleNoController.value.text;
-    purchasePassModel.value.lotNo = lotNoController.value.text;
-    purchasePassModel.value.companyName = companyNameController.value.text;
-    purchasePassModel.value.companyRegistrationNo =
-        companyRegistrationNoController.value.text;
-    purchasePassModel.value.address = addressController.value.text;
-    purchasePassModel.value.countryCode = countryCode.reactive.toString();
-    purchasePassModel.value.startDate = Timestamp.now();
-    purchasePassModel.value.createAt = Timestamp.now();
-    purchasePassModel.value.endDate = Timestamp.fromDate(
-      DateTime.timestamp().add(
-        Duration(
-          days: checkDuration(
-            selectedSessionPass.value.validity.toString(),
-          ),
-        ),
-      ),
-    );
-
-    // Create and return a map with required data
-    return {
-      'customerId': purchasePassModel.value.customerId,
-      'address': purchasePassModel.value.address,
-      'companyName': purchasePassModel.value.companyName,
-      'companyRegistrationNo': purchasePassModel.value.companyRegistrationNo,
-      'endDate': purchasePassModel.value.endDate,
-      'startDate': purchasePassModel.value.startDate,
-      'fullName': purchasePassModel.value.fullName,
-      'email': purchasePassModel.value.email,
-      'mobileNumber': purchasePassModel.value.mobileNumber,
-      'identificationNo': purchasePassModel.value.identificationNo,
-      'vehicleNo': purchasePassModel.value.vehicleNo,
-      'lotNo': purchasePassModel.value.lotNo,
-    };
+  Future<void> getQueryPass() async {
+    isLoading.value = true;
+    try {
+      final vehicleNo = vehicleNoController.value.text;
+      final validity =
+          checkDuration(selectedSessionPass.value.validity.toString());
+      final response = await server.getRequest(
+        endPoint: '${APIList.queryPass}vehicleNo=$vehicleNo&validity=$validity',
+      );
+      if (response != null) {
+        print("Response Status Code: ${response.statusCode}");
+        print("Response Body: ${response.body}");
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body);
+          print("Start Date: ${jsonResponse['newStartDate']}");
+          print("End Date: ${jsonResponse['newEndDate']}");
+          queryPassModel.value.newStartDate =
+              Timestamp.fromDate(DateTime.parse(jsonResponse['newStartDate']));
+          queryPassModel.value.newEndDate =
+              Timestamp.fromDate(DateTime.parse(jsonResponse['newEndDate']));
+        } else {
+          print("API Error: ${response.reasonPhrase}");
+          // Handle error cases based on response status code or reasonPhrase
+        }
+      } else {
+        print("Null Response");
+        // Handle null response case
+      }
+    } catch (e) {
+      print("Error fetching query pass: $e");
+      // Handle any exceptions that occur during the API call
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  checkDuration(String time) {
+  Future<Map<String, dynamic>> addSeasonPassData() async {
+    try {
+      // Ensure queryPassModel has been populated
+      if (queryPassModel.value.newStartDate != null &&
+          queryPassModel.value.newEndDate != null) {
+        // Populate purchasePassModel
+        purchasePassModel.value.id = Constant.getUuid();
+        purchasePassModel.value.customerId = FireStoreUtils.getCurrentUid();
+        purchasePassModel.value.seasonPassModel = selectedSessionPass.value;
+        purchasePassModel.value.fullName = fullNameController.value.text;
+        purchasePassModel.value.email = emailController.value.text;
+        purchasePassModel.value.identificationNo =
+            identificationNoController.value.text;
+        purchasePassModel.value.mobileNumber = phoneNumberController.value.text;
+        purchasePassModel.value.vehicleNo = vehicleNoController.value.text;
+        purchasePassModel.value.lotNo = lotNoController.value.text;
+        purchasePassModel.value.companyName = companyNameController.value.text;
+        purchasePassModel.value.companyRegistrationNo =
+            companyRegistrationNoController.value.text;
+        purchasePassModel.value.address = addressController.value.text;
+        purchasePassModel.value.countryCode = countryCode.reactive.toString();
+        purchasePassModel.value.startDate = queryPassModel.value.newStartDate!;
+        purchasePassModel.value.createAt = Timestamp.now();
+        purchasePassModel.value.endDate = queryPassModel.value.newEndDate!;
+
+        // Create and return a map with required data
+        return {
+          'customerId': purchasePassModel.value.customerId,
+          'address': purchasePassModel.value.address,
+          'companyName': purchasePassModel.value.companyName,
+          'companyRegistrationNo':
+              purchasePassModel.value.companyRegistrationNo,
+          'endDate': purchasePassModel.value.endDate,
+          'startDate': purchasePassModel.value.startDate,
+          'fullName': purchasePassModel.value.fullName,
+          'email': purchasePassModel.value.email,
+          'mobileNumber': purchasePassModel.value.mobileNumber,
+          'identificationNo': purchasePassModel.value.identificationNo,
+          'vehicleNo': purchasePassModel.value.vehicleNo,
+          'lotNo': purchasePassModel.value.lotNo,
+        };
+      } else {
+        throw Exception("Query pass data is not available");
+      }
+    } catch (e) {
+      print("Error adding season pass data: $e");
+      // Handle any exceptions that occur during data population
+      return {}; // Or return an empty map or null based on your error handling strategy
+    }
+  }
+
+  int checkDuration(String time) {
     if (time == "1 Week") {
       return 6;
     } else if (time == "2 Weeks") {

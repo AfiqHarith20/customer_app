@@ -312,4 +312,12 @@ const Map<String, String> msMY = {
       'Anda sekarang belum mempunyai transaksi.\nTapi bila ada, ia akan keluar di sini!',
   'Buy Pass': "Beli Pas",
   'Pay Compound': 'Bayar Kompaun',
+  "Transaction Fee": "Bayaran Transaksi",
+  "Please download the latest version of the apps in Google Play Store (for Android)/ App Store (for iOS).":
+      "Sila muat turun aplikasi versi baru di Google Play Store(untuk Android)/ App Store (untuk iOS).",
+  "Update Available": "Kemaskini Aplikasi",
+  "TRANSACTION FEE": "BAYARAN TRANSAKSI",
+  "Please contact nazifa parking admin for further assistance.":
+      "Sila hubungi admin nazifa parking untuk bantuan selanjutnya.",
+  "Dissable": "Disekat",
 };

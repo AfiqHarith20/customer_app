@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/compound_model.dart';
 import 'package:customer_app/app/models/my_payment_compound_model.dart';
+import 'package:customer_app/app/models/tax_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
@@ -226,9 +228,8 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                       ),
                       _buildPaymentInformation(
                         compoundModel,
-                        controller.taxModel.value.value != null
-                            ? double.parse(controller.taxModel.value.value!)
-                            : 0.0,
+                        controller.taxModel,
+                        controller.transactionFeeModel,
                       ),
                       const Divider(
                         color: Colors.black,
@@ -301,8 +302,8 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                   // Calculate total price using the passPrice
                   double totalPrice = calculateTotalPrice(
                     compoundModel,
-                    controller.taxModel.value.value != null
-                        ? double.parse(controller.taxModel.value.value!)
+                    controller.taxModel!.value! != null
+                        ? double.parse(controller.taxModel!.value!)
                         : 0.0,
                   );
 
@@ -611,15 +612,26 @@ Widget paymentDecoration({
   );
 }
 
-Widget _buildPaymentInformation(CompoundModel compoundModel, double taxValue) {
+Widget _buildPaymentInformation(CompoundModel compoundModel, TaxModel? taxModel,
+    TransactionFeeModel? transactionFee) {
   // Convert passPrice to a double
   double price = double.parse(compoundModel.amount ?? '0.0');
 
   // Calculate tax (based on the fetched tax value)
-  double tax = taxValue * price;
+  double tax = double.parse(taxModel!.value!) * price;
+
+  double taxValue = 0.0;
+  if (taxModel != null) {
+    taxValue = double.parse(taxModel.value!);
+  }
+  // Convert transaction fee from String to double and calculate the amount
+  double transactionFeeAmount = 0.0;
+  if (transactionFee != null) {
+    transactionFeeAmount = double.parse(transactionFee.value!);
+  }
 
   // Calculate total amount
-  double totalPrice = price + tax;
+  double totalPrice = price + tax + transactionFeeAmount;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -636,8 +648,11 @@ Widget _buildPaymentInformation(CompoundModel compoundModel, double taxValue) {
       const SizedBox(height: 20),
       _buildDetailRow("Sub Total".tr,
           "RM ${price.toStringAsFixed(2)}"), // Convert price to string
-      _buildDetailRow("${"Tax ".tr}(${(taxValue * 100).toStringAsFixed(0)}%)",
+      _buildDetailRow(
+          "${taxModel.name}(${(taxValue * 100).toStringAsFixed(0)}%)",
           "RM ${tax.toStringAsFixed(2)}"),
+      _buildDetailRow("Transaction Fee".tr,
+          "RM ${transactionFeeAmount.toStringAsFixed(2)}"),
       const Divider(),
       _buildTotalRow("Total Amount".tr, "RM ${totalPrice.toStringAsFixed(2)}"),
     ],

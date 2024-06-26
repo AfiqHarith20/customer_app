@@ -477,10 +477,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = P672TCQ93G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NUMBER = 7;
+				FLUTTER_BUILD_NUMBER = 9;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nazifa Parking";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -489,7 +489,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.terasoft.nazifaparking;
 				PRODUCT_NAME = Todo;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -614,10 +614,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = P672TCQ93G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NUMBER = 7;
+				FLUTTER_BUILD_NUMBER = 9;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nazifa Parking";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -626,7 +626,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.terasoft.nazifaparking.dev;
 				PRODUCT_NAME = "Nazifa Parking dev";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -719,10 +719,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = P672TCQ93G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NUMBER = 7;
+				FLUTTER_BUILD_NUMBER = 9;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nazifa Parking";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -731,7 +731,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.terasoft.nazifaparking.dev;
 				PRODUCT_NAME = "Nazifa Parking dev";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -819,10 +819,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = P672TCQ93G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NUMBER = 7;
+				FLUTTER_BUILD_NUMBER = 9;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nazifa Parking";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -831,7 +831,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.terasoft.nazifaparking.dev;
 				PRODUCT_NAME = "Todo-dev";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -979,10 +979,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = P672TCQ93G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NUMBER = 7;
+				FLUTTER_BUILD_NUMBER = 9;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nazifa Parking";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -991,7 +991,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.terasoft.nazifaparking;
 				PRODUCT_NAME = "Nazifa Parking";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1012,10 +1012,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = P672TCQ93G;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NUMBER = 7;
+				FLUTTER_BUILD_NUMBER = 9;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nazifa Parking";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -1024,7 +1024,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.terasoft.nazifaparking;
 				PRODUCT_NAME = "Nazifa Parking";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
