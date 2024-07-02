@@ -116,12 +116,12 @@ class WebviewScreenController extends GetxController {
       'zoneName': onlinePaymentData.zoneName ?? '',
     };
     body.forEach((key, value) {
-      // print('$key: $value');
+      print('$key: $value');
     });
 
     // Convert the map to a JSON object
     final String jsonString = json.encode(body);
-    // print(jsonString);
+    print(jsonString);
 
     return jsonString;
   }

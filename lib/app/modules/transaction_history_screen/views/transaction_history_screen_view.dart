@@ -356,35 +356,39 @@ class _TransactionHistoryScreenViewState
               if (controller.isLoading.value) {
                 return Constant.loader();
               } else if (controller.transactionHistoryList.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/images/empty-box.png",
-                        height: 100,
-                        width: 100,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No transactions yet'.tr,
-                        style: const TextStyle(
-                          color: AppColors.darkGrey09,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                return SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 8),
+                        Image.asset(
+                          "assets/images/empty-box.png",
+                          height: 100,
+                          width: 100,
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'You currently have no transactions.\nBut, when you do, they\'ll show up here!'
-                            .tr,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColors.darkGrey09,
-                          fontSize: 14,
+                        const SizedBox(height: 16),
+                        Text(
+                          'No transactions yet'.tr,
+                          style: const TextStyle(
+                            color: AppColors.darkGrey09,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        // Text(
+                        //   'You currently have no transactions.\nBut, when you do, they\'ll show up here!'
+                        //       .tr,
+                        //   textAlign: TextAlign.center,
+                        //   style: const TextStyle(
+                        //     color: AppColors.darkGrey09,
+                        //     fontSize: 14,
+                        //   ),
+                        // ),
+                      ],
+                    ),
                   ),
                 );
               } else {
