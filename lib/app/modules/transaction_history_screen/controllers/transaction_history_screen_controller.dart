@@ -36,7 +36,6 @@ class TransactionHistoryScreenController extends GetxController {
       List<Map<String, dynamic>> fetchedItems = querySnapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data();
 
-        // Check the type of createAt and convert accordingly
         DateTime dateTime;
         if (data['createAt'] is Timestamp) {
           dateTime = (data['createAt'] as Timestamp).toDate();
@@ -72,7 +71,6 @@ class TransactionHistoryScreenController extends GetxController {
         };
       }).toList();
 
-      // Sort items by createAt in descending order
       fetchedItems.sort((a, b) {
         return b['createAt'].compareTo(a['createAt']);
       });

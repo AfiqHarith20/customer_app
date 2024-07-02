@@ -351,11 +351,9 @@ class _TransactionHistoryScreenViewState
                 ],
               ),
             ),
-          Expanded(
+          Flexible(
             child: Obx(() {
-              if (controller.isLoading.value) {
-                return Constant.loader();
-              } else if (controller.transactionHistoryList.isEmpty) {
+              if (controller.transactionHistoryList.isEmpty) {
                 return SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),
                   child: Center(

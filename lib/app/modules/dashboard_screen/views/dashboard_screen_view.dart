@@ -1,17 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:customer_app/app/models/location_lat_lng.dart';
-import 'package:customer_app/app/modules/home/controllers/home_controller.dart';
-import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:place_picker/entities/entities.dart';
 
-import '../../../../utils/utils.dart';
-import '../../../routes/app_pages.dart';
 import '../controllers/dashboard_screen_controller.dart';
 
 class DashboardScreenView extends GetView<DashboardScreenController> {
