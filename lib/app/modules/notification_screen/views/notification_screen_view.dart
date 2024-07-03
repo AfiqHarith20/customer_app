@@ -33,9 +33,9 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                 padding: const EdgeInsets.only(
                   left: 16,
                   right: 16.0,
-                  top: 10,
                 ),
                 child: Icon(
+                  size: 30,
                   controller.isInEditMode.value
                       ? Icons.cancel
                       : Icons.edit_notifications_rounded,
@@ -56,11 +56,29 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                       child: TabBar(
                         labelColor: AppColors.darkGrey10,
                         tabs: [
+                          // Tab: Notifications
                           Tab(
-                            text: "Notifications".tr,
+                            child: Obx(() => Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Notifications".tr),
+                                    const SizedBox(width: 5),
+                                    _buildNotificationCount(
+                                        controller.notificationCount.value),
+                                  ],
+                                )),
                           ),
+                          // Tab: Activity
                           Tab(
-                            text: "Activity".tr,
+                            child: Obx(() => Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Activity".tr),
+                                    const SizedBox(width: 5),
+                                    _buildNotificationCount(
+                                        controller.activityCount.value),
+                                  ],
+                                )),
                           ),
                         ],
                       ),
@@ -69,19 +87,26 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                       child: TabBarView(
                         children: [
                           // First tab: Notifications
-                          Obx(() {
-                            return ListView.builder(
+                          RefreshIndicator(
+                            onRefresh: () async {
+                              await controller.loadNotifications();
+                            },
+                            child: ListView.builder(
                               itemCount: controller.notifyList.length,
                               itemBuilder: (context, index) {
                                 var notification = controller.notifyList[index];
                                 final category = notification['category'];
                                 final createAt = notification['createAt'];
                                 final message = notification['message'];
+                                final title = notification['title'];
+                                final isRead = RxBool(notification[
+                                    'isRead']); // Ensure RxBool here
+                                final reference = notification['reference'];
 
-                                // Render each notification card based on selection mode
                                 return category != 'Petak Khas'
                                     ? NotificationCard(
-                                        category: category,
+                                        controller: controller,
+                                        title: title,
                                         createAt: createAt,
                                         message: message,
                                         isInEditMode:
@@ -92,12 +117,9 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                           if (controller.isInEditMode.value) {
                                             controller.toggleSelection(index);
                                           } else {
-                                            // Handle tapping on notification card in normal mode
                                             showDialog(
                                               context: context,
                                               builder: (context) {
-                                                final controller = Get.find<
-                                                    NotificationScreenController>();
                                                 return AlertDialog(
                                                   content: Column(
                                                     mainAxisSize:
@@ -107,9 +129,10 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        category ?? '',
+                                                        title ?? '',
                                                         style: const TextStyle(
-                                                          color: Colors.blue,
+                                                          color: AppColors
+                                                              .darkGrey09,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),
@@ -134,21 +157,20 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                                   ),
                                                   actions: [
                                                     TextButton(
-                                                      onPressed: () {
-                                                        // Mark the notification as read and close the dialog
+                                                      onPressed: () async {
                                                         controller
-                                                            .markSelectedAsRead();
+                                                            .markAsRead(index);
                                                         Navigator.of(context)
                                                             .pop();
                                                       },
                                                       child: Text(
-                                                        'Mark as Read'.tr,
+                                                        'OK'.tr,
                                                         style: const TextStyle(
                                                           fontSize: 14,
                                                           fontStyle:
                                                               FontStyle.normal,
                                                           color: AppColors
-                                                              .yellow04,
+                                                              .darkGrey09,
                                                         ),
                                                       ),
                                                     ),
@@ -158,25 +180,33 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                             );
                                           }
                                         },
+                                        isRead: isRead,
                                       )
                                     : Container();
                               },
-                            );
-                          }),
+                            ),
+                          ),
                           // Second tab: Activity
-                          Obx(() {
-                            return ListView.builder(
+                          RefreshIndicator(
+                            onRefresh: () async {
+                              controller.loadNotifications();
+                            },
+                            child: ListView.builder(
                               itemCount: controller.notifyList.length,
                               itemBuilder: (context, index) {
                                 var notification = controller.notifyList[index];
                                 final category = notification['category'];
                                 final createAt = notification['createAt'];
                                 final message = notification['message'];
+                                final title = notification['title'];
+                                final isRead = RxBool(notification[
+                                    'isRead']); // Ensure RxBool here
+                                final reference = notification['reference'];
 
-                                // Only show notifications with category 'Petak Khas'
                                 return category == 'Petak Khas'
                                     ? NotificationCard(
-                                        category: category,
+                                        controller: controller,
+                                        title: title,
                                         createAt: createAt,
                                         message: message,
                                         isInEditMode:
@@ -190,8 +220,6 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                             showDialog(
                                               context: context,
                                               builder: (context) {
-                                                final controller = Get.find<
-                                                    NotificationScreenController>();
                                                 return AlertDialog(
                                                   content: Column(
                                                     mainAxisSize:
@@ -201,9 +229,10 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        category ?? '',
+                                                        title ?? '',
                                                         style: const TextStyle(
-                                                          color: Colors.blue,
+                                                          color: AppColors
+                                                              .darkGrey09,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),
@@ -214,34 +243,36 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                                             .timestampToDate(
                                                                 createAt),
                                                         style: const TextStyle(
+                                                          fontSize: 12,
                                                           color: Colors.grey,
                                                         ),
                                                       ),
                                                       const SizedBox(height: 4),
                                                       Text(
                                                         message ?? '',
+                                                        textAlign:
+                                                            TextAlign.justify,
                                                         style: const TextStyle(
-                                                          fontSize: 16,
-                                                        ),
+                                                            fontSize: 14),
                                                       ),
                                                     ],
                                                   ),
                                                   actions: [
                                                     TextButton(
-                                                      onPressed: () {
-                                                        // Mark the notification as read and close the dialog
+                                                      onPressed: () async {
                                                         controller
-                                                            .markSelectedAsRead();
+                                                            .markAsRead(index);
                                                         Navigator.of(context)
                                                             .pop();
                                                       },
                                                       child: Text(
-                                                        'Ok'.tr,
+                                                        'OK'.tr,
                                                         style: const TextStyle(
                                                           fontSize: 14,
                                                           fontStyle:
                                                               FontStyle.normal,
-                                                          color: Colors.black,
+                                                          color: AppColors
+                                                              .darkGrey09,
                                                         ),
                                                       ),
                                                     ),
@@ -251,11 +282,13 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                             );
                                           }
                                         },
+                                        isRead:
+                                            isRead, // Pass isRead property to NotificationCard
                                       )
                                     : Container();
                               },
-                            );
-                          }),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -264,7 +297,7 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                       visible: controller.isInEditMode.value,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                            horizontal: 10, vertical: 8),
                         color: Colors.grey[100],
                         child: Row(
                           children: [
@@ -311,7 +344,7 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                           Get.back();
                                         },
                                         content:
-                                            "Are you sure you want to Delete this notification."
+                                            "Are you sure you want to delete this notification?"
                                                 .tr,
                                         onPressCancelColor:
                                             AppColors.darkGrey01,
@@ -323,7 +356,7 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                               child: Text(
                                 "Delete".tr,
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontStyle: FontStyle.normal,
                                   color: Colors.black,
                                 ),
@@ -339,13 +372,13 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                                 ), // Change color here
                               ),
                               onPressed: () {
-                                controller.markSelectedAsRead();
+                                controller.markAllSelectedAsRead();
                                 controller.toggleEditMode();
                               },
                               child: Text(
                                 "Mark as Read".tr,
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontStyle: FontStyle.normal,
                                   color: Colors.black,
                                 ),
@@ -361,78 +394,134 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
       );
     });
   }
+
+  Widget _buildNotificationCount(int count) {
+    if (count > 0) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppColors.red04,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          count.toString(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
 }
 
 // NotificationCard widget
 
 class NotificationCard extends StatelessWidget {
-  final String? category;
+  final String? title;
   final dynamic createAt;
   final String? message;
   final bool isInEditMode;
   final bool isSelected;
   final VoidCallback onTap;
+  final RxBool isRead; // Use RxBool here for reactivity
+  final NotificationScreenController controller;
 
   const NotificationCard({
     Key? key,
-    this.category,
+    this.title,
     this.createAt,
     this.message,
     required this.isInEditMode,
     required this.isSelected,
     required this.onTap,
+    required this.isRead,
+    required this.controller,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: Row(
-            children: [
-              if (isInEditMode)
-                Checkbox(
-                  activeColor: Colors.blue,
-                  value: isSelected,
-                  onChanged: (_) => onTap(),
-                ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      category ?? '',
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+    return Obx(() {
+      // Define the background color based on isRead
+      Color backgroundColor = isRead.value
+          ? Colors.white // Transparent grey background
+          : AppColors.yellow03;
+
+      // Define text color with opacity
+      Color textColor = isRead.value
+          ? Colors.black.withOpacity(0.6) // Transparent grey text
+          : Colors.black;
+
+      Color textTitleColor = isRead.value
+          ? AppColors.darkGrey09.withOpacity(0.6) // Transparent grey text
+          : AppColors.darkGrey09;
+
+      return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        color: backgroundColor, // Use dynamic color based on isRead
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Row(
+              children: [
+                if (isInEditMode)
+                  Checkbox(
+                    activeColor: Colors.blue,
+                    value: isSelected,
+                    onChanged: (_) => onTap(),
+                  ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              title ?? '',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: textTitleColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                              width:
+                                  8), // Add some spacing between title and createAt
+                          Text(
+                            Constant.timestampToDate(createAt),
+                            style: TextStyle(
+                              color:
+                                  textColor, // Use the defined textColor here
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      Constant.timestampToDate(createAt),
-                      style: const TextStyle(
-                        color: Colors.grey,
+                      const SizedBox(height: 8),
+                      Text(
+                        message ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: textColor, // Use the defined textColor here
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      message ?? '',
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

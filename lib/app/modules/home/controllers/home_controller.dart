@@ -14,6 +14,7 @@ class HomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<CarouselModel> carouselData = <CarouselModel>[].obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
+  RxList<Map<String, dynamic>> notifyList = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {

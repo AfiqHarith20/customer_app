@@ -32,7 +32,7 @@ class NewsDetailScreenController extends GetxController {
       } else {
         return ''; // Handle unexpected date type
       }
-      return DateFormat('dd/MM/yyyy').format(dateTime);
+      return DateFormat('dd MMMM yyyy').format(dateTime);
     } catch (e) {
       print('Error parsing date: $e');
       return ''; // Return empty string if parsing fails

@@ -34,25 +34,27 @@ class NewsDetailScreenView extends StatelessWidget {
                         controller.title,
                         textAlign: TextAlign.justify,
                         style: const TextStyle(
-                          fontSize: 14,
                           fontFamily: AppThemData.medium,
-                          color: Colors.black,
+                          color: AppColors.darkGrey10,
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Text(
-                        controller.date,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            controller.date,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       Text(
                         controller.des.toString(),
                         textAlign: TextAlign.justify,
                         style: const TextStyle(
-                          fontSize: 12,
                           fontFamily: AppThemData.regular,
                           color: Colors.black,
                         ),

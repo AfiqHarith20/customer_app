@@ -24,6 +24,7 @@ class AppColors {
   static const Color lightGrey09 = Color(0xff868688);
   static const Color lightGrey10 = Color(0xff666668);
 
+  static const Color yellow03 = Color.fromARGB(255, 255, 233, 182);
   static const Color yellow04 = Color(0xffFFC844);
   static const Color yellow07 = Color(0xffBF9633);
   static const Color yellow09 = Color(0xff735A1F);

@@ -50,6 +50,7 @@ class _NewsScreenViewState extends State<NewsScreenView> {
                               );
                             },
                             child: Card(
+                              elevation: 4,
                               margin: const EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 4,
@@ -58,56 +59,53 @@ class _NewsScreenViewState extends State<NewsScreenView> {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 10,
-                                  right: 10,
-                                  top: 10,
-                                  bottom: 10,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      title ?? '',
-                                      textAlign: TextAlign.justify,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      des ?? '',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.justify,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontStyle: FontStyle.normal,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          formatDate(date),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[600],
+                                  padding: const EdgeInsets.only(
+                                    left: 10,
+                                    right: 10,
+                                    top: 10,
+                                    bottom: 10,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              title ?? '',
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.justify,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
                                           ),
+                                          const SizedBox(
+                                              width:
+                                                  8), // Add some spacing between title and date
+                                          Text(
+                                            Constant.timestampToDate(date),
+                                            style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        des ?? '',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.justify,
+                                        style: const TextStyle(
+                                          fontStyle: FontStyle.normal,
+                                          color: Colors.grey,
                                         ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
+                                      ),
+                                    ],
+                                  )),
                             ),
                           );
                         }),

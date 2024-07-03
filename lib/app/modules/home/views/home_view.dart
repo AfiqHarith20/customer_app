@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/modules/notification_screen/controllers/notification_screen_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/themes/app_colors.dart';
@@ -84,6 +85,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final notificationController = Get.put(NotificationScreenController());
     return GetX<HomeController>(
         init: HomeController(),
         builder: (controller) {
@@ -120,11 +122,47 @@ class _HomeViewState extends State<HomeView> {
                         padding: const EdgeInsets.only(
                           left: 16,
                           right: 16.0,
-                          top: 10,
+                          top: 14,
                         ),
-                        child: SvgPicture.asset(
-                          "assets/icons/ic_bell.svg",
-                          color: Colors.black,
+                        child: Stack(
+                          children: [
+                            SvgPicture.asset(
+                              "assets/icons/ic_bell.svg",
+                              color: Colors.black,
+                              height: 30,
+                            ),
+                            Obx(() {
+                              final unreadCount =
+                                  notificationController.unreadCount;
+                              if (unreadCount > 0) {
+                                return Positioned(
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: Text(
+                                      '$unreadCount',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            })
+                          ],
                         ),
                       ),
                     ),
@@ -360,46 +398,50 @@ class _HomeViewState extends State<HomeView> {
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              title ?? '',
-                                              textAlign: TextAlign.justify,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      title ?? '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontFamily:
+                                                            AppThemData.medium,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                      width:
+                                                          8), // Add some spacing between title and pubDate
+                                                  Text(
+                                                    Constant.timestampToDate(
+                                                        pubDate),
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              des ?? '',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.justify,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontStyle: FontStyle.normal,
-                                                color: Colors.grey,
+                                              const SizedBox(height: 5),
+                                              Text(
+                                                des ?? '',
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontStyle: FontStyle.normal,
+                                                  color: Colors.grey,
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              formatDate(pubDate),
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                              const SizedBox(height: 5),
+                                            ],
+                                          )),
                                     ),
                                   );
                                 },

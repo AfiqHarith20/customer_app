@@ -11,6 +11,8 @@ class NotificationScreenController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isInEditMode = false.obs;
   RxList<int> selectedIndexes = <int>[].obs;
+  RxInt notificationCount = RxInt(0);
+  RxInt activityCount = RxInt(0);
 
   static String getCurrentUid() {
     return FirebaseAuth.instance.currentUser!.uid;
@@ -40,7 +42,9 @@ class NotificationScreenController extends GetxController {
           "category": doc.data()['category'].toString(),
           "reference": doc.data()['reference'].toString(),
           "message": doc.data()['message'].toString(),
-          "isRead": doc.data()['isRead'].toString(),
+          "isRead":
+              doc.data()['isRead'].toString() == 'true', // Convert to bool
+          "documentId": doc.id,
         };
       }).toList();
       // Sort notifications by createAt in descending order
@@ -49,14 +53,75 @@ class NotificationScreenController extends GetxController {
       });
 
       notifyList.assignAll(fetchedNotifications);
+
+      // Update counts after fetching notifications
+      getNotificationCount();
+      getActivityCount();
     } catch (e) {
       print('Error fetching information: $e');
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
+  }
+
+  loadNotifications() async {
+    try {
+      isLoading(true); // Set loading state to true
+
+      // Replace this with your actual Firestore collection reference
+      var snapshot = await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(getCurrentUid())
+          .collection('messages')
+          .orderBy('createAt', descending: true)
+          .get();
+
+      // Clear existing notifications before adding new ones
+      notifyList.clear();
+
+      // Add notifications from Firestore to the notifyList
+      notifyList.addAll(snapshot.docs.map((doc) => doc.data()));
+
+      isLoading(false); // Set loading state to false
+    } catch (e) {
+      print('Error loading notifications: $e');
+      isLoading(false); // Set loading state to false on error
+    }
+  }
+
+  // Getter to count unread notifications
+  int get unreadCount => notifyList
+      .where((notification) => notification['isRead'] == false)
+      .length;
+
+  void getNotificationCount() {
+    if (notifyList.isNotEmpty) {
+      // Count notifications in the notifyList where category is not 'Petak Khas'
+      notificationCount.value = notifyList
+          .where((notification) =>
+              notification['category'] != 'Petak Khas' &&
+              notification['isRead'] == false)
+          .length;
+    } else {
+      notificationCount.value = 0;
+    }
+  }
+
+  void getActivityCount() {
+    if (notifyList.isNotEmpty) {
+      // Count notifications in the notifyList where category is 'Petak Khas'
+      activityCount.value = notifyList
+          .where((notification) =>
+              notification['category'] == 'Petak Khas' &&
+              notification['isRead'] == false)
+          .length;
+    } else {
+      activityCount.value = 0;
+    }
   }
 
   void toggleEditMode() {
-    isInEditMode.toggle();
+    isInEditMode.value = !isInEditMode.value;
     // Clear selected indexes when exiting edit mode
     if (!isInEditMode.value) {
       selectedIndexes.clear();
@@ -94,7 +159,7 @@ class NotificationScreenController extends GetxController {
       selectedIndexes.sort((a, b) => b.compareTo(a));
       for (var index in selectedIndexes) {
         String documentId =
-            notifyList[index]['reference']; // Get the document ID
+            notifyList[index]['documentId']; // Get the document ID
         await FirebaseFirestore.instance
             .collection('notifications')
             .doc(getCurrentUid())
@@ -110,27 +175,31 @@ class NotificationScreenController extends GetxController {
     }
   }
 
-  markSelectedAsRead() async {
-    try {
-      for (var index in selectedIndexes) {
-        String documentId =
-            notifyList[index]['reference']; // Get the document ID
-        await FirebaseFirestore.instance
-            .collection('notifications')
-            .doc(getCurrentUid())
-            .collection('messages')
-            .doc(documentId)
-            .update({'isRead': true}); // Update the 'isRead' field to true
-        notifyList[index]['isRead'] = true; // Update locally as well
-      }
-    } catch (e) {
-      print('Error marking notifications as read: $e');
+  void markAllSelectedAsRead() async {
+    for (var index in selectedIndexes) {
+      markAsRead(index);
     }
+    toggleEditMode();
   }
 
-  @override
-  void dispose() {
-    //FireStoreUtils().getNearestParkingRequestController!.close();
-    super.dispose();
+  void markAsRead(int index) async {
+    try {
+      String documentId =
+          notifyList[index]['documentId']; // Get the document ID
+      await FirebaseFirestore.instance
+          .collection(CollectionName.notifications)
+          .doc(getCurrentUid())
+          .collection('messages')
+          .doc(documentId)
+          .update({'isRead': true});
+
+      // Update the local state
+      notifyList[index]['isRead'] = true;
+      notifyList.refresh(); // Call refresh to update the UI
+      getNotificationCount();
+      getActivityCount();
+    } catch (e) {
+      print('Error marking notification as read: $e');
+    }
   }
 }
