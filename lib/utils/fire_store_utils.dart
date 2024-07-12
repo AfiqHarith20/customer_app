@@ -17,6 +17,7 @@ import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/transaction_history_model.dart';
+import 'package:customer_app/app/models/vehicle_model.dart';
 import 'package:customer_app/app/models/wallet_topup_model.dart';
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/app/models/referral_model.dart';
@@ -29,6 +30,7 @@ import 'package:customer_app/constant/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
+import 'package:get/get.dart';
 import '../app/models/carousel_model.dart';
 import '../app/models/my_payment_compound_model.dart';
 import '../app/models/my_purchase_pass_model.dart';
@@ -987,5 +989,44 @@ class FireStoreUtils {
     }
 
     return platformInfo;
+  }
+
+  static Future<List<VehicleManufactureModel>?> getVehicleManufacture() async {
+    List<VehicleManufactureModel> vehicleManufactureList = [];
+    await fireStore
+        .collection(CollectionName.vehicleManufacture)
+        .where('active', isEqualTo: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        VehicleManufactureModel vehicleManufactureModel =
+            VehicleManufactureModel.fromJson(element.data());
+        vehicleManufactureList.add(vehicleManufactureModel);
+        print('-------length----->${vehicleManufactureList.length}');
+      }
+    }).catchError((error) {
+      log("Failed to get data: $error");
+      return null;
+    });
+    return vehicleManufactureList;
+  }
+
+  static Future<List<ColorHexModel>?> getColorHex() async {
+    List<ColorHexModel> colorHexList = [];
+    await fireStore
+        .collection(CollectionName.colorHex)
+        .where('active', isEqualTo: true)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        ColorHexModel colorHexModel = ColorHexModel.fromJson(element.data());
+        colorHexList.add(colorHexModel);
+        print('-------length----->${colorHexList.length}');
+      }
+    }).catchError((error) {
+      log("Failed to get data: $error");
+      return null;
+    });
+    return colorHexList;
   }
 }

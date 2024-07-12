@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/query_pass_model.dart';
 import 'package:customer_app/app/models/season_pass_model.dart';
+import 'package:customer_app/app/models/vehicle_model.dart';
+import 'package:customer_app/constant/collection_name.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/server.dart';
@@ -29,6 +32,10 @@ class PurchasePassController extends GetxController {
   Rx<TextEditingController> addressController = TextEditingController().obs;
   RxString countryCode = "+60".obs;
   RxBool isLoading = false.obs;
+  RxList<Map<String, dynamic>> vehicleList = <Map<String, dynamic>>[].obs;
+  Rx<VehicleModel> customerVehicleModel = VehicleModel().obs;
+  final _error = ''.obs;
+  get error => _error.value;
   Server server = Server();
   List<String> type = [
     "Pas Mingguan 1",
@@ -61,6 +68,7 @@ class PurchasePassController extends GetxController {
     getArgument();
     getProfileData();
     clearFormData();
+    fetchVehicle();
     super.onInit();
   }
 
@@ -91,6 +99,10 @@ class PurchasePassController extends GetxController {
     update();
   }
 
+  static String getCurrentUid() {
+    return FirebaseAuth.instance.currentUser!.uid;
+  }
+
   getProfileData() async {
     await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
         .then((value) {
@@ -101,6 +113,49 @@ class PurchasePassController extends GetxController {
         phoneNumberController.value.text = customerModel.value.phoneNumber!;
       }
     });
+  }
+
+  Future<void> fetchVehicle() async {
+    try {
+      isLoading.value = true;
+      print('Fetching vehicle data for user: ${getCurrentUid()}');
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection(CollectionName.custVehicle)
+              .doc(getCurrentUid())
+              .collection('vehicles')
+              .where('active', isEqualTo: true)
+              .get();
+
+      List<Map<String, dynamic>> vehicleInfo = querySnapshot.docs.map((doc) {
+        print('Document data: ${doc.data()}');
+        return {
+          "vehicleNo": doc.data()['vehicleNo'].toString(),
+          "colorHex": doc.data()['colorHex'].toString(),
+          "vehicleManufacturer": doc.data()['vehicleManufacturer'].toString(),
+          "vehicleModel": doc.data()['vehicleModel'].toString(),
+          "active": doc.data()['active'] == true,
+          "default": doc.data()['default'] == true,
+          "documentId": doc.id,
+        };
+      }).toList();
+
+      print('Fetched vehicle data: $vehicleInfo');
+
+      if (vehicleInfo.isNotEmpty) {
+        vehicleList.assignAll(vehicleInfo);
+        customerVehicleModel.value = VehicleModel.fromJson(vehicleInfo.first);
+      } else {
+        print('No active vehicles found for user: ${getCurrentUid()}');
+      }
+    } catch (e) {
+      print('Error fetching information: $e');
+      _error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+      update(); // Update the UI after data fetch
+    }
   }
 
   Future<void> getQueryPass() async {

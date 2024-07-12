@@ -346,7 +346,20 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: const BorderSide(
-                                color: AppColors.white, width: 1),
+                              color: AppColors.yellow04,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(
+                              color: AppColors.yellow04,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(
+                              color: AppColors.yellow04,
+                            ),
                           ),
                         ),
                         items: controller.zones.map((Zone zone) {
@@ -388,7 +401,20 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: const BorderSide(
-                                color: AppColors.white, width: 1),
+                              color: AppColors.yellow04,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(
+                              color: AppColors.yellow04,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: const BorderSide(
+                              color: AppColors.yellow04,
+                            ),
                           ),
                         ),
                         items: controller.roads.map((Road road) {

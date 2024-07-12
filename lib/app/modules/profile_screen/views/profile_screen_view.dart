@@ -139,6 +139,13 @@ class ProfileScreenView extends StatelessWidget {
                                 title: "Language".tr,
                                 svgImage: "assets/icons/ic_language.svg",
                               ),
+                              menuItemWidget(
+                                onTap: () {
+                                  Get.toNamed(Routes.VEHICLE_SCREEN);
+                                },
+                                title: "Vehicle".tr,
+                                svgImage: "assets/icons/ic_vehicle.svg",
+                              ),
                               const Divider(
                                   height: 0, color: AppColors.lightGrey05),
                               menuItemWidget(

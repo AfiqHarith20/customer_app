@@ -55,6 +55,8 @@ abstract class Routes {
   static const TRANSACTION_HISTORY_SCREEN = _Paths.TRANSACTION_HISTORY_SCREEN;
   static const TRANSACTION_HISTORY_DETAIL_SCREEN =
       _Paths.TRANSACTION_HISTORY_DETAIL_SCREEN;
+  static const VEHICLE_SCREEN = _Paths.VEHICLE_SCREEN;
+  static const ADD_NEW_VEHICLE = _Paths.ADD_NEW_VEHICLE;
 }
 
 abstract class _Paths {
@@ -109,4 +111,6 @@ abstract class _Paths {
   static const TRANSACTION_HISTORY_SCREEN = '/transaction-history-screen';
   static const TRANSACTION_HISTORY_DETAIL_SCREEN =
       '/transaction-history-detail-screen';
+  static const VEHICLE_SCREEN = '/vehicle-screen';
+  static const ADD_NEW_VEHICLE = '/add-vehicle-screen';
 }

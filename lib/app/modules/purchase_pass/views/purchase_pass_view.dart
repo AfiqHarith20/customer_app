@@ -175,7 +175,42 @@ class PurchasePassView extends GetView<PurchasePassController> {
                             ? null
                             : 'Plate No. required'.tr,
                         controller: controller.vehicleNoController.value,
-                        onPress: () {},
+                        onPress: () {
+                          if (controller.vehicleList.isNotEmpty) {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  child: ListView.builder(
+                                    itemCount: controller.vehicleList.length,
+                                    itemBuilder: (context, index) {
+                                      var vehicle =
+                                          controller.vehicleList[index];
+                                      return ListTile(
+                                        title: Text(vehicle['vehicleNo']),
+                                        subtitle: Text(
+                                            vehicle['vehicleManufacturer']),
+                                        onTap: () {
+                                          // Set selected vehicle data to the text field
+                                          controller.vehicleNoController.value
+                                              .text = vehicle['vehicleNo'];
+                                          Navigator.pop(
+                                              context); // Close the bottom sheet
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          } else {
+                            // Handle case where no vehicle data is available
+                            // Allow the user to type manually
+                            // Optionally, you can show a message or handle it as needed
+                          }
+                        },
                         textCapitalization: TextCapitalization.characters,
                       ),
                       // TextFieldWidgetPrefix(

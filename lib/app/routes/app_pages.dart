@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/modules/add_vehicle_screen/bindings/add_vehicle_screen_binding.dart';
+import 'package:customer_app/app/modules/add_vehicle_screen/views/add_vehicle_screen_view.dart';
 import 'package:customer_app/app/modules/news_detail_screen/bindings/news_detail_screen_binding.dart';
 import 'package:customer_app/app/modules/news_detail_screen/views/news_detail_screen_view.dart';
 import 'package:customer_app/app/modules/news_screen/bindings/news_screen_binding.dart';
@@ -25,6 +27,8 @@ import 'package:customer_app/app/modules/transaction_history_detail_screen/bindi
 import 'package:customer_app/app/modules/transaction_history_detail_screen/views/transaction_history_detail_screen_view.dart';
 import 'package:customer_app/app/modules/transaction_history_screen/bindings/transaction_history_screen_binding.dart';
 import 'package:customer_app/app/modules/transaction_history_screen/views/transaction_history_screen_view.dart';
+import 'package:customer_app/app/modules/vehicle_screen/bindings/vehicle_screen_binding.dart';
+import 'package:customer_app/app/modules/vehicle_screen/views/vehicle_screen_view.dart';
 import 'package:customer_app/app/modules/webview/bindings/webview_screen_binding.dart';
 import 'package:customer_app/app/modules/webview/views/webview_screen_view.dart';
 import 'package:customer_app/app/modules/webview_compound_screen/bindings/webview_compound_screen_binding.dart';
@@ -351,7 +355,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.NOTIFICATION_SCREEN,
-      page: () => NotificationScreenView(
+      page: () => const NotificationScreenView(
           // controller: Get.arguments['controller'] ?? '',
           ),
       binding: NotificationScreenBinding(),
@@ -442,6 +446,16 @@ class AppPages {
       name: _Paths.TRANSACTION_HISTORY_DETAIL_SCREEN,
       page: () => const TransactionHistoryDetailScreenView(),
       binding: TransactionHistoryDetailScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.VEHICLE_SCREEN,
+      page: () => VehicleScreenView(),
+      binding: VehicleScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADD_NEW_VEHICLE,
+      page: () => AddVehicleScreenView(),
+      binding: AddVehicleScreenBinding(),
     ),
   ];
 }

@@ -21,4 +21,7 @@ class CollectionName {
   static const String messages = "messages";
   static const String transacHistory = "consolidate_transaction";
   static const String transactionFee = "transaction_fee";
+  static const String custVehicle = "customer_vehicles";
+  static const String colorHex = "color_hex";
+  static const String vehicleManufacture = "vehicle_manufacturers";
 }

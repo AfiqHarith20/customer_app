@@ -176,7 +176,7 @@ class _HomeViewState extends State<HomeView> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Container(
-                              height: 90,
+                              height: 60,
                               decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.only(
                                   bottomRight: Radius.circular(50),
@@ -222,36 +222,36 @@ class _HomeViewState extends State<HomeView> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(
-                                        "assets/icons/ic_wallet.svg",
-                                        height: 25,
-                                        width: 25,
-                                        color: Colors.black,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        Constant.amountShow(
-                                          amount: controller.customerModel.value
-                                                  .walletAmount
-                                                  ?.toString() ??
-                                              '0',
-                                        ),
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  // const SizedBox(
+                                  //   height: 10,
+                                  // ),
+                                  // Row(
+                                  //   mainAxisAlignment: MainAxisAlignment.center,
+                                  //   children: [
+                                  //     SvgPicture.asset(
+                                  //       "assets/icons/ic_wallet.svg",
+                                  //       height: 25,
+                                  //       width: 25,
+                                  //       color: Colors.black,
+                                  //     ),
+                                  //     const SizedBox(
+                                  //       width: 10,
+                                  //     ),
+                                  //     Text(
+                                  //       Constant.amountShow(
+                                  //         amount: controller.customerModel.value
+                                  //                 .walletAmount
+                                  //                 ?.toString() ??
+                                  //             '0',
+                                  //       ),
+                                  //       style: const TextStyle(
+                                  //         fontSize: 20,
+                                  //         color: Colors.black,
+                                  //         fontWeight: FontWeight.w900,
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                 ],
                               ),
                             ),
@@ -260,7 +260,7 @@ class _HomeViewState extends State<HomeView> {
                                 autoPlay: true,
                                 enlargeCenterPage: false,
                                 scrollDirection: Axis.horizontal,
-                                height: 220,
+                                height: 230,
                                 onPageChanged: (index, reason) {
                                   setState(
                                     () {
