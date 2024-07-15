@@ -47,6 +47,8 @@ class VehicleScreenView extends StatelessWidget {
             child: InkWell(
               onTap: () async {
                 await Get.toNamed(Routes.ADD_NEW_VEHICLE);
+                // Call fetchVehicle to refresh the vehicle list after returning
+                controller.fetchVehicle();
               },
               child: Container(
                 height: 40,
@@ -162,6 +164,8 @@ class VehicleScreenView extends StatelessWidget {
                                         'documentId': vehicle['documentId'],
                                       },
                                     );
+                                    // Call fetchVehicle to refresh the vehicle list after returning
+                                    controller.fetchVehicle();
                                   }
                                 },
                               ),
