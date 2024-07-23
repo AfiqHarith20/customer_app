@@ -33,7 +33,7 @@ class SplashScreenView extends StatelessWidget {
                       fontSize: 32),
                 ),
                 Text(
-                  "Effortless Parking".tr,
+                  "Friendly, Easy & Effective".tr,
                   style: const TextStyle(
                       fontFamily: AppThemData.regular,
                       color: Colors.black,

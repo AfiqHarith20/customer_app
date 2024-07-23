@@ -159,6 +159,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                     widget.selectedBankName = result['bankName'];
                     controller.purchasePassModel.value.startDate;
                     controller.purchasePassModel.value.endDate;
+                    controller.purchasePassModel.value.vehicleNo;
                   });
                 }
               },
@@ -422,7 +423,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   // print('Online Payment Data: $onlinePaymentModel');
                   print('startDate ${passData['startDate']}');
                   print('endDate ${passData['endDate']}');
-                  Get.toNamed(
+                  Get.offAllNamed(
                     Routes.WEBVIEW_SCREEN,
                     arguments: {
                       'onlinePaymentModel': onlinePaymentModel,

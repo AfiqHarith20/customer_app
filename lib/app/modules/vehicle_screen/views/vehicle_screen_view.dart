@@ -48,7 +48,7 @@ class VehicleScreenView extends StatelessWidget {
               onTap: () async {
                 await Get.toNamed(Routes.ADD_NEW_VEHICLE);
                 // Call fetchVehicle to refresh the vehicle list after returning
-                controller.fetchVehicle();
+                await controller.fetchVehicle();
               },
               child: Container(
                 height: 40,
@@ -131,25 +131,73 @@ class VehicleScreenView extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8.0),
+                              Text(
+                                '${vehicleManufacturer ?? ''} - ${vehicleModel ?? ''}',
+                                style: const TextStyle(
+                                  color: AppColors.darkGrey10,
+                                  fontSize: 16.0,
                                 ),
-                                child: Center(
+                              ),
+                              if (vehicleDefault ?? false)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4.0,
+                                    horizontal: 8.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
                                   child: Text(
-                                    vehicleNo ?? '',
+                                    'PRIMARY'.tr,
                                     style: const TextStyle(
-                                      color: AppColors.yellow10,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
+                            ],
+                          ),
+                          const SizedBox(height: 14.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        vehicleNo ?? '',
+                                        style: const TextStyle(
+                                          color: AppColors.white,
+                                          fontFamily: AppThemData.medium,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  Container(
+                                    width: 40,
+                                    height: 47,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: vehicleColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                               IconButton(
-                                icon: const Icon(Icons.edit),
+                                icon: const Icon(
+                                  Icons.edit,
+                                  size: 32,
+                                ),
                                 onPressed: () async {
                                   if (vehicle != null) {
                                     await Get.toNamed(
@@ -165,57 +213,9 @@ class VehicleScreenView extends StatelessWidget {
                                       },
                                     );
                                     // Call fetchVehicle to refresh the vehicle list after returning
-                                    controller.fetchVehicle();
+                                    await controller.fetchVehicle();
                                   }
                                 },
-                              ),
-                            ],
-                          ),
-                          if (vehicleDefault ?? false)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                                horizontal: 8.0,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Text(
-                                'PRIMARY'.tr,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          const SizedBox(height: 14.0),
-                          Text(
-                            vehicleManufacturer ?? '',
-                            style: const TextStyle(
-                              color: AppColors.darkGrey10,
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: vehicleColor,
-                                ),
-                              ),
-                              const SizedBox(width: 8.0),
-                              Text(
-                                '${vehicleModel ?? ''}',
-                                style: const TextStyle(
-                                  color: AppColors.darkGrey10,
-                                  fontSize: 16.0,
-                                ),
                               ),
                             ],
                           ),

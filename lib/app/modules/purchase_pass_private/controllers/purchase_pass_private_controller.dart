@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/pending_detail_pass_model.dart';
 import 'package:customer_app/app/models/private_pass_model.dart';
+import 'package:customer_app/app/models/query_lot_model.dart';
 import 'package:customer_app/app/models/zone_road_model.dart';
 import 'package:customer_app/app/modules/Season_pass/controllers/season_pass_controller.dart';
 import 'package:customer_app/app/models/customer_model.dart';
@@ -21,6 +23,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 class PurchasePassPrivateController extends GetxController {
   Rx<GlobalKey<FormState>> formKeyPurchasePrivate = GlobalKey<FormState>().obs;
@@ -36,6 +39,7 @@ class PurchasePassPrivateController extends GetxController {
       TextEditingController().obs;
   Rx<TextEditingController> addressController = TextEditingController().obs;
   Rx<TextEditingController> referenceController = TextEditingController().obs;
+  Rx<DateController> startAtDateController = DateController().obs;
   RxString countryCode = "+60".obs;
   RxBool isLoading = true.obs;
   RxString privateParkImage = "".obs;
@@ -58,6 +62,7 @@ class PurchasePassPrivateController extends GetxController {
   final ImagePicker imagePicker = ImagePicker();
   final bool selectedSegment = Get.arguments?['selectedSegment'] ?? false;
   final SeasonPassController seasonPassController = Get.find();
+  Rx<QueryLot> queryLotModel = QueryLot().obs;
   Server server = Server();
   var zones = <Zone>[].obs;
   var roads = <Road>[].obs;
@@ -136,7 +141,20 @@ class PurchasePassPrivateController extends GetxController {
     try {
       XFile? image = await imagePicker.pickImage(source: source);
       if (image == null) return;
-      privateParkImage.value = image.path;
+
+      // Generate a UUID for the image name
+      String uuid = const Uuid().v4();
+      String fileName = "$uuid.jpg";
+
+      // Update the privateParkImage with the generated file name
+      privateParkImage.value = fileName;
+
+      // Copy the image to a new path with the UUID name
+      File imageFile = File(image.path);
+      String newPath = "${imageFile.parent.path}/$fileName";
+      await imageFile.copy(newPath);
+
+      privateParkImage.value = newPath;
     } on PlatformException catch (e) {
       ShowToastDialog.showToast("${"failed_to_pick".tr} : \n $e");
     }
@@ -171,72 +189,105 @@ class PurchasePassPrivateController extends GetxController {
     });
   }
 
-  // Future<bool> postReservePassData() async {
-  //   try {
-  //     Map<String, dynamic> rawData = await getRawData();
+  Future<void> getQueryLot() async {
+    isLoading.value = true;
+    try {
+      final companyName = companyNameController.value.text;
+      final startDate = startAtDateController.value.value;
+      final validity =
+          getApiDuration(selectedPrivatePass.value.validity.toString());
+      final response = await server.getRequest(
+          endPoint:
+              '${APIList.queryLot}companyName=$companyName&startDate=$startDate&validity=$validity');
+      if (response != null) {
+        print("Response Status Code: ${response.statusCode}");
+        print("Response Body: ${response.body}");
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body);
+          print("Start Date: ${jsonResponse['newStartDate']}");
+          print("End Date: ${jsonResponse['newEndDate']}");
 
-  //     // Print each key-value pair in rawData
-  //     rawData.forEach((key, value) {
-  //       print('Raw Data Key: $key, Value: $value');
-  //     });
+          // Update selectedPrivatePass with the new data from the API response
+          selectedPrivatePass.value = PrivatePassModel(
+            availability: jsonResponse['privatePassModel']['availability'],
+            passId: jsonResponse['privatePassModel']['id'],
+            passName: jsonResponse['privatePassModel']['passName'],
+            price: jsonResponse['privatePassModel']['price'],
+            status: jsonResponse['privatePassModel']['status'],
+            userType: jsonResponse['privatePassModel']['userType'],
+            validity: jsonResponse['privatePassModel']['validity'],
+          );
 
-  //     final response = await http.post(
-  //       Uri.parse(APIList.reserveLot.toString()),
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: jsonEncode(rawData),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       return true;
-  //     } else {
-  //       ShowToastDialog.showToast(
-  //           "Error occurred while making payment. Status Code: ${response.statusCode}");
-  //       print('Raw Data: $rawData');
-  //       print('Response Body: ${response.body}');
-  //       return false;
-  //     }
-  //   } catch (e, s) {
-  //     log("$e \n$s");
-  //     ShowToastDialog.showToast("Error occurred while making payment: $e");
-  //     return false;
-  //   }
-  // }
+          queryLotModel.value.newStartDate =
+              DateTime.parse(jsonResponse['newStartDate']);
+          queryLotModel.value.newEndDate =
+              DateTime.parse(jsonResponse['newEndDate']);
+          queryLotModel.value.privatePassModel?.availability =
+              jsonResponse['availability'];
+          queryLotModel.value.privatePassModel?.price = jsonResponse['price'];
+          queryLotModel.value.privatePassModel?.passId = jsonResponse['id'];
+          queryLotModel.value.privatePassModel?.passName =
+              jsonResponse['passName'];
+          queryLotModel.value.privatePassModel?.validity =
+              jsonResponse['validity'];
+          queryLotModel.value.privatePassModel?.status = jsonResponse['status'];
+          queryLotModel.value.privatePassModel?.userType =
+              jsonResponse['userType'];
+          queryLotModel.value.privatePassModel = selectedPrivatePass.value;
+        } else {
+          print("API Error: ${response.reasonPhrase}");
+          // Handle error cases based on response status code or reasonPhrase
+        }
+      } else {
+        print("Null Response");
+        // Handle null response case
+      }
+    } catch (e) {
+      print("Error fetching query lot: $e");
+      // Handle any exceptions that occur during the API call
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   Future<bool> addPrivatePassData() async {
     try {
-      pendingDetailPassModel.value.id = Constant.getUuid();
-      pendingDetailPassModel.value.customerId = FireStoreUtils.getCurrentUid();
-      pendingDetailPassModel.value.privatePassModel = selectedPrivatePass.value;
-      pendingDetailPassModel.value.fullName = fullNameController.value.text;
-      pendingDetailPassModel.value.reference = referenceController.value.text;
-      pendingDetailPassModel.value.email = emailController.value.text;
-      pendingDetailPassModel.value.mobileNumber =
-          phoneNumberController.value.text;
-      pendingDetailPassModel.value.vehicleNo = vehicleNoController.value.text;
-      pendingDetailPassModel.value.lotNo = lotNoController.value.text;
-      pendingDetailPassModel.value.companyName =
-          companyNameController.value.text;
-      pendingDetailPassModel.value.companyRegistrationNo =
-          companyRegistrationNoController.value.text;
-      pendingDetailPassModel.value.address = addressController.value.text;
-      pendingDetailPassModel.value.zoneId =
-          selectedZone.value?.znId.toString() ?? '';
-      pendingDetailPassModel.value.zoneName = selectedZone.value?.znName;
-      pendingDetailPassModel.value.roadId =
-          selectedRoad.value?.jlnId.toString() ?? '';
-      pendingDetailPassModel.value.roadName = selectedRoad.value?.jlnNama;
-      pendingDetailPassModel.value.countryCode =
-          countryCode.reactive.toString();
-
-      // Set the dates and status
-      pendingDetailPassModel.value.startDate = DateTime.now();
-      pendingDetailPassModel.value.createAt = DateTime.now();
-      pendingDetailPassModel.value.endDate = DateTime.now().add(
-        Duration(
-          days: checkDuration(selectedPrivatePass.value.validity.toString()),
-        ),
-      );
-      pendingDetailPassModel.value.status = "pending";
+      if (queryLotModel.value.newStartDate != null &&
+          queryLotModel.value.newEndDate != null) {
+        pendingDetailPassModel.value.id = Constant.getUuid();
+        pendingDetailPassModel.value.customerId =
+            FireStoreUtils.getCurrentUid();
+        pendingDetailPassModel.value.privatePassModel =
+            selectedPrivatePass.value;
+        pendingDetailPassModel.value.fullName = fullNameController.value.text;
+        pendingDetailPassModel.value.reference = referenceController.value.text;
+        pendingDetailPassModel.value.email = emailController.value.text;
+        pendingDetailPassModel.value.mobileNumber =
+            phoneNumberController.value.text;
+        pendingDetailPassModel.value.vehicleNo = vehicleNoController.value.text;
+        pendingDetailPassModel.value.lotNo = lotNoController.value.text;
+        pendingDetailPassModel.value.companyName =
+            companyNameController.value.text;
+        pendingDetailPassModel.value.companyRegistrationNo =
+            companyRegistrationNoController.value.text;
+        pendingDetailPassModel.value.address = addressController.value.text;
+        pendingDetailPassModel.value.zoneId =
+            selectedZone.value?.znId.toString() ?? '';
+        pendingDetailPassModel.value.zoneName = selectedZone.value?.znName;
+        pendingDetailPassModel.value.roadId =
+            selectedRoad.value?.jlnId.toString() ?? '';
+        pendingDetailPassModel.value.roadName = selectedRoad.value?.jlnNama;
+        pendingDetailPassModel.value.countryCode =
+            countryCode.reactive.toString();
+        // Set the dates and status
+        pendingDetailPassModel.value.startDate =
+            queryLotModel.value.newStartDate;
+        pendingDetailPassModel.value.endDate = queryLotModel.value.newEndDate!;
+        pendingDetailPassModel.value.createAt = DateTime.now();
+        pendingDetailPassModel.value.status = "pending";
+      } else {
+        throw Exception("Query pass data is not available");
+      }
 
       // Now call getRawData()
       Map<String, dynamic> rawData = await getRawData();
@@ -259,6 +310,8 @@ class PurchasePassPrivateController extends GetxController {
             "Error occurred while making payment. Status Code: ${response.statusCode}");
         print('Raw Data: $rawData');
         print('Response Body: ${response.body}');
+        print(
+            "Failed to send data: ${response.statusCode} ${response.reasonPhrase}");
         return false;
       }
     } catch (e, s) {
@@ -282,10 +335,26 @@ class PurchasePassPrivateController extends GetxController {
       "validity": selectedPrivatePass.value.validity,
     };
 
+    Map<String, dynamic> queryPrivatePassData = {
+      "availability": queryLotModel.value.privatePassModel?.availability,
+      "id": queryLotModel.value.privatePassModel?.passId,
+      "passName": queryLotModel.value.privatePassModel?.passName,
+      "price": queryLotModel.value.privatePassModel?.price,
+      "status": queryLotModel.value.privatePassModel?.status,
+      "userType": queryLotModel.value.privatePassModel?.userType,
+      "validity": queryLotModel.value.privatePassModel?.validity,
+    };
+
+    // Use the privatePassModel from queryLotModel if it is available
+    Map<String, dynamic> effectivePrivatePassModel =
+        queryLotModel.value.privatePassModel != null
+            ? queryPrivatePassData
+            : privatePassData;
+
     Map<String, dynamic> rawData = {
       "id": Constant.getUuid(),
       "customerId": FireStoreUtils.getCurrentUid(),
-      "privatePassModel": privatePassData,
+      "privatePassModel": effectivePrivatePassModel,
       "fullName": fullNameController.value.text,
       "reference": referenceController.value.text,
       "email": emailController.value.text,
@@ -314,27 +383,64 @@ class PurchasePassPrivateController extends GetxController {
   }
 
   Future<String> convertImageToBase64(String imagePath) async {
-    List<int> imageBytes = await File(imagePath).readAsBytes();
-    String base64Image = base64Encode(imageBytes);
-    return base64Image;
+    try {
+      // Compress the image with consistent settings
+      Uint8List? imageBytes = await FlutterImageCompress.compressWithFile(
+        imagePath,
+        minWidth: 200,
+        minHeight: 200,
+        quality: 40,
+        format: CompressFormat.jpeg, // Ensure JPEG format for consistency
+      );
+
+      if (imageBytes == null) {
+        throw Exception("Failed to compress image");
+      }
+
+      // Encode the image bytes to Base64
+      String base64Image = base64Encode(imageBytes);
+
+      // Ensure the Base64 string has a consistent length (for debugging purposes)
+      print("Base64 Image Length: ${base64Image.length}");
+
+      return base64Image;
+    } catch (e) {
+      print('Error converting image to Base64: $e');
+      rethrow; // Rethrow the error after logging it
+    }
   }
 
   int checkDuration(String time) {
     switch (time) {
       case "1 Week":
-        return 7;
+        return 6;
       case "2 Weeks":
-        return 14;
+        return 13;
       case "3 Weeks":
-        return 21;
+        return 20;
       case "1 Month":
-        return 30;
+        return 29;
       case "3 Months":
-        return 90;
+        return 89;
       case "6 Months":
-        return 182;
+        return 179;
       case "12 Months":
-        return 365;
+        return 364;
+      default:
+        return 0;
+    }
+  }
+
+  int getApiDuration(String time) {
+    switch (time) {
+      case "1 Month":
+        return 1;
+      case "3 Months":
+        return 3;
+      case "6 Months":
+        return 6;
+      case "12 Months":
+        return 12;
       default:
         return 0;
     }
@@ -389,4 +495,8 @@ class PurchasePassPrivateController extends GetxController {
       return []; // Return an empty list in case of error
     }
   }
+}
+
+class DateController extends ValueNotifier<DateTime?> {
+  DateController([DateTime? value]) : super(value);
 }

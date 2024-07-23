@@ -60,7 +60,10 @@ class _HomeViewState extends State<HomeView> {
   void fetchInformation() async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance.collection('information').get();
+          await FirebaseFirestore.instance
+              .collection('information')
+              .where("active", isEqualTo: true)
+              .get();
 
       List<dynamic> fetchedItems = querySnapshot.docs.map((doc) {
         return {
@@ -262,47 +265,38 @@ class _HomeViewState extends State<HomeView> {
                                 scrollDirection: Axis.horizontal,
                                 height: 230,
                                 onPageChanged: (index, reason) {
-                                  setState(
-                                    () {
-                                      _currentIndex = index;
-                                    },
-                                  );
+                                  setState(() {
+                                    _currentIndex = index;
+                                  });
                                 },
                               ),
-                              items: imagesList
-                                  .map(
-                                    (item) => Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Card(
-                                        margin: const EdgeInsets.only(
-                                          top: 10.0,
-                                          bottom: 10.0,
-                                        ),
-                                        elevation: 6.0,
-                                        shadowColor: Colors.redAccent,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(30.0),
-                                          ),
-                                          child: Stack(
-                                            children: <Widget>[
-                                              Image.network(
-                                                item,
-                                                fit: BoxFit.cover,
-                                                width: double.infinity,
-                                                height: double.infinity,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                              items: controller.carouselData.map((carousel) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Card(
+                                    margin: const EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                    ),
+                                    elevation: 6.0,
+                                    shadowColor: Colors.redAccent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(30.0),
+                                      ),
+                                      child: Image.network(
+                                        carousel.image!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
                                       ),
                                     ),
-                                  )
-                                  .toList(),
+                                  ),
+                                );
+                              }).toList(),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -412,7 +406,7 @@ class _HomeViewState extends State<HomeView> {
                                                           TextOverflow.ellipsis,
                                                       style: const TextStyle(
                                                         fontFamily:
-                                                            AppThemData.medium,
+                                                            AppThemData.bold,
                                                       ),
                                                     ),
                                                   ),

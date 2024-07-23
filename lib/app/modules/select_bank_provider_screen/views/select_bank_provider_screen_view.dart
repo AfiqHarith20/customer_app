@@ -1,16 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../constant/constant.dart';
 import '../../../../themes/app_colors.dart';
 import '../../../../themes/app_them_data.dart';
-import '../../../../themes/button_theme.dart';
 import '../../../../themes/common_ui.dart';
 import '../../../widget/svg_image_widget.dart';
-import '../../select_payment_screen/controllers/select_payment_screen_controller.dart';
 import '../controllers/select_bank_provider_screen_controller.dart';
 
 class SelectBankProviderScreenView extends StatefulWidget {

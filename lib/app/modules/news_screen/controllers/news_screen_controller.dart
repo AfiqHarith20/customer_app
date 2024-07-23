@@ -14,7 +14,10 @@ class NewsScreenController extends GetxController {
   void fetchInformationNews() async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance.collection('information').get();
+          await FirebaseFirestore.instance
+              .collection('information')
+              .where("active", isEqualTo: true)
+              .get();
 
       List<Map<String, dynamic>> fetchedItems = querySnapshot.docs.map((doc) {
         return {

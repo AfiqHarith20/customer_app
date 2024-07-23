@@ -146,6 +146,28 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                   controller: vehicleData == null
                       ? controller.plateNoController.value
                       : controller2.plateNoController.value,
+                  onChanged: (text) {
+                    // Convert text to uppercase
+                    if (vehicleData == null) {
+                      controller.plateNoController.value.value =
+                          controller.plateNoController.value.value.copyWith(
+                        text: text.toUpperCase(),
+                        selection: TextSelection(
+                          baseOffset: text.length,
+                          extentOffset: text.length,
+                        ),
+                      );
+                    } else {
+                      controller2.plateNoController.value.value =
+                          controller2.plateNoController.value.value.copyWith(
+                        text: text.toUpperCase(),
+                        selection: TextSelection(
+                          baseOffset: text.length,
+                          extentOffset: text.length,
+                        ),
+                      );
+                    }
+                  },
                   decoration: InputDecoration(
                     hintText: 'WWX 1235',
                     border: OutlineInputBorder(
@@ -176,7 +198,96 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'VEHICLE NAME'.tr,
+                  'VEHICLE MANUFACTURE'.tr,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 8),
+                Obx(() {
+                  return DropdownButtonFormField<VehicleManufactureModel>(
+                    decoration: InputDecoration(
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Image.asset(
+                          "assets/images/car-manufacturing.png",
+                          height: 24,
+                        ),
+                      ),
+                      labelText: "Vehicle Manufacture*".tr,
+                      labelStyle: const TextStyle(
+                        color: AppColors.darkGrey09,
+                      ),
+                      fillColor: AppColors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: AppColors.yellow04,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: AppColors.yellow04,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: AppColors.yellow04,
+                        ),
+                      ),
+                    ),
+                    itemHeight: 48,
+                    items: vehicleData == null
+                        ? controller.vehicleManufactData
+                            .map((VehicleManufactureModel vehicle) {
+                            return DropdownMenuItem<VehicleManufactureModel>(
+                              value: vehicle,
+                              child: SizedBox(
+                                height: 48,
+                                child: Text(
+                                  vehicle.name ?? '',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            );
+                          }).toList()
+                        : controller2.vehicleManufactData
+                            .map((VehicleManufactureModel vehicle) {
+                            return DropdownMenuItem<VehicleManufactureModel>(
+                              value: vehicle,
+                              child: SizedBox(
+                                height: 48,
+                                child: Text(
+                                  vehicle.name ?? '',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                    onChanged: (VehicleManufactureModel? newValue) {
+                      if (vehicleData == null) {
+                        controller.selectedVehicle.value = newValue;
+                        controller.customerVehicleModel.update((val) {
+                          val?.vehicleManufacturer = newValue?.name;
+                        });
+                      } else {
+                        controller2.selectedVehicle.value = newValue;
+                        controller2.customerVehicleModel.update((val) {
+                          val?.vehicleManufacturer = newValue?.name;
+                        });
+                      }
+                    },
+                    value: vehicleData == null
+                        ? controller.selectedVehicle.value
+                        : controller2.selectedVehicle.value,
+                    validator: (value) => value != null
+                        ? null
+                        : 'Vehicle Manufacture required'.tr,
+                  );
+                }),
+                const SizedBox(height: 10),
+                Text(
+                  'VEHICLE MODEL'.tr,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
@@ -207,7 +318,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter vehicle Name';
+                      return 'Please enter vehicle model'.tr;
                     }
                     return null;
                   },
@@ -326,95 +437,6 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                         : controller2.selectedColor.value,
                     validator: (value) =>
                         value != null ? null : 'Color required'.tr,
-                  );
-                }),
-                const SizedBox(height: 16),
-                Text(
-                  'TYPE'.tr,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 8),
-                Obx(() {
-                  return DropdownButtonFormField<VehicleManufactureModel>(
-                    decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Image.asset(
-                          "assets/images/car-manufacturing.png",
-                          height: 24,
-                        ),
-                      ),
-                      labelText: "Vehicle Manufacture*".tr,
-                      labelStyle: const TextStyle(
-                        color: AppColors.darkGrey09,
-                      ),
-                      fillColor: AppColors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(
-                          color: AppColors.yellow04,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(
-                          color: AppColors.yellow04,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(
-                          color: AppColors.yellow04,
-                        ),
-                      ),
-                    ),
-                    itemHeight: 48,
-                    items: vehicleData == null
-                        ? controller.vehicleManufactData
-                            .map((VehicleManufactureModel vehicle) {
-                            return DropdownMenuItem<VehicleManufactureModel>(
-                              value: vehicle,
-                              child: SizedBox(
-                                height: 48,
-                                child: Text(
-                                  vehicle.name ?? '',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ),
-                            );
-                          }).toList()
-                        : controller2.vehicleManufactData
-                            .map((VehicleManufactureModel vehicle) {
-                            return DropdownMenuItem<VehicleManufactureModel>(
-                              value: vehicle,
-                              child: SizedBox(
-                                height: 48,
-                                child: Text(
-                                  vehicle.name ?? '',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                    onChanged: (VehicleManufactureModel? newValue) {
-                      if (vehicleData == null) {
-                        controller.selectedVehicle.value = newValue;
-                        controller.customerVehicleModel.update((val) {
-                          val?.vehicleManufacturer = newValue?.name;
-                        });
-                      } else {
-                        controller2.selectedVehicle.value = newValue;
-                        controller2.customerVehicleModel.update((val) {
-                          val?.vehicleManufacturer = newValue?.name;
-                        });
-                      }
-                    },
-                    value: vehicleData == null
-                        ? controller.selectedVehicle.value
-                        : controller2.selectedVehicle.value,
-                    validator: (value) => value != null
-                        ? null
-                        : 'Vehicle Manufacture required'.tr,
                   );
                 }),
                 const SizedBox(height: 10),

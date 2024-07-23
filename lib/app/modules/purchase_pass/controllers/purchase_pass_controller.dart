@@ -257,7 +257,7 @@ class PurchasePassController extends GetxController {
     } else if (time == "3 Months") {
       return 89;
     } else if (time == "6 Months") {
-      return 181;
+      return 179;
     } else if (time == "12 Months") {
       return 364;
     }

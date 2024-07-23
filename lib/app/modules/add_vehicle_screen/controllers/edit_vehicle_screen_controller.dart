@@ -110,10 +110,10 @@ class EditVehicleScreenController extends GetxController {
         'active': true,
       });
 
-      Get.snackbar('Success', 'Vehicle updated successfully');
+      Get.snackbar('Success'.tr, 'Vehicle updated successfully'.tr);
       print('Vehicle updated successfully');
     } catch (e) {
-      Get.snackbar('Error', 'Error updating vehicle: $e');
+      Get.snackbar('Error'.tr, 'Error updating vehicle: $e');
       print('Error updating vehicle: $e');
     } finally {
       isLoading.value = false;
@@ -132,10 +132,10 @@ class EditVehicleScreenController extends GetxController {
 
       await vehicleDocRef.delete();
 
-      Get.snackbar('Success', 'Vehicle deleted successfully');
+      Get.snackbar('Success'.tr, 'Vehicle deleted successfully'.tr);
       print('Vehicle deleted successfully');
     } catch (e) {
-      Get.snackbar('Error', 'Error deleting vehicle: $e');
+      Get.snackbar('Error'.tr, 'Error deleting vehicle: $e');
       print('Error deleting vehicle: $e');
     } finally {
       isLoading.value = false;
@@ -144,22 +144,22 @@ class EditVehicleScreenController extends GetxController {
 
   bool validateInput() {
     if (plateNoController.value.text.isEmpty) {
-      Get.snackbar('Error', 'Please enter a valid plate number');
+      Get.snackbar('Error'.tr, 'Please enter a valid plate number'.tr);
       return false;
     }
 
     if (vehicleModelController.value.text.isEmpty) {
-      Get.snackbar('Error', 'Please enter a valid vehicle model');
+      Get.snackbar('Error'.tr, 'Please enter a valid vehicle model'.tr);
       return false;
     }
 
     if (selectedColor.value == null) {
-      Get.snackbar('Error', 'Please select a color');
+      Get.snackbar('Error'.tr, 'Please select a color'.tr);
       return false;
     }
 
     if (selectedVehicle.value == null) {
-      Get.snackbar('Error', 'Please select a vehicle manufacturer');
+      Get.snackbar('Error'.tr, 'Please select a vehicle manufacturer'.tr);
       return false;
     }
 

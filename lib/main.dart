@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:customer_app/app/models/app_version_model.dart';
+import 'package:customer_app/app/models/server_maintenance_model.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/firebase_options.dart';
 import 'package:customer_app/services/localization_service.dart';
@@ -8,23 +9,53 @@ import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:customer_app/utils/preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'app/routes/app_pages.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Preferences.initPref();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  try {
+    await FirebaseMessaging.instance.subscribeToTopic("nazifa");
+    print('Subscribed to topic "nazifa"');
+  } catch (e) {
+    print('Failed to subscribe to topic: $e');
+  }
+
   final bool shouldShowUpdateDialog = await checkForAppUpdate();
+  final ServerMaintenanceModel? maintenanceInfo = await checkForMaintenance();
 
   runApp(
-    GetMaterialApp(
+    MyApp(
+      shouldShowUpdateDialog: shouldShowUpdateDialog,
+      maintenanceInfo: maintenanceInfo,
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  final bool? shouldShowUpdateDialog;
+  final ServerMaintenanceModel? maintenanceInfo;
+
+  const MyApp({
+    Key? key,
+    this.shouldShowUpdateDialog,
+    this.maintenanceInfo,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: false,
@@ -33,36 +64,16 @@ void main() async {
       fallbackLocale: LocalizationService.locale,
       translations: LocalizationService(),
       builder: (context, child) {
-        if (shouldShowUpdateDialog) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return DialogBoxNotify(
-                  imageAsset: "assets/images/certificate.png",
-                  onPressConfirm: () async {
-                    // Close the app when the user clicks "Ok"
-                    exit(0);
-                  },
-                  onPressConfirmBtnName: "Ok".tr,
-                  onPressConfirmColor: AppColors.red04,
-                  content:
-                      "Please download the latest version of the apps in Google Play Store (for Android)/ App Store (for iOS)."
-                          .tr,
-                  subTitle: "Update Available".tr,
-                );
-              },
-            );
-          });
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {});
+
         return EasyLoading.init()(context, child);
       },
       title: "Nazifa Parking",
       initialRoute: AppPages.INITIAL,
       debugShowCheckedModeBanner: false,
       getPages: AppPages.routes,
-    ),
-  );
+    );
+  }
 }
 
 Future<bool> checkForAppUpdate() async {
@@ -111,4 +122,22 @@ Future<bool> checkForAppUpdate() async {
   }
 
   return shouldUpdate;
+}
+
+Future<ServerMaintenanceModel?> checkForMaintenance() async {
+  print('Checking for server maintenance...');
+  final serverMaintenance = await FireStoreUtils.fetchServerMaintenance();
+
+  if (serverMaintenance == null) {
+    print('No server maintenance info found.');
+    return null;
+  }
+
+  if (serverMaintenance.active == true) {
+    print('Server is under maintenance.');
+    return serverMaintenance;
+  } else {
+    print('No active server maintenance.');
+    return null;
+  }
 }

@@ -8,7 +8,7 @@ import '../../../models/carousel_model.dart';
 
 class CarouselSliderDataFound extends StatefulWidget {
   final List<CarouselModel> carouselList;
-  const CarouselSliderDataFound(this.carouselList);
+  const CarouselSliderDataFound(this.carouselList, {super.key});
 
   @override
   _CarouselSliderDataFoundState createState() =>

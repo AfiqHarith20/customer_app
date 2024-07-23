@@ -16,6 +16,7 @@ import 'package:customer_app/app/models/owner_model.dart';
 import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
+import 'package:customer_app/app/models/server_maintenance_model.dart';
 import 'package:customer_app/app/models/transaction_history_model.dart';
 import 'package:customer_app/app/models/vehicle_model.dart';
 import 'package:customer_app/app/models/wallet_topup_model.dart';
@@ -862,8 +863,11 @@ class FireStoreUtils {
         PendingPassModel pendingPassModel =
             PendingPassModel.fromJson(element.data());
         pendingPassList.add(pendingPassModel);
-        print('-------length pending----->${pendingPassList.length}');
       }
+      // Sort pending passes by createAt in descending order
+      pendingPassList.sort((a, b) {
+        return b.createAt!.compareTo(a.createAt!);
+      });
     }).catchError((error) {
       log("Failed to get data: $error");
       return null;
@@ -882,6 +886,10 @@ class FireStoreUtils {
         MyPurchasePassModel mySeasonPassModel =
             MyPurchasePassModel.fromJson(element.data());
         mySeasonPassList.add(mySeasonPassModel);
+        // Sort pending passes by createAt in descending order
+        mySeasonPassList.sort((a, b) {
+          return b.createAt!.compareTo(a.createAt!);
+        });
         print('-------length----->${mySeasonPassList.length}');
       }
     }).catchError((error) {
@@ -989,6 +997,29 @@ class FireStoreUtils {
     }
 
     return platformInfo;
+  }
+
+  static Future<ServerMaintenanceModel?> fetchServerMaintenance() async {
+    try {
+      // Query Firestore to get documents where 'active' is true
+      final serverSnapshot = await FirebaseFirestore.instance
+          .collection(CollectionName.serverMaintenance)
+          .where("active", isEqualTo: true)
+          .get();
+
+      // Check if we have any documents
+      if (serverSnapshot.docs.isNotEmpty) {
+        // Assume we only want the first document if there are multiple
+        final doc = serverSnapshot.docs.first;
+        return ServerMaintenanceModel.fromFirestore(doc);
+      } else {
+        print("No active server maintenance found.");
+        return null;
+      }
+    } catch (error) {
+      print("Failed to get data: $error");
+      return null;
+    }
   }
 
   static Future<List<VehicleManufactureModel>?> getVehicleManufacture() async {

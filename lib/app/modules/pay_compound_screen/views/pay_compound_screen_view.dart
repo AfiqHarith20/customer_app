@@ -112,6 +112,9 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
             context,
             "Checkout".tr,
             backgroundColor: AppColors.white,
+            // onBackTap: () {
+            //   Get.offAllNamed(Routes.SEARCH_SUMMON_SCREEN);
+            // },
           ),
           body: controller.isLoading.value
               ? Constant.loader()
@@ -364,7 +367,7 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                   // print('channelId: ${myPaymentCompoundModel.channelId}');
                   // print('compoundNo: ${myPaymentCompoundModel.compoundNo}');
                   // print('kodHasil: ${myPaymentCompoundModel.kodHasil}');
-                  Get.toNamed(
+                  Get.offAllNamed(
                     Routes.WEBVIEW_COMPOUND_SCREEN,
                     arguments: {
                       'myPaymentCompoundModel': myPaymentCompoundModel,

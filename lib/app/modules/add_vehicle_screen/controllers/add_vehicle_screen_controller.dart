@@ -64,10 +64,10 @@ class AddVehicleScreenController extends GetxController {
 
       await createVehicle(vehicleDocRef);
 
-      Get.snackbar('Success', 'Vehicle added successfully');
+      Get.snackbar('Success'.tr, 'Vehicle added successfully'.tr);
       print('Vehicle added successfully');
     } catch (e) {
-      Get.snackbar('Error', 'Error adding vehicle: $e');
+      Get.snackbar('Error'.tr, 'Error adding vehicle: $e');
       print('Error adding vehicle: $e');
     } finally {
       isLoading.value = false;
@@ -76,22 +76,22 @@ class AddVehicleScreenController extends GetxController {
 
   bool validateInput() {
     if (plateNoController.value.text.isEmpty) {
-      Get.snackbar('Error', 'Please enter a valid plate number');
+      Get.snackbar('Error'.tr, 'Please enter a valid plate number'.tr);
       return false;
     }
 
     if (vehicleModelController.value.text.isEmpty) {
-      Get.snackbar('Error', 'Please enter a valid vehicle model');
+      Get.snackbar('Error'.tr, 'Please enter a valid vehicle model'.tr);
       return false;
     }
 
     if (customerVehicleModel.value.colorHex == null) {
-      Get.snackbar('Error', 'Please select a color');
+      Get.snackbar('Error'.tr, 'Please select a color'.tr);
       return false;
     }
 
     if (customerVehicleModel.value.vehicleManufacturer == null) {
-      Get.snackbar('Error', 'Please select a vehicle manufacturer');
+      Get.snackbar('Error'.tr, 'Please select a vehicle manufacturer'.tr);
       return false;
     }
 

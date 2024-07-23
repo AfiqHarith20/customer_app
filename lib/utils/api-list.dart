@@ -18,4 +18,5 @@ class APIList {
   static String? zone = "${baseUrl!}/api/v1/Parking/Zone";
   static String? road = "${baseUrl!}/api/v1/Parking/Road?ZoneId=";
   static String? queryPass = "${baseUrl!}/api/v1/Parking/QueryPass?";
+  static String? queryLot = "${baseUrl!}/api/v1/Parking/QueryLot?";
 }

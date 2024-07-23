@@ -1,11 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:customer_app/app/models/season_pass_model.dart';
-import 'package:customer_app/app/modules/select_payment_screen/views/select_payment_screen_view.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
-import 'package:customer_app/constant/constant.dart';
-import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -13,9 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../themes/app_colors.dart';
-import '../../../../themes/app_them_data.dart';
 import '../../../../themes/button_theme.dart';
-import '../../../../themes/common_ui.dart';
 import '../../../widget/mobile_number_textfield.dart';
 import '../../../widget/text_field_prefix_widget.dart';
 import '../controllers/purchase_pass_controller.dart';
@@ -183,15 +177,15 @@ class PurchasePassView extends GetView<PurchasePassController> {
                                 return SizedBox(
                                   height:
                                       MediaQuery.of(context).size.height * 0.6,
-                                  child: ListView.builder(
+                                  child: ListView.separated(
                                     itemCount: controller.vehicleList.length,
                                     itemBuilder: (context, index) {
                                       var vehicle =
                                           controller.vehicleList[index];
                                       return ListTile(
-                                        title: Text(vehicle['vehicleNo']),
-                                        subtitle: Text(
-                                            vehicle['vehicleManufacturer']),
+                                        title: Center(
+                                          child: Text(vehicle['vehicleNo']),
+                                        ),
                                         onTap: () {
                                           // Set selected vehicle data to the text field
                                           controller.vehicleNoController.value
@@ -201,6 +195,8 @@ class PurchasePassView extends GetView<PurchasePassController> {
                                         },
                                       );
                                     },
+                                    separatorBuilder: (context, index) =>
+                                        const Divider(), // Adds a separator between items
                                   ),
                                 );
                               },

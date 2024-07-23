@@ -63,10 +63,12 @@ class VehicleScreenController extends GetxController {
 
       print('Fetched and sorted vehicle data: $vehicleInfo');
 
+      vehicleList.assignAll(vehicleInfo);
       if (vehicleInfo.isNotEmpty) {
-        vehicleList.assignAll(vehicleInfo);
         customerVehicleModel.value = VehicleModel.fromJson(vehicleInfo.first);
       } else {
+        customerVehicleModel.value =
+            VehicleModel(); // Reset the model if no vehicles
         print('No active vehicles found for user: ${getCurrentUid()}');
       }
     } catch (e) {
@@ -74,7 +76,6 @@ class VehicleScreenController extends GetxController {
       _error.value = e.toString();
     } finally {
       isLoading.value = false;
-      update(); // Update the UI after data fetch
     }
   }
 

@@ -24,4 +24,5 @@ class CollectionName {
   static const String custVehicle = "customer_vehicles";
   static const String colorHex = "color_hex";
   static const String vehicleManufacture = "vehicle_manufacturers";
+  static const String serverMaintenance = "server_maintenance_logs";
 }

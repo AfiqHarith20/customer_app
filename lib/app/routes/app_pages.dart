@@ -91,8 +91,8 @@ import '../modules/refer_screen/bindings/refer_screen_binding.dart';
 import '../modules/refer_screen/views/refer_screen_view.dart';
 import '../modules/search_screen/bindings/search_screen_binding.dart';
 import '../modules/search_screen/views/search_screen_view.dart';
-import '../modules/select_payment_screen/bindings/select_payment_screen_binding.dart';
-import '../modules/select_payment_screen/views/select_payment_screen_view.dart';
+import '../modules/checkout_screen/bindings/select_payment_screen_binding.dart';
+import '../modules/checkout_screen/views/select_payment_screen_view.dart';
 import '../modules/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/splash_screen/views/splash_screen_view.dart';
 import '../modules/wallet_screen/bindings/wallet_screen_binding.dart';
@@ -454,7 +454,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.ADD_NEW_VEHICLE,
-      page: () => AddVehicleScreenView(),
+      page: () => const AddVehicleScreenView(),
       binding: AddVehicleScreenBinding(),
     ),
   ];

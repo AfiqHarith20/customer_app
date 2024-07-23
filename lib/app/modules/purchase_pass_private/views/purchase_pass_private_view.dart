@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:customer_app/app/models/query_lot_model.dart';
 import 'package:customer_app/app/models/zone_road_model.dart';
 import 'package:customer_app/app/modules/MySeason_Pass/controllers/my_season_pass_controller.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/themes/screen_size.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../themes/app_colors.dart';
 import '../../../../themes/app_them_data.dart';
@@ -25,9 +28,17 @@ import '../../../widget/mobile_number_textfield.dart';
 import '../../../widget/text_field_prefix_widget.dart';
 import '../controllers/purchase_pass_private_controller.dart';
 
-class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
+class PurchasePassPrivateView extends StatefulWidget {
   const PurchasePassPrivateView({super.key});
 
+  @override
+  State<PurchasePassPrivateView> createState() =>
+      _PurchasePassPrivateViewState();
+}
+
+class _PurchasePassPrivateViewState extends State<PurchasePassPrivateView> {
+  final PurchasePassPrivateController controller =
+      Get.put(PurchasePassPrivateController());
   @override
   Widget build(BuildContext context) {
     return GetX<PurchasePassPrivateController>(
@@ -332,6 +343,54 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                       controller: controller.addressController.value,
                       onPress: () {},
                     ),
+                    TextFieldWidgetPrefix(
+                      prefix: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SvgPicture.asset(
+                          "assets/icons/ic_calender.svg",
+                        ),
+                      ),
+                      validator: (value) => value != null && value.isNotEmpty
+                          ? null
+                          : 'Start Date required'.tr,
+                      title: "Start Date*".tr,
+                      hintText: "Enter Start Date".tr,
+                      controller: TextEditingController(
+                        text: controller.startAtDateController.value.value !=
+                                null
+                            ? DateFormat('MM-yyyy').format(
+                                controller.startAtDateController.value.value!,
+                              )
+                            : '',
+                      ),
+                      readOnly: true,
+                      onPress: () async {
+                        List<DateTime?>? pickDate =
+                            await showCalendarDatePicker2Dialog(
+                          context: context,
+                          config: CalendarDatePicker2WithActionButtonsConfig(
+                            calendarViewMode: CalendarDatePicker2Mode.month,
+                            currentDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                            selectedDayHighlightColor: AppColors.yellow04,
+                          ),
+                          dialogSize: const Size(325, 400),
+                        );
+
+                        if (pickDate != null &&
+                            pickDate.isNotEmpty &&
+                            pickDate[0] != null) {
+                          DateTime selectedDate = pickDate[
+                              0]!; // Extract the first date and ensure it's not null
+                          DateTime firstDayOfMonth = DateTime(
+                              selectedDate.year, selectedDate.month, 1);
+                          controller.startAtDateController.value.value =
+                              firstDayOfMonth;
+                          setState(() {});
+                        }
+                      },
+                    ),
                     Obx(() {
                       return DropdownButtonFormField<Zone>(
                         decoration: InputDecoration(
@@ -480,6 +539,19 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                     },
                   );
 
+                  // Call getQueryLot() first
+                  await controller.getQueryLot();
+
+                  // Show dialog box with new API response
+                  bool isConfirmed = await showNewPassDialog(
+                      context, controller.queryLotModel.value);
+
+                  // If the user cancelled the dialog, stop execution here
+                  if (!isConfirmed) {
+                    Navigator.of(context).pop();
+                    return;
+                  }
+
                   // Call postReservePassData asynchronously
                   bool success = await controller.addPrivatePassData();
 
@@ -521,7 +593,6 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
                               onPressConfirmColor: AppColors.red04,
                               content:
                                   "Your request is not successfully sent, please try again"
-                                      .tr
                                       .tr,
                               subTitle: "Error".tr,
                             );
@@ -534,6 +605,35 @@ class PurchasePassPrivateView extends GetView<PurchasePassPrivateController> {
         );
       },
     );
+  }
+
+  Future<bool> showNewPassDialog(
+      BuildContext context, QueryLot queryLot) async {
+    bool isConfirmed = false;
+    await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
+        return DialogBox(
+          imageAsset: "assets/images/ic_parking.png",
+          content:
+              '${'As a new user, we would like to let you know that the minimum purchase for the private pass is 3 months. Below are the details:'.tr}\n${'Start Date:'.tr}${queryLot.newStartDate != null ? dateFormat.format(queryLot.newStartDate!) : ''}\n${'End Date:'.tr}${queryLot.newEndDate != null ? dateFormat.format(queryLot.newEndDate!) : ''}\n${'Price: RM'.tr}${queryLot.privatePassModel?.price ?? ''}',
+          subTitle: 'New User Pass'.tr,
+          onPressConfirm: () {
+            isConfirmed = true;
+            Navigator.pop(context, true);
+          },
+          onPressConfirmBtnName: "Buy Pass".tr,
+          onPressConfirmColor: AppColors.green04,
+          onPressCancel: () {
+            Navigator.pop(context, false);
+          },
+          onPressCancelColor: AppColors.darkGrey01,
+          onPressCancelBtnName: "Cancel".tr,
+        );
+      },
+    ).then((value) => isConfirmed = value ?? false);
+    return isConfirmed;
   }
 
   _showImagePickerOptions(

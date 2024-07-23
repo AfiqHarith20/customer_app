@@ -30,8 +30,14 @@ class SplashScreenController extends GetxController {
       if (value != null) {
         Constant.currencyModel = value;
       } else {
-        Constant.currencyModel =
-            CurrencyModel(id: "", code: "MYR", decimalDigits: 2, enable: true, name: "Ringgit Malaysia", symbol: "RM", symbolAtRight: false);
+        Constant.currencyModel = CurrencyModel(
+            id: "",
+            code: "MYR",
+            decimalDigits: 2,
+            enable: true,
+            name: "Ringgit Malaysia",
+            symbol: "RM",
+            symbolAtRight: false);
       }
     });
 
@@ -44,7 +50,8 @@ class SplashScreenController extends GetxController {
     } else {
       bool isLogin = await FireStoreUtils.isLogin();
       if (isLogin == true) {
-        await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid()).then((value) async {
+        await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+            .then((value) async {
           if (value!.active == true) {
             Get.offAllNamed(Routes.DASHBOARD_SCREEN);
           } else {
@@ -66,7 +73,8 @@ class SplashScreenController extends GetxController {
       String token = await NotificationService.getToken();
       log(":::::::TOKEN:::::: $token");
       if (FirebaseAuth.instance.currentUser != null) {
-        await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid()).then((value) {
+        await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+            .then((value) {
           if (value != null) {
             CustomerModel customerModel = value;
             customerModel.fcmToken = token;
@@ -78,12 +86,16 @@ class SplashScreenController extends GetxController {
   }
 
   checkLanguage() {
-    if (Preferences.getString(Preferences.languageCodeKey).toString().isNotEmpty) {
+    if (Preferences.getString(Preferences.languageCodeKey)
+        .toString()
+        .isNotEmpty) {
       LanguageModel languageModel = Constant.getLanguage();
       LocalizationService().changeLocale(languageModel.code.toString());
     } else {
-      LanguageModel languageModel = LanguageModel(id: "ytCeKlliZ71o01g0GqUq", code: "ms", name: "Bahasa Melayu");
-      Preferences.setString(Preferences.languageCodeKey, jsonEncode(languageModel.toJson()));
+      LanguageModel languageModel = LanguageModel(
+          id: "ytCeKlliZ71o01g0GqUq", code: "ms", name: "Bahasa Melayu");
+      Preferences.setString(
+          Preferences.languageCodeKey, jsonEncode(languageModel.toJson()));
     }
   }
 }
