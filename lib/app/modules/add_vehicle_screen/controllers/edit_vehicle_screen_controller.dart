@@ -103,9 +103,9 @@ class EditVehicleScreenController extends GetxController {
 
       await vehicleDocRef.update({
         'vehicleNo': plateNoController.value.text,
-        'colorHex': selectedColor.value?.code,
-        'vehicleManufacturer': selectedVehicle.value?.name,
-        'vehicleModel': vehicleModelController.value.text,
+        'colorHex': selectedColor.value?.code ?? '',
+        'vehicleManufacturer': selectedVehicle.value?.name ?? '',
+        'vehicleModel': vehicleModelController.value.text ?? '',
         'default': isDefault.value,
         'active': true,
       });
@@ -145,21 +145,6 @@ class EditVehicleScreenController extends GetxController {
   bool validateInput() {
     if (plateNoController.value.text.isEmpty) {
       Get.snackbar('Error'.tr, 'Please enter a valid plate number'.tr);
-      return false;
-    }
-
-    if (vehicleModelController.value.text.isEmpty) {
-      Get.snackbar('Error'.tr, 'Please enter a valid vehicle model'.tr);
-      return false;
-    }
-
-    if (selectedColor.value == null) {
-      Get.snackbar('Error'.tr, 'Please select a color'.tr);
-      return false;
-    }
-
-    if (selectedVehicle.value == null) {
-      Get.snackbar('Error'.tr, 'Please select a vehicle manufacturer'.tr);
       return false;
     }
 

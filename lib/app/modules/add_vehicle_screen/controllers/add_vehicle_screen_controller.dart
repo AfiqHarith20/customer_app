@@ -80,30 +80,16 @@ class AddVehicleScreenController extends GetxController {
       return false;
     }
 
-    if (vehicleModelController.value.text.isEmpty) {
-      Get.snackbar('Error'.tr, 'Please enter a valid vehicle model'.tr);
-      return false;
-    }
-
-    if (customerVehicleModel.value.colorHex == null) {
-      Get.snackbar('Error'.tr, 'Please select a color'.tr);
-      return false;
-    }
-
-    if (customerVehicleModel.value.vehicleManufacturer == null) {
-      Get.snackbar('Error'.tr, 'Please select a vehicle manufacturer'.tr);
-      return false;
-    }
-
     return true;
   }
 
   Future<void> createVehicle(DocumentReference vehicleDocRef) async {
     await vehicleDocRef.set({
       'vehicleNo': plateNoController.value.text,
-      'colorHex': customerVehicleModel.value.colorHex,
-      'vehicleManufacturer': customerVehicleModel.value.vehicleManufacturer,
-      'vehicleModel': vehicleModelController.value.text,
+      'colorHex': customerVehicleModel.value.colorHex ?? '',
+      'vehicleManufacturer':
+          customerVehicleModel.value.vehicleManufacturer ?? '',
+      'vehicleModel': vehicleModelController.value.text ?? '',
       'active': true,
       'default': isDefault.value,
     });

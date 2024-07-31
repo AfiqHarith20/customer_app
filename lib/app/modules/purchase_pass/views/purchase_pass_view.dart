@@ -2,6 +2,7 @@
 
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/app/widget/text_field_prefix_upper_widget.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -169,6 +170,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                             ? null
                             : 'Plate No. required'.tr,
                         controller: controller.vehicleNoController.value,
+                        readOnly: true,
                         onPress: () {
                           if (controller.vehicleList.isNotEmpty) {
                             showModalBottomSheet(
@@ -202,9 +204,25 @@ class PurchasePassView extends GetView<PurchasePassController> {
                               },
                             );
                           } else {
-                            // Handle case where no vehicle data is available
-                            // Allow the user to type manually
-                            // Optionally, you can show a message or handle it as needed
+                            // Show a dialog if no vehicles are available
+                            Get.dialog(
+                              DialogBoxNotify(
+                                imageAsset: "assets/images/car.png",
+                                onPressConfirm: () async {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog
+                                  // Navigate to the profile page
+                                  Get.offAndToNamed(
+                                    Routes.VEHICLE_SCREEN,
+                                  );
+                                },
+                                onPressConfirmBtnName: "Ok".tr,
+                                onPressConfirmColor: AppColors.green04,
+                                content: "Please add your vehicle.".tr,
+                                subTitle: "No Plate Number Available".tr.tr,
+                              ),
+                              barrierDismissible: false,
+                            );
                           }
                         },
                         textCapitalization: TextCapitalization.characters,

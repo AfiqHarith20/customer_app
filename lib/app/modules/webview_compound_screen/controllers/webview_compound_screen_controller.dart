@@ -179,6 +179,26 @@ class WebviewCompoundScreenController extends GetxController {
       );
     }
   }
+
+  @override
+  void onClose() {
+    super.onClose();
+    cleanup();
+  }
+
+  void cleanup() {
+    // Reset or clear any data here
+    purchasePassModel.value = MyPurchasePassModel();
+    myPaymentCompoundModel.value = MyPaymentCompoundModel();
+    compoundModel.value = CompoundModel();
+    customerModel.value = CustomerModel();
+    paymentModel.value = PaymentModel();
+    onlinePaymentModel.value = OnlinePaymentModel();
+    isLoading.value = true;
+    isFormVisible.value = false;
+    paymentResponse = '';
+    paymentType.value = '';
+  }
 }
 
 class WebViewResponse {

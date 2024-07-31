@@ -115,10 +115,28 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
       dispose: (state) => state.dispose(),
       builder: (controller) {
         return Scaffold(
-          appBar: UiInterface().customAppBar(
-            context,
-            "Checkout".tr,
+          appBar: AppBar(
+            title: Text(
+              "Checkout".tr,
+              style: const TextStyle(color: AppColors.darkGrey07),
+            ),
             backgroundColor: AppColors.white,
+            leading: IconButton(
+              color: AppColors.darkGrey07,
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () async {
+                final result = await Get.offAllNamed(Routes.SEASON_PASS);
+                if (result != null && result is Map<String, dynamic>) {
+                  setState(() {
+                    controller.passId = result['passId'];
+                    widget.selectedBankName = result['bankName'];
+                    controller.purchasePassModel.value.startDate;
+                    controller.purchasePassModel.value.endDate;
+                    controller.purchasePassModel.value.vehicleNo;
+                  });
+                }
+              },
+            ),
           ),
           body:
               // controller.isLoading.value
@@ -390,7 +408,7 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                     );
                     // print('Online Payment Data: $onlinePaymentModel');
                     // print('customerId ${passData['customerId']}');
-                    Get.toNamed(
+                    Get.offAndToNamed(
                       Routes.WEBVIEW_SCREEN,
                       arguments: {
                         'onlinePaymentModel': onlinePaymentModel,
@@ -406,16 +424,18 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                             .purchasePassModel.value.seasonPassModel!.price!,
                       ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
                     );
-                  } else if (controller.selectedPaymentMethod.value ==
-                      controller.paymentModel.value.paypal!.name) {
-                    // Call the controller method to handle PayPal payment
-                    controller.paypalPaymentSheet(
-                      double.parse(
-                        controller
-                            .purchasePassModel.value.seasonPassModel!.price!,
-                      ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-                    );
-                  } else if (controller.selectedPaymentMethod.value ==
+                  }
+                  // else if (controller.selectedPaymentMethod.value ==
+                  //     controller.paymentModel.value.paypal!.name) {
+                  //   // Call the controller method to handle PayPal payment
+                  //   controller.paypalPaymentSheet(
+                  //     double.parse(
+                  //       controller
+                  //           .purchasePassModel.value.seasonPassModel!.price!,
+                  //     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+                  //   );
+                  // }
+                  else if (controller.selectedPaymentMethod.value ==
                       controller.paymentModel.value.wallet!.name) {
                     // Check if the wallet amount is sufficient
                     if (double.parse(controller.customerModel.value.walletAmount

@@ -439,16 +439,18 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                           .purchasePassModel.value.seasonPassModel!.price!,
                     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
                   );
-                } else if (controller.selectedPaymentMethod.value ==
-                    controller.paymentModel.value.paypal!.name) {
-                  // Call the controller method to handle PayPal payment
-                  controller.paypalPaymentSheet(
-                    double.parse(
-                      controller
-                          .purchasePassModel.value.seasonPassModel!.price!,
-                    ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-                  );
-                } else if (controller.selectedPaymentMethod.value ==
+                }
+                // else if (controller.selectedPaymentMethod.value ==
+                //     controller.paymentModel.value.paypal!.name) {
+                //   // Call the controller method to handle PayPal payment
+                //   controller.paypalPaymentSheet(
+                //     double.parse(
+                //       controller
+                //           .purchasePassModel.value.seasonPassModel!.price!,
+                //     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+                //   );
+                // }
+                else if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.wallet!.name) {
                   // Check if the wallet amount is sufficient
                   if (double.parse(controller.customerModel.value.walletAmount

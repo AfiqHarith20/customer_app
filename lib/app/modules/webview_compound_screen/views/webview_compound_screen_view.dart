@@ -55,7 +55,7 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
             return InAppWebView(
               initialUrlRequest: URLRequest(
                 // Load empty page initially
-                url: WebUri('about:blank'),
+                url: Uri.parse('about:blank'),
               ),
               onProgressChanged:
                   (InAppWebViewController controller, int progress) {
@@ -75,14 +75,14 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
                 if (redirectionType == 1) {
                   // Redirect using URL
                   await controller.loadUrl(
-                      urlRequest: URLRequest(url: WebUri(redirectUrl)));
+                      urlRequest: URLRequest(url: Uri.parse(redirectUrl)));
                 } else if (redirectionType == 2) {
                   // Redirect using client script
                   // Load the HTML form content into WebView
                   await controller.loadData(
                     data: clientScript,
                     // Set base URL for relative paths (optional)
-                    baseUrl: WebUri('https://mepsfpx.com.my/'),
+                    baseUrl: Uri.parse('https://mepsfpx.com.my/'),
                     // Set MIME type (optional)
                     mimeType: 'text/html',
                     // Set encoding (optional)

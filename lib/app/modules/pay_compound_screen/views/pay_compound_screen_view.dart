@@ -382,15 +382,17 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                       controller.myPaymentCompoundModel.value.amount!,
                     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
                   );
-                } else if (controller.selectedPaymentMethod.value ==
-                    controller.paymentModel.value.paypal!.name) {
-                  // Call the controller method to handle PayPal payment
-                  controller.paypalPaymentSheet(
-                    double.parse(
-                      controller.myPaymentCompoundModel.value.amount!,
-                    ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-                  );
-                } else if (controller.selectedPaymentMethod.value ==
+                }
+                // else if (controller.selectedPaymentMethod.value ==
+                //     controller.paymentModel.value.paypal!.name) {
+                //   // Call the controller method to handle PayPal payment
+                //   controller.paypalPaymentSheet(
+                //     double.parse(
+                //       controller.myPaymentCompoundModel.value.amount!,
+                //     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+                //   );
+                // }
+                else if (controller.selectedPaymentMethod.value ==
                     controller.paymentModel.value.wallet!.name) {
                   // Check if the wallet amount is sufficient
                   if (double.parse(controller.customerModel.value.walletAmount

@@ -6,7 +6,7 @@ import 'package:customer_app/themes/app_them_data.dart';
 import 'package:customer_app/themes/button_theme.dart';
 import 'package:customer_app/themes/common_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_share/flutter_share.dart';
+// import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
@@ -21,7 +21,8 @@ class ReferScreenView extends StatelessWidget {
         init: ReferScreenController(),
         builder: (controller) {
           return Scaffold(
-            appBar: UiInterface().customAppBar(context, "Refer And Earn".tr, backgroundColor: AppColors.white),
+            appBar: UiInterface().customAppBar(context, "Refer And Earn".tr,
+                backgroundColor: AppColors.white),
             body: (controller.isLoading.value)
                 ? Constant.loader()
                 : SingleChildScrollView(
@@ -32,16 +33,23 @@ class ReferScreenView extends StatelessWidget {
                         children: [
                           Text(
                             "Refer and Earn Rewards".tr,
-                            style: const TextStyle(fontFamily: AppThemData.semiBold, fontSize: 20, color: AppColors.darkGrey10),
+                            style: const TextStyle(
+                                fontFamily: AppThemData.semiBold,
+                                fontSize: 20,
+                                color: AppColors.darkGrey10),
                           ),
                           Text(
                             "Invite friends to use our app and earn exclusive rewards for every successful referral. Share the benefits today!"
                                 .tr,
-                            style: const TextStyle(fontFamily: AppThemData.regular, color: AppColors.lightGrey10),
+                            style: const TextStyle(
+                                fontFamily: AppThemData.regular,
+                                color: AppColors.lightGrey10),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 66.0, vertical: 32),
-                            child: Image.asset("assets/images/refer_and_earnbg.png"),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 66.0, vertical: 32),
+                            child: Image.asset(
+                                "assets/images/refer_and_earnbg.png"),
                           ),
                           Row(
                             children: [
@@ -49,7 +57,8 @@ class ReferScreenView extends StatelessWidget {
                                   child: ButtonThem.buildButton(
                                 context,
                                 btnHeight: 45,
-                                title: "${controller.referralModel.value.referralCode}",
+                                title:
+                                    "${controller.referralModel.value.referralCode}",
                                 txtColor: AppColors.yellow10,
                                 bgColor: AppColors.yellow04,
                                 onPress: () {},
@@ -65,8 +74,10 @@ class ReferScreenView extends StatelessWidget {
                                 txtColor: AppColors.lightGrey01,
                                 bgColor: AppColors.darkGrey10,
                                 onPress: () {
-                                  FlutterClipboard.copy('${controller.referralModel.value.referralCode}')
-                                      .then((value) => ShowToastDialog.showToast("Copied"));
+                                  FlutterClipboard.copy(
+                                          '${controller.referralModel.value.referralCode}')
+                                      .then((value) =>
+                                          ShowToastDialog.showToast("Copied"));
                                 },
                               )
                             ],
@@ -76,18 +87,23 @@ class ReferScreenView extends StatelessWidget {
                           ),
                           Text(
                             "How it Works".tr,
-                            style: const TextStyle(fontFamily: AppThemData.semiBold, fontSize: 16, color: AppColors.darkGrey10),
+                            style: const TextStyle(
+                                fontFamily: AppThemData.semiBold,
+                                fontSize: 16,
+                                color: AppColors.darkGrey10),
                           ),
                           const SizedBox(
                             height: 24,
                           ),
                           commanWidget(
                               title: "Refer Friends",
-                              description: "Share your unique referral link or code with friends.",
+                              description:
+                                  "Share your unique referral link or code with friends.",
                               imageAsset: "assets/icons/ic_mail.svg"),
                           commanWidget(
                               title: "Friends Join",
-                              description: "Friends sign up for the app using your referral link or code.",
+                              description:
+                                  "Friends sign up for the app using your referral link or code.",
                               imageAsset: "assets/icons/ic_supervised.svg"),
                           commanWidget(
                               title: "Earn Rewards",
@@ -117,22 +133,28 @@ class ReferScreenView extends StatelessWidget {
 }
 
 Future<void> share(ReferScreenController controller) async {
-  await FlutterShare.share(
-    title: 'NAZIFA Customer'.tr,
-    text:
-        'Hey there, thanks for choosing NAZIFA Customer. Hope you love our product. If you do, share it with your friends using code ${controller.referralModel.value.referralCode.toString()} and get ${Constant.amountShow(amount: Constant.referralAmount)}.'
-            .tr,
-  );
+  // await FlutterShare.share(
+  //   title: 'NAZIFA Customer'.tr,
+  //   text:
+  //       'Hey there, thanks for choosing NAZIFA Customer. Hope you love our product. If you do, share it with your friends using code ${controller.referralModel.value.referralCode.toString()} and get ${Constant.amountShow(amount: Constant.referralAmount)}.'
+  //           .tr,
+  // );
 }
 
-commanWidget({required String imageAsset, required String title, required String description}) {
+commanWidget(
+    {required String imageAsset,
+    required String title,
+    required String description}) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 12.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(radius: 24, backgroundColor: AppColors.white, child: SvgPicture.asset(imageAsset)),
+        CircleAvatar(
+            radius: 24,
+            backgroundColor: AppColors.white,
+            child: SvgPicture.asset(imageAsset)),
         const SizedBox(
           width: 16,
         ),
@@ -142,11 +164,17 @@ commanWidget({required String imageAsset, required String title, required String
             children: [
               Text(
                 title.tr,
-                style: const TextStyle(fontFamily: AppThemData.semiBold, fontSize: 16, color: AppColors.darkGrey10),
+                style: const TextStyle(
+                    fontFamily: AppThemData.semiBold,
+                    fontSize: 16,
+                    color: AppColors.darkGrey10),
               ),
               Text(
                 description.tr,
-                style: const TextStyle(fontFamily: AppThemData.semiBold, fontSize: 12, color: AppColors.lightGrey09),
+                style: const TextStyle(
+                    fontFamily: AppThemData.semiBold,
+                    fontSize: 12,
+                    color: AppColors.lightGrey09),
               ),
             ],
           ),

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 // Example function to convert color hex codes to color names
-String getColorNameFromHex(String colorHex) {
+String getColorNameFromHex(String? colorHex) {
   // This is just an example map, you might need to implement or use a library for this conversion
   Map<String, String> colorMap = {
     '#FF0000': 'Red',
@@ -17,11 +17,17 @@ String getColorNameFromHex(String colorHex) {
   };
 
   // Default to returning hex if no match found
-  return colorMap[colorHex] ?? colorHex;
+  return colorHex != null && colorHex.isNotEmpty
+      ? colorMap[colorHex] ?? colorHex
+      : '';
 }
 
 // Function to convert color hex codes to Color objects
-Color getColorFromHex(String colorHex) {
+Color getColorFromHex(String? colorHex) {
+  if (colorHex == null || colorHex.isEmpty) {
+    return Colors
+        .transparent; // Return a default color or transparent if hex is null or empty
+  }
   return Color(int.parse(colorHex.replaceAll('#', '0xFF')));
 }
 
@@ -39,14 +45,14 @@ class VehicleScreenView extends StatelessWidget {
         context,
         "My Vehicle".tr,
         onBackTap: () {
-          Get.offAndToNamed(Routes.DASHBOARD_SCREEN);
+          Get.offNamed(Routes.DASHBOARD_SCREEN);
         },
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () async {
-                await Get.toNamed(Routes.ADD_NEW_VEHICLE);
+                await Get.offAndToNamed(Routes.ADD_NEW_VEHICLE);
                 // Call fetchVehicle to refresh the vehicle list after returning
                 await controller.fetchVehicle();
               },
@@ -110,11 +116,12 @@ class VehicleScreenView extends StatelessWidget {
                   itemCount: controller.vehicleList.length,
                   itemBuilder: (context, index) {
                     var vehicle = controller.vehicleList[index];
-                    final vehicleNo = vehicle['vehicleNo'];
+                    final vehicleNo = vehicle['vehicleNo'] ?? '';
                     final colorHex = vehicle['colorHex'];
-                    final vehicleManufacturer = vehicle['vehicleManufacturer'];
-                    final vehicleModel = vehicle['vehicleModel'];
-                    final vehicleDefault = vehicle['default'];
+                    final vehicleManufacturer =
+                        vehicle['vehicleManufacturer'] ?? '';
+                    final vehicleModel = vehicle['vehicleModel'] ?? '';
+                    final vehicleDefault = vehicle['default'] ?? false;
                     final colorName = getColorNameFromHex(colorHex);
                     final vehicleColor = getColorFromHex(colorHex);
 
@@ -132,13 +139,13 @@ class VehicleScreenView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '${vehicleManufacturer ?? ''} - ${vehicleModel ?? ''}',
+                                '$vehicleManufacturer - $vehicleModel',
                                 style: const TextStyle(
                                   color: AppColors.darkGrey10,
                                   fontSize: 16.0,
                                 ),
                               ),
-                              if (vehicleDefault ?? false)
+                              if (vehicleDefault)
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 4.0,
@@ -172,7 +179,7 @@ class VehicleScreenView extends StatelessWidget {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        vehicleNo ?? '',
+                                        vehicleNo,
                                         style: const TextStyle(
                                           color: AppColors.white,
                                           fontFamily: AppThemData.medium,
@@ -182,15 +189,17 @@ class VehicleScreenView extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 8.0),
-                                  Container(
-                                    width: 40,
-                                    height: 47,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      color: vehicleColor,
+                                  if (colorHex != null && colorHex.isNotEmpty)
+                                    Container(
+                                      width: 40,
+                                      height: 47,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        color: vehicleColor,
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                               IconButton(

@@ -1024,7 +1024,7 @@ class FireStoreUtils {
 
   static Future<List<VehicleManufactureModel>?> getVehicleManufacture() async {
     List<VehicleManufactureModel> vehicleManufactureList = [];
-    await fireStore
+    await FireStoreUtils.fireStore
         .collection(CollectionName.vehicleManufacture)
         .where('active', isEqualTo: true)
         .get()
@@ -1035,6 +1035,13 @@ class FireStoreUtils {
         vehicleManufactureList.add(vehicleManufactureModel);
         print('-------length----->${vehicleManufactureList.length}');
       }
+
+      // Sort the list alphabetically by the 'name' field, but keep 'Other' at the bottom
+      vehicleManufactureList.sort((a, b) {
+        if (a.name == 'Other') return 1;
+        if (b.name == 'Other') return -1;
+        return a.name!.compareTo(b.name!);
+      });
     }).catchError((error) {
       log("Failed to get data: $error");
       return null;

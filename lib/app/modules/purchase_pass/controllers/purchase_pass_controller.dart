@@ -74,14 +74,20 @@ class PurchasePassController extends GetxController {
 
   @override
   void onClose() {
+    cleanup(); // Call cleanup to dispose controllers
+    super.onClose();
+  }
+
+  void cleanup() {
+    // Dispose all TextEditingControllers
     fullNameController.value.dispose();
     emailController.value.dispose();
     phoneNumberController.value.dispose();
     vehicleNoController.value.dispose();
+    lotNoController.value.dispose();
     companyNameController.value.dispose();
     companyRegistrationNoController.value.dispose();
     addressController.value.dispose();
-    super.onClose();
   }
 
   getArgument() async {

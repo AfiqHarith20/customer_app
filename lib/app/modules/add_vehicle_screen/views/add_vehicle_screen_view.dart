@@ -84,13 +84,19 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
 
     return Scaffold(
       backgroundColor: AppColors.lightGrey02,
-      appBar: UiInterface().customAppBar(
-        onBackTap: () {
-          Get.offAndToNamed(Routes.VEHICLE_SCREEN);
-        },
+      appBar: AppBar(
+        leading: IconButton(
+          color: AppColors.darkGrey07,
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () async {
+            Get.offAndToNamed(Routes.VEHICLE_SCREEN);
+          },
+        ),
+        title: Text(
+          vehicleData == null ? "New Vehicle".tr : "Edit Vehicle".tr,
+          style: const TextStyle(color: AppColors.darkGrey10),
+        ),
         backgroundColor: AppColors.white,
-        context,
-        vehicleData == null ? "New Vehicle".tr : "Edit Vehicle".tr,
         actions: vehicleData == null
             ? []
             : [
@@ -109,7 +115,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               await controller2.deleteVehicle();
                               Navigator.pop(context); // Close the dialog
                               vehicleController.refreshVehicleData();
-                              Get.toNamed(Routes
+                              Get.offAndToNamed(Routes
                                   .VEHICLE_SCREEN); // Navigate back to vehicle screen
                             },
                             onPressConfirmBtnName: "Delete".tr,
@@ -138,7 +144,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
               children: [
                 const SizedBox(height: 16),
                 Text(
-                  'PLATE NUMBER'.tr,
+                  'PLATE NUMBER*'.tr,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
@@ -191,7 +197,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter plate number';
+                      return 'Please enter plate number'.tr;
                     }
                     return null;
                   },
@@ -212,7 +218,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                           height: 24,
                         ),
                       ),
-                      labelText: "Vehicle Manufacture*".tr,
+                      labelText: "Vehicle Manufacture".tr, // Optional label
                       labelStyle: const TextStyle(
                         color: AppColors.darkGrey09,
                       ),
@@ -245,7 +251,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               child: SizedBox(
                                 height: 48,
                                 child: Text(
-                                  vehicle.name ?? '',
+                                  vehicle.name?.tr ?? '',
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               ),
@@ -258,7 +264,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               child: SizedBox(
                                 height: 48,
                                 child: Text(
-                                  vehicle.name ?? '',
+                                  vehicle.name?.tr ?? '',
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               ),
@@ -268,21 +274,19 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                       if (vehicleData == null) {
                         controller.selectedVehicle.value = newValue;
                         controller.customerVehicleModel.update((val) {
-                          val?.vehicleManufacturer = newValue?.name;
+                          val?.vehicleManufacturer = newValue?.name?.tr ?? '';
                         });
                       } else {
                         controller2.selectedVehicle.value = newValue;
                         controller2.customerVehicleModel.update((val) {
-                          val?.vehicleManufacturer = newValue?.name;
+                          val?.vehicleManufacturer = newValue?.name?.tr ?? '';
                         });
                       }
                     },
                     value: vehicleData == null
                         ? controller.selectedVehicle.value
                         : controller2.selectedVehicle.value,
-                    validator: (value) => value != null
-                        ? null
-                        : 'Vehicle Manufacture required'.tr,
+                    validator: (value) => null, // Optional, no validation
                   );
                 }),
                 const SizedBox(height: 10),
@@ -316,12 +320,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                       ),
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter vehicle model'.tr;
-                    }
-                    return null;
-                  },
+                  validator: (value) => null, // Optional, no validation
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -339,7 +338,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                           height: 24,
                         ),
                       ),
-                      labelText: "Color*".tr,
+                      labelText: "Color".tr,
                       labelStyle: const TextStyle(
                         color: AppColors.darkGrey09,
                       ),
@@ -423,20 +422,20 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                       if (vehicleData == null) {
                         controller.selectedColor.value = newValue;
                         controller.customerVehicleModel.update((val) {
-                          val?.colorHex = newValue?.code;
+                          val?.colorHex = newValue?.code ?? '';
                         });
                       } else {
                         controller2.selectedColor.value = newValue;
                         controller2.customerVehicleModel.update((val) {
-                          val?.colorHex = newValue?.code;
+                          val?.colorHex = newValue?.code ?? '';
                         });
                       }
                     },
                     value: vehicleData == null
                         ? controller.selectedColor.value
                         : controller2.selectedColor.value,
-                    validator: (value) =>
-                        value != null ? null : 'Color required'.tr,
+                    // validator: (value) =>
+                    //     value != null ? null : 'Color required'.tr,
                   );
                 }),
                 const SizedBox(height: 10),
@@ -483,18 +482,15 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
                   child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(AppColors.yellow04),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.yellow04,
+                      padding: const EdgeInsets.all(12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
                     onPressed: () async {
