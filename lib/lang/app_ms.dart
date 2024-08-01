@@ -325,7 +325,7 @@ const Map<String, String> msMY = {
   "Vehicle": "Kenderaan",
   "My Vehicle": "Kenderaan Saya",
   "New Vehicle": "Kenderaan Baru",
-  "Edit Vehicle": "Ubah Kenderaan",
+  "Edit Vehicle": "Kemaskini Kenderaan",
   'PLATE NUMBER*': 'NOMBOR PLAT*',
   'Please enter plate number': 'Sila masukkan nombor plat',
   'VEHICLE MODEL': 'MODEL KENDERAAN',
@@ -338,6 +338,7 @@ const Map<String, String> msMY = {
   "Vehicle Manufacture": "Pembuat Kenderaan",
   'Vehicle Manufacture required': 'Pembuat Kenderaan Diperlukan',
   "ADD VEHICLE": "TAMBAH KENDERAAN",
+  'UPDATE VEHICLE': "KEMASKINI KENDERAAN",
   "Delete Vehicle": "Padam Kenderaan",
   "Are you sure you want to Delete Vehicle.":
       "Adakah anda pasti mahu Padam Kenderaan.",
@@ -358,5 +359,9 @@ const Map<String, String> msMY = {
   "Start Date*": "Tarikh Mula*",
   "No Plate Number Available": "Tiada Nombor Plat",
   "Please add your vehicle.": "Sila Tambah Kenderaan anda.",
-  "Other": "Lain-Lain"
+  "Other": "Lain-Lain",
+  'Enter plate number': 'Masukkan Nombor Plat',
+  "Select vehicle manufacture": "Pilih pembuat kenderaan",
+  'Enter vehicle model': 'Masukkan model kenderaan',
+  "Select color": "Pilih Warna",
 };

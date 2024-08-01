@@ -326,6 +326,10 @@ const Map<String, String> enUS = {
   "New Vehicle": "New Vehicle",
   "Edit Vehicle": "Edit Vehicle",
   'PLATE NUMBER*': 'PLATE NUMBER*',
+  'Enter plate number': 'Enter plate number',
+  "Select vehicle manufacture": "Select vehicle manufacture",
+  'Enter vehicle model': 'Enter vehicle model',
+  "Select color": "Select color",
   'Please enter plate number': 'Please enter plate number',
   'VEHICLE MODEL': 'VEHICLE MODEL',
   'Please enter vehicle model': 'Please enter vehicle model',
@@ -337,6 +341,7 @@ const Map<String, String> enUS = {
   "Vehicle Manufacture": "Vehicle Manufacture",
   'Vehicle Manufacture required': 'Vehicle Manufacture required',
   "ADD VEHICLE": "ADD VEHICLE",
+  'UPDATE VEHICLE': 'UPDATE VEHICLE',
   "Delete Vehicle": "Delete Vehicle",
   "Are you sure you want to Delete Vehicle.":
       "Are you sure you want to Delete Vehicle.",

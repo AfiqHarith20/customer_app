@@ -143,7 +143,7 @@ class ProfileScreenView extends StatelessWidget {
                                 onTap: () {
                                   Get.toNamed(Routes.VEHICLE_SCREEN);
                                 },
-                                title: "Vehicle".tr,
+                                title: "My Vehicle".tr,
                                 svgImage: "assets/icons/ic_vehicle.svg",
                               ),
                               const Divider(

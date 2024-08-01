@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AddVehicleScreenView extends StatefulWidget {
-  const AddVehicleScreenView({Key? key}) : super(key: key);
+  const AddVehicleScreenView({super.key});
 
   @override
   State<AddVehicleScreenView> createState() => _AddVehicleScreenViewState();
@@ -175,7 +175,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                     }
                   },
                   decoration: InputDecoration(
-                    hintText: 'WWX 1235',
+                    hintText: 'Enter plate number'.tr,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
@@ -218,7 +218,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                           height: 24,
                         ),
                       ),
-                      labelText: "Vehicle Manufacture".tr, // Optional label
+                      labelText: "Select vehicle manufacture".tr, // Optional label
                       labelStyle: const TextStyle(
                         color: AppColors.darkGrey09,
                       ),
@@ -250,10 +250,14 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               value: vehicle,
                               child: SizedBox(
                                 height: 48,
-                                child: Text(
+                                child: Center(
+                                  child: Text(
                                   vehicle.name?.tr ?? '',
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 14),
                                 ),
+                                ),
+                                
                               ),
                             );
                           }).toList()
@@ -263,9 +267,12 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               value: vehicle,
                               child: SizedBox(
                                 height: 48,
-                                child: Text(
+                                child: Center(
+                                  child: Text(
                                   vehicle.name?.tr ?? '',
+                                  textAlign: TextAlign.center,
                                   style: const TextStyle(fontSize: 14),
+                                ),
                                 ),
                               ),
                             );
@@ -300,7 +307,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                       ? controller.vehicleModelController.value
                       : controller2.vehicleModelController.value,
                   decoration: InputDecoration(
-                    hintText: 'Yaris',
+                    hintText: 'Enter vehicle model'.tr,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
@@ -338,7 +345,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                           height: 24,
                         ),
                       ),
-                      labelText: "Color".tr,
+                      labelText: "Select color".tr,
                       labelStyle: const TextStyle(
                         color: AppColors.darkGrey09,
                       ),
@@ -372,8 +379,15 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               value: color,
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.center,
                                 children: [
+                                  
+                                  
+                                  Text(
+                                    color.name ?? '',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(width: 5),
                                   Container(
                                     width: 24,
                                     height: 24,
@@ -381,11 +395,6 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                                       shape: BoxShape.circle,
                                       color: Color(colorValue),
                                     ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    color.name ?? '',
-                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ],
                               ),
@@ -399,7 +408,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               value: color,
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.center,
                                 children: [
                                   Container(
                                     width: 24,
@@ -487,7 +496,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.yellow04,
+                      backgroundColor: AppColors.darkGrey09,
                       padding: const EdgeInsets.all(12.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
@@ -528,7 +537,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
 
                         // Navigate back to the vehicle screen
                         vehicleController.refreshVehicleData();
-                        Get.offAndToNamed(Routes.VEHICLE_SCREEN);
+                        Navigator.pop(context);
                       }
                     },
                     child: Text(
@@ -536,6 +545,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                           ? 'ADD VEHICLE'.tr
                           : 'UPDATE VEHICLE'.tr,
                       style: const TextStyle(
+                        color: AppColors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),

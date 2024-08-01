@@ -52,7 +52,7 @@ class VehicleScreenView extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () async {
-                await Get.offAndToNamed(Routes.ADD_NEW_VEHICLE);
+                await Get.toNamed(Routes.ADD_NEW_VEHICLE);
                 // Call fetchVehicle to refresh the vehicle list after returning
                 await controller.fetchVehicle();
               },
@@ -139,7 +139,10 @@ class VehicleScreenView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '$vehicleManufacturer - $vehicleModel',
+                                (vehicleManufacturer?.isEmpty ?? true) &&
+                                        (vehicleModel?.isEmpty ?? true)
+                                    ? 'No data'
+                                    : '${vehicleManufacturer ?? ''}${vehicleManufacturer != null && vehicleModel != null ? ' - ' : ''}${vehicleModel ?? ''}',
                                 style: const TextStyle(
                                   color: AppColors.darkGrey10,
                                   fontSize: 16.0,
