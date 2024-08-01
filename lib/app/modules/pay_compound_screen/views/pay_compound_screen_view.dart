@@ -367,6 +367,7 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                   // print('channelId: ${myPaymentCompoundModel.channelId}');
                   // print('compoundNo: ${myPaymentCompoundModel.compoundNo}');
                   // print('kodHasil: ${myPaymentCompoundModel.kodHasil}');
+                  controller.cleanup();
                   Get.offAllNamed(
                     Routes.WEBVIEW_COMPOUND_SCREEN,
                     arguments: {

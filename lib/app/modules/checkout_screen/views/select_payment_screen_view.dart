@@ -152,6 +152,7 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
               color: AppColors.darkGrey07,
               icon: const Icon(Icons.arrow_back),
               onPressed: () async {
+                controller.cleanup();
                 final result = await Get.offAllNamed(Routes.SEASON_PASS);
                 if (result != null && result is Map<String, dynamic>) {
                   setState(() {
@@ -423,7 +424,8 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                   // print('Online Payment Data: $onlinePaymentModel');
                   print('startDate ${passData['startDate']}');
                   print('endDate ${passData['endDate']}');
-                  Get.offAllNamed(
+                  controller.cleanup();
+                  Get.toNamed(
                     Routes.WEBVIEW_SCREEN,
                     arguments: {
                       'onlinePaymentModel': onlinePaymentModel,

@@ -30,6 +30,7 @@ import 'package:customer_app/app/modules/transaction_history_screen/views/transa
 import 'package:customer_app/app/modules/vehicle_screen/bindings/vehicle_screen_binding.dart';
 import 'package:customer_app/app/modules/vehicle_screen/views/vehicle_screen_view.dart';
 import 'package:customer_app/app/modules/webview/bindings/webview_screen_binding.dart';
+import 'package:customer_app/app/modules/webview/controllers/webview_screen_controller.dart';
 import 'package:customer_app/app/modules/webview/views/webview_screen_view.dart';
 import 'package:customer_app/app/modules/webview_compound_screen/bindings/webview_compound_screen_binding.dart';
 import 'package:customer_app/app/modules/webview_compound_screen/views/webview_compound_screen_view.dart';
@@ -368,7 +369,9 @@ class AppPages {
     GetPage(
       name: _Paths.WEBVIEW_SCREEN,
       page: () => const WebviewScreen(),
-      binding: WebviewScreenBinding(),
+     binding: BindingsBuilder(() {
+        Get.lazyPut<WebviewScreenController>(() => WebviewScreenController());
+      }),
     ),
     GetPage(
       name: _Paths.WEBVIEW_COMPOUND_SCREEN,

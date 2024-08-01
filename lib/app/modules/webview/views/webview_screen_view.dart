@@ -1,3 +1,4 @@
+import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/modules/dashboard_screen/controllers/dashboard_screen_controller.dart';
 import 'package:customer_app/app/modules/webview/controllers/webview_screen_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
@@ -16,7 +17,7 @@ class WebviewScreen extends StatefulWidget {
 class _WebviewScreenState extends State<WebviewScreen> {
   double _progress = 0;
   final WebviewScreenController controller =
-      Get.find<WebviewScreenController>();
+      Get.put(WebviewScreenController());
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +25,21 @@ class _WebviewScreenState extends State<WebviewScreen> {
       appBar: AppBar(
         leading: IconButton(
           color: Colors.black,
-          onPressed: () {
+          onPressed: () async {
+            // Perform cleanup before navigating away
+            // controller.cleanup();
+            //  Get.delete<OnlinePaymentModel>();
+            // Navigate to the dashboard screen
             Get.offAllNamed(
               Routes.DASHBOARD_SCREEN,
             );
-            DashboardScreenController dashboardController = Get.find();
-            dashboardController.refreshData();
-            DashboardScreenController controller =
-                Get.put(DashboardScreenController());
-            controller.selectedIndex(1);
+
+            // Fetch and update the dashboard controller
+            // DashboardScreenController dashboardController = Get.find();
+            // dashboardController.refreshData();
+            // DashboardScreenController newDashboardController =
+            //     Get.put(DashboardScreenController());
+            // newDashboardController.selectedIndex(1);
           },
           icon: const Icon(
             Icons.close,

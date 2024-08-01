@@ -56,6 +56,7 @@ class _PurchasePassPrivateViewState extends State<PurchasePassPrivateView> {
               color: AppColors.darkGrey07,
               icon: const Icon(Icons.arrow_back),
               onPressed: () async {
+                 controller.clearFormData();
                 await Get.offAllNamed(Routes.SEASON_PASS);
               },
             ),
@@ -570,6 +571,7 @@ class _PurchasePassPrivateViewState extends State<PurchasePassPrivateView> {
                                 Navigator.pop(context);
 
                                 // Navigate to dashboard page
+                                controller.clearFormData();
                                 Get.offAndToNamed(
                                   Routes.DASHBOARD_SCREEN,
                                 );

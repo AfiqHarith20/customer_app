@@ -35,6 +35,7 @@ class WebviewCompoundScreenController extends GetxController {
   RxBool isFormVisible = false.obs;
   String paymentResponse = '';
   RxString paymentType = RxString('');
+   bool isPaymentFetched = false;
 
   @override
   void onInit() {
@@ -44,8 +45,12 @@ class WebviewCompoundScreenController extends GetxController {
     getArgumentandPayCompound();
   }
 
-  void getArgumentandPayCompound() async {
+  Future<void> getArgumentandPayCompound() async {
     try {
+      cleanup();
+      // Reset isPaymentFetched to allow payment fetch
+      isPaymentFetched = false;
+
       dynamic argumentData = Get.arguments;
       if (argumentData != null &&
           argumentData['myPaymentCompoundModel'] != null) {
@@ -158,7 +163,15 @@ class WebviewCompoundScreenController extends GetxController {
             clientScript: '',
           );
         }
-      } else {
+      } else if (response.statusCode == 500) {
+        print('Server Error: ${response.statusCode}');
+        ShowToastDialog.showToast("Retrying...");
+        // Retry fetching payment after updating arguments
+        await updateArgumentAndMakePayment();
+        // Retry fetchPayment after updating arguments
+        return fetchPayCompound();
+      }
+      else {
         // If response status code is not 200, handle the error
         print('Error: ${response.statusCode}');
         // Return an empty WebViewResponse
@@ -178,6 +191,24 @@ class WebviewCompoundScreenController extends GetxController {
         clientScript: '',
       );
     }
+  }
+
+  Future<WebViewResponse> updateArgumentAndMakePayment() async {
+    // Call getArgumentAndMakePayment and then update UI if needed
+    await getArgumentandPayCompound();
+    return WebViewResponse(
+      redirectionType: -1,
+      redirectUrl: '',
+      clientScript: '',
+    );
+  }
+
+    @override
+  void dispose() {
+    // Perform cleanup before disposing
+    cleanup();
+    // Call dispose method of superclass
+    super.dispose();
   }
 
   @override

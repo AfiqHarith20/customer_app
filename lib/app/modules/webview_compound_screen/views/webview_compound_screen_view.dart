@@ -16,7 +16,7 @@ class WebviewCompoundScreen extends StatefulWidget {
 class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
   double _progress = 0;
   final WebviewCompoundScreenController controller =
-      Get.find<WebviewCompoundScreenController>();
+      Get.put(WebviewCompoundScreenController());
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
         leading: IconButton(
           color: Colors.black,
           onPressed: () {
-            Get.offAllNamed(
+            Get.offNamed(
               Routes.DASHBOARD_SCREEN,
             );
             DashboardScreenController dashboardController = Get.find();

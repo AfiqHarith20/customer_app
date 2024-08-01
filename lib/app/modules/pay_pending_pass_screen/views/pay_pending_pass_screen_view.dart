@@ -125,6 +125,7 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
               color: AppColors.darkGrey07,
               icon: const Icon(Icons.arrow_back),
               onPressed: () async {
+                controller.cleanup();
                 final result = await Get.offAllNamed(Routes.SEASON_PASS);
                 if (result != null && result is Map<String, dynamic>) {
                   setState(() {
@@ -408,6 +409,7 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                     );
                     // print('Online Payment Data: $onlinePaymentModel');
                     // print('customerId ${passData['customerId']}');
+                    controller.cleanup();
                     Get.offAndToNamed(
                       Routes.WEBVIEW_SCREEN,
                       arguments: {

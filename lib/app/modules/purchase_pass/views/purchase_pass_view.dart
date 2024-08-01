@@ -36,6 +36,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                 color: AppColors.darkGrey07,
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () async {
+                  controller.cleanup();
                   await Get.offAllNamed(Routes.SEASON_PASS);
                 },
               ),
@@ -233,6 +234,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         await controller.getQueryPass();
                         Navigator.of(context).pop();
                         await controller.addSeasonPassData();
+                         controller.cleanup();
                         Get.offNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
                           "addSeasonPassData": controller.addSeasonPassData,
                           "purchasePassModel":

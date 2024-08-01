@@ -83,14 +83,14 @@ class PurchasePassController extends GetxController {
 
   void cleanup() {
     // Dispose all TextEditingControllers
-    fullNameController.value.dispose();
-    emailController.value.dispose();
-    phoneNumberController.value.dispose();
-    vehicleNoController.value.dispose();
-    lotNoController.value.dispose();
-    companyNameController.value.dispose();
-    companyRegistrationNoController.value.dispose();
-    addressController.value.dispose();
+    fullNameController.value;
+    emailController.value;
+    phoneNumberController.value;
+    vehicleNoController.value;
+    lotNoController.value;
+    companyNameController.value;
+    companyRegistrationNoController.value;
+    addressController.value;
   }
 
   getArgument() async {

@@ -408,8 +408,15 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               value: color,
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
+                                  
+                                 
+                                  Text(
+                                    color.name ?? '',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                   const SizedBox(width: 5),
                                   Container(
                                     width: 24,
                                     height: 24,
@@ -417,11 +424,6 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                                       shape: BoxShape.circle,
                                       color: Color(colorValue),
                                     ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    color.name ?? '',
-                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ],
                               ),
