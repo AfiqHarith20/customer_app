@@ -64,7 +64,7 @@ class AddVehicleScreenController extends GetxController {
 
       await createVehicle(vehicleDocRef);
 
-      Get.snackbar('Success'.tr, 'Vehicle added successfully'.tr);
+      // Get.snackbar('Success'.tr, 'Vehicle added successfully'.tr);
       print('Vehicle added successfully');
     } catch (e) {
       Get.snackbar('Error'.tr, 'Error adding vehicle: $e');

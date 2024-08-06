@@ -56,8 +56,8 @@ class _PurchasePassPrivateViewState extends State<PurchasePassPrivateView> {
               color: AppColors.darkGrey07,
               icon: const Icon(Icons.arrow_back),
               onPressed: () async {
-                 controller.clearFormData();
-                await Get.offAllNamed(Routes.SEASON_PASS);
+                controller.clearFormData();
+                Get.back();
               },
             ),
           ),

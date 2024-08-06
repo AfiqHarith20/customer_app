@@ -37,7 +37,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () async {
                   controller.cleanup();
-                  await Get.offAllNamed(Routes.SEASON_PASS);
+                  Get.back();
                 },
               ),
             ),
@@ -80,7 +80,6 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         controller: controller.emailController.value,
                         onPress: () {},
                       ),
-                     
                       MobileNumberTextField(
                         title: "Mobile Number*".tr,
                         controller: controller.phoneNumberController.value,
@@ -145,7 +144,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                                   Navigator.of(context)
                                       .pop(); // Close the dialog
                                   // Navigate to the profile page
-                                  Get.offAndToNamed(
+                                  Get.offNamed(
                                     Routes.VEHICLE_SCREEN,
                                   );
                                 },
@@ -160,7 +159,6 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         },
                         textCapitalization: TextCapitalization.characters,
                       ),
-                      
                       TextFieldWidgetPrefix(
                         prefix: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -234,7 +232,7 @@ class PurchasePassView extends GetView<PurchasePassController> {
                         await controller.getQueryPass();
                         Navigator.of(context).pop();
                         await controller.addSeasonPassData();
-                         controller.cleanup();
+                        controller.cleanup();
                         Get.offNamed(Routes.SELECT_PAYMENT_SCREEN, arguments: {
                           "addSeasonPassData": controller.addSeasonPassData,
                           "purchasePassModel":

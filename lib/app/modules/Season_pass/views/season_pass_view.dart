@@ -57,7 +57,7 @@ class _SeasonPassViewState extends State<SeasonPassView> {
               color: AppColors.darkGrey07,
               icon: const Icon(Icons.arrow_back),
               onPressed: () async {
-                await Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+                Get.back();
               },
             ),
           ),
