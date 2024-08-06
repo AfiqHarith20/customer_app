@@ -89,7 +89,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
           color: AppColors.darkGrey07,
           icon: const Icon(Icons.arrow_back),
           onPressed: () async {
-            Get.offAndToNamed(Routes.VEHICLE_SCREEN);
+            Get.back();
           },
         ),
         title: Text(
@@ -115,8 +115,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               await controller2.deleteVehicle();
                               Navigator.pop(context); // Close the dialog
                               vehicleController.refreshVehicleData();
-                              Get.offAndToNamed(Routes
-                                  .VEHICLE_SCREEN); // Navigate back to vehicle screen
+                              Navigator.pop(context);
                             },
                             onPressConfirmBtnName: "Delete".tr,
                             onPressConfirmColor: AppColors.red04,
@@ -218,7 +217,8 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                           height: 24,
                         ),
                       ),
-                      labelText: "Select vehicle manufacture".tr, // Optional label
+                      labelText:
+                          "Select vehicle manufacture".tr, // Optional label
                       labelStyle: const TextStyle(
                         color: AppColors.darkGrey09,
                       ),
@@ -252,12 +252,11 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                                 height: 48,
                                 child: Center(
                                   child: Text(
-                                  vehicle.name?.tr ?? '',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 14),
+                                    vehicle.name?.tr ?? '',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
                                 ),
-                                ),
-                                
                               ),
                             );
                           }).toList()
@@ -269,10 +268,10 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                                 height: 48,
                                 child: Center(
                                   child: Text(
-                                  vehicle.name?.tr ?? '',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
+                                    vehicle.name?.tr ?? '',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
                                 ),
                               ),
                             );
@@ -379,10 +378,8 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                               value: color,
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  
-                                  
                                   Text(
                                     color.name ?? '',
                                     style: const TextStyle(fontSize: 14),
@@ -410,13 +407,11 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  
-                                 
                                   Text(
                                     color.name ?? '',
                                     style: const TextStyle(fontSize: 14),
                                   ),
-                                   const SizedBox(width: 5),
+                                  const SizedBox(width: 5),
                                   Container(
                                     width: 24,
                                     height: 24,
@@ -539,7 +534,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
 
                         // Navigate back to the vehicle screen
                         vehicleController.refreshVehicleData();
-                        Navigator.pop(context);
+                        Get.back();
                       }
                     },
                     child: Text(

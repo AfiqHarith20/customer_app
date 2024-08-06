@@ -35,11 +35,11 @@ class _WebviewScreenState extends State<WebviewScreen> {
             );
 
             // Fetch and update the dashboard controller
-            // DashboardScreenController dashboardController = Get.find();
-            // dashboardController.refreshData();
-            // DashboardScreenController newDashboardController =
-            //     Get.put(DashboardScreenController());
-            // newDashboardController.selectedIndex(1);
+            DashboardScreenController dashboardController = Get.find();
+            dashboardController.refreshData();
+            DashboardScreenController newDashboardController =
+                Get.put(DashboardScreenController());
+            newDashboardController.selectedIndex(1);
           },
           icon: const Icon(
             Icons.close,

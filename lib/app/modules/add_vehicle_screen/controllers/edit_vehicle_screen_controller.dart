@@ -110,7 +110,7 @@ class EditVehicleScreenController extends GetxController {
         'active': true,
       });
 
-      Get.snackbar('Success'.tr, 'Vehicle updated successfully'.tr);
+      // Get.snackbar('Success'.tr, 'Vehicle updated successfully'.tr);
       print('Vehicle updated successfully');
     } catch (e) {
       Get.snackbar('Error'.tr, 'Error updating vehicle: $e');
@@ -132,7 +132,7 @@ class EditVehicleScreenController extends GetxController {
 
       await vehicleDocRef.delete();
 
-      Get.snackbar('Success'.tr, 'Vehicle deleted successfully'.tr);
+      // Get.snackbar('Success'.tr, 'Vehicle deleted successfully'.tr);
       print('Vehicle deleted successfully');
     } catch (e) {
       Get.snackbar('Error'.tr, 'Error deleting vehicle: $e');

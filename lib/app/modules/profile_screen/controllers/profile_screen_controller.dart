@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileScreenController extends GetxController {
   Rx<GlobalKey<FormState>> formKeyProfile = GlobalKey<FormState>().obs;
@@ -21,6 +22,7 @@ class ProfileScreenController extends GetxController {
   RxBool isWalletScreen = false.obs;
 
   RxString profileImage = "".obs;
+  var appVersion = ''.obs;
   final ImagePicker imagePicker = ImagePicker();
 
   Rx<CustomerModel> customerModel = CustomerModel().obs;
@@ -32,7 +34,17 @@ class ProfileScreenController extends GetxController {
     // TODO: implement onInit
     getProfileData();
     getLanguage();
+    getAppVersion();
     super.onInit();
+  }
+
+  Future<void> getAppVersion() async {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      appVersion.value = packageInfo.version;
+    } catch (e) {
+      appVersion.value = 'Unknown';
+    }
   }
 
   getProfileData() async {

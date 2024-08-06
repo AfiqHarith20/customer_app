@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:customer_app/app/modules/vehicle_screen/controllers/vehicle_screen_controller.dart';
 import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/themes/app_colors.dart';
@@ -45,7 +47,7 @@ class VehicleScreenView extends StatelessWidget {
         context,
         "My Vehicle".tr,
         onBackTap: () {
-          Get.offNamed(Routes.DASHBOARD_SCREEN);
+          Get.back();
         },
         actions: [
           Padding(
