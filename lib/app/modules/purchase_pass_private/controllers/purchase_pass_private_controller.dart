@@ -207,32 +207,36 @@ class PurchasePassPrivateController extends GetxController {
           print("Start Date: ${jsonResponse['newStartDate']}");
           print("End Date: ${jsonResponse['newEndDate']}");
 
-          // Update selectedPrivatePass with the new data from the API response
-          selectedPrivatePass.value = PrivatePassModel(
-            availability: jsonResponse['privatePassModel']['availability'],
-            passId: jsonResponse['privatePassModel']['id'],
-            passName: jsonResponse['privatePassModel']['passName'],
-            price: jsonResponse['privatePassModel']['price'],
-            status: jsonResponse['privatePassModel']['status'],
-            userType: jsonResponse['privatePassModel']['userType'],
-            validity: jsonResponse['privatePassModel']['validity'],
-          );
+          // Assuming you have a previous data variable
+          PrivatePassModel previousPrivatePass = selectedPrivatePass.value;
+
+// Check if 'privatePassModel' is null in the response
+          if (jsonResponse['privatePassModel'] != null) {
+            selectedPrivatePass.value = PrivatePassModel(
+              availability: jsonResponse['privatePassModel']['availability'] ??
+                  previousPrivatePass.availability,
+              passId: jsonResponse['privatePassModel']['id'] ??
+                  previousPrivatePass.passId,
+              passName: jsonResponse['privatePassModel']['passName'] ??
+                  previousPrivatePass.passName,
+              price: jsonResponse['privatePassModel']['price'] ??
+                  previousPrivatePass.price,
+              status: jsonResponse['privatePassModel']['status'] ??
+                  previousPrivatePass.status,
+              userType: jsonResponse['privatePassModel']['userType'] ??
+                  previousPrivatePass.userType,
+              validity: jsonResponse['privatePassModel']['validity'] ??
+                  previousPrivatePass.validity,
+            );
+          } else {
+            // If 'privatePassModel' is null, use previous data
+            selectedPrivatePass.value = previousPrivatePass;
+          }
 
           queryLotModel.value.newStartDate =
               DateTime.parse(jsonResponse['newStartDate']);
           queryLotModel.value.newEndDate =
               DateTime.parse(jsonResponse['newEndDate']);
-          queryLotModel.value.privatePassModel?.availability =
-              jsonResponse['availability'];
-          queryLotModel.value.privatePassModel?.price = jsonResponse['price'];
-          queryLotModel.value.privatePassModel?.passId = jsonResponse['id'];
-          queryLotModel.value.privatePassModel?.passName =
-              jsonResponse['passName'];
-          queryLotModel.value.privatePassModel?.validity =
-              jsonResponse['validity'];
-          queryLotModel.value.privatePassModel?.status = jsonResponse['status'];
-          queryLotModel.value.privatePassModel?.userType =
-              jsonResponse['userType'];
           queryLotModel.value.privatePassModel = selectedPrivatePass.value;
         } else {
           print("API Error: ${response.reasonPhrase}");
