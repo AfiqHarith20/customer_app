@@ -359,7 +359,7 @@ class _PurchasePassPrivateViewState extends State<PurchasePassPrivateView> {
                       controller: TextEditingController(
                         text: controller.startAtDateController.value.value !=
                                 null
-                            ? DateFormat('MM-yyyy').format(
+                            ? DateFormat('dd/MM/yyyy').format(
                                 controller.startAtDateController.value.value!,
                               )
                             : '',
@@ -370,7 +370,7 @@ class _PurchasePassPrivateViewState extends State<PurchasePassPrivateView> {
                             await showCalendarDatePicker2Dialog(
                           context: context,
                           config: CalendarDatePicker2WithActionButtonsConfig(
-                            calendarViewMode: CalendarDatePicker2Mode.month,
+                            calendarViewMode: CalendarDatePicker2Mode.day,
                             currentDate: DateTime.now(),
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2101),
