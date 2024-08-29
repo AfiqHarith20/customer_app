@@ -173,48 +173,60 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                           String convertBase64ToUrl(String base64Strings) {
                             final String decodedUrl =
                                 utf8.decode(base64.decode(base64Strings));
-
                             return decodedUrl;
                           }
 
                           // Parse the JSON response into a list of CompoundModel objects
                           List<CompoundModel> compounds = [];
                           List<String> compoundNums =
-                              searchResult['compound_num'] != null
+                              searchResult['compound_num'] != null &&
+                                      searchResult['compound_num'] is String
                                   ? searchResult['compound_num'].split("::")
                                   : [];
-                          List<String> amounts = searchResult['amount'] != null
-                              ? searchResult['amount'].split("::")
-                              : [];
+                          List<String> amounts =
+                              searchResult['amount'] != null &&
+                                      searchResult['amount'] is String
+                                  ? searchResult['amount'].split("::")
+                                  : [searchResult['amount'].toString()];
                           List<String> dateTimes =
-                              searchResult['datetime'] != null
+                              searchResult['datetime'] != null &&
+                                      searchResult['datetime'] is String
                                   ? searchResult['datetime'].split("::")
                                   : [];
-                          List<String> statuses = searchResult['status'] != null
-                              ? searchResult['status'].split("::")
-                              : [];
+                          List<String> statuses =
+                              searchResult['status'] != null &&
+                                      searchResult['status'] is String
+                                  ? searchResult['status'].split("::")
+                                  : [];
                           List<String> offences =
-                              searchResult['offence'] != null
+                              searchResult['offence'] != null &&
+                                      searchResult['offence'] is String
                                   ? searchResult['offence'].split("::")
                                   : [];
                           List<String> kodHasils =
-                              searchResult['kod_hasil'] != null
+                              searchResult['kod_hasil'] != null &&
+                                      searchResult['kod_hasil'] is String
                                   ? searchResult['kod_hasil'].split("::")
                                   : [];
                           List<String> vehicleNums =
-                              searchResult['vehicle_num'] != null
+                              searchResult['vehicle_num'] != null &&
+                                      searchResult['vehicle_num'] is String
                                   ? searchResult['vehicle_num'].split("::")
                                   : [];
 
                           List<String> imageUrls =
-                              searchResult['allCompoundImage'] != null
+                              searchResult['allCompoundImage'] != null &&
+                                      searchResult['allCompoundImage'] is String
                                   ? convertBase64ToUrl(
                                           searchResult['allCompoundImage'])
                                       .split("::")
                                   : [];
+
                           for (int i = 0; i < compoundNums.length; i++) {
                             CompoundModel compound = CompoundModel(
-                              compoundNo: compoundNums[i],
+                              compoundNo: compoundNums.isNotEmpty
+                                  ? compoundNums[i]
+                                  : '',
                               amount: amounts.isNotEmpty ? amounts[i] : '',
                               dateTime: dateTimes.isNotEmpty
                                   ? Timestamp.fromDate(
@@ -242,9 +254,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                           if (searchResult.containsKey('msg') &&
                               searchResult['msg'] != null &&
                               searchResult['msg'].isNotEmpty) {
-                            ShowToastDialog.showToast(
-                              searchResult['msg'],
-                            );
+                            ShowToastDialog.showToast(searchResult['msg']);
                           }
                         } catch (e) {
                           // Handle any errors that occur during the search
