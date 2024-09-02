@@ -45,37 +45,43 @@ class _SeasonPassViewState extends State<SeasonPassView> {
     return GetX<SeasonPassController>(
       init: controller,
       builder: (controller) {
-        return Scaffold(
-          backgroundColor: AppColors.lightGrey02,
-          appBar: AppBar(
-            title: Text(
-              "Season Pass".tr,
-              style: const TextStyle(color: AppColors.darkGrey07),
+        return WillPopScope(
+          onWillPop: () async {
+            Get.back();
+            return false;
+          },
+          child: Scaffold(
+            backgroundColor: AppColors.lightGrey02,
+            appBar: AppBar(
+              title: Text(
+                "Season Pass".tr,
+                style: const TextStyle(color: AppColors.darkGrey07),
+              ),
+              backgroundColor: AppColors.white,
+              leading: IconButton(
+                color: AppColors.darkGrey07,
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () async {
+                  Get.back();
+                },
+              ),
             ),
-            backgroundColor: AppColors.white,
-            leading: IconButton(
-              color: AppColors.darkGrey07,
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () async {
-                Get.back();
-              },
-            ),
+            body: controller.isLoading.value
+                ? Constant.loader()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Custom sliding segmented control
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      _buildCustomSliding(controller),
+                      // Content based on selected segment
+                      _buildContent(context, controller.seasonPassList,
+                          controller.privatePassList),
+                    ],
+                  ),
           ),
-          body: controller.isLoading.value
-              ? Constant.loader()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Custom sliding segmented control
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    _buildCustomSliding(controller),
-                    // Content based on selected segment
-                    _buildContent(context, controller.seasonPassList,
-                        controller.privatePassList),
-                  ],
-                ),
         );
       },
     );

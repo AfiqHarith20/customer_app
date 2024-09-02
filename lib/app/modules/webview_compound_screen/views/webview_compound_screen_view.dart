@@ -25,14 +25,21 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
         leading: IconButton(
           color: Colors.black,
           onPressed: () {
-            Get.offNamed(
-              Routes.DASHBOARD_SCREEN,
+            Get.offNamedUntil(
+              Routes
+                  .DASHBOARD_SCREEN, // Replace with your actual route for the search compound page
+              (route) => route
+                  .isFirst, // Removes all intermediate pages (checkout page, etc.)
+              arguments: {
+                'paymentCompleted':
+                    true, // Pass a signal that the payment was completed
+              },
             );
-            DashboardScreenController dashboardController = Get.find();
-            dashboardController.refreshData();
-            DashboardScreenController controller =
-                Get.put(DashboardScreenController());
-            controller.selectedIndex(2);
+            // DashboardScreenController dashboardController = Get.find();
+            // dashboardController.refreshData();
+            // DashboardScreenController controller =
+            //     Get.put(DashboardScreenController());
+            // controller.selectedIndex(2);
           },
           icon: const Icon(
             Icons.close,
