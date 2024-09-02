@@ -25,6 +25,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../constant/show_toast_dialogue.dart';
 import '../../../models/commercepay/auth_model.dart';
@@ -50,6 +51,7 @@ class PayCompoundScreenController extends GetxController {
   Rx<TextEditingController> countryCode = TextEditingController().obs;
   TaxModel? taxModel = TaxModel();
   TransactionFeeModel? transactionFeeModel = TransactionFeeModel();
+  String? accessToken;
 
   @override
   Future<void> onInit() async {
@@ -57,6 +59,7 @@ class PayCompoundScreenController extends GetxController {
     fetchTax();
     fetchTransactionFee();
     getProfileData();
+    await _checkAuthTokenValidity();
     super.onInit();
   }
 
@@ -76,7 +79,7 @@ class PayCompoundScreenController extends GetxController {
     selectedBankId.value = "";
     isPaymentCompleted.value = true;
     isLoading.value = true;
-    authResultModel = AuthResultModel();
+    // authResultModel = AuthResultModel();
     transactionFeeModel = TransactionFeeModel();
   }
 
@@ -168,6 +171,28 @@ class PayCompoundScreenController extends GetxController {
     });
   }
 
+  Future<void> _checkAuthTokenValidity() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final storedAccessToken = prefs.getString('AccessToken');
+    final tokenExpiryString = prefs.getString('TokenExpiry');
+
+    if (storedAccessToken != null && tokenExpiryString != null) {
+      DateTime tokenExpiry = DateTime.parse(tokenExpiryString);
+      if (DateTime.now().isBefore(tokenExpiry)) {
+        // Token is still valid, use it
+        accessToken = storedAccessToken;
+        authResultModel = AuthResultModel(accessToken: accessToken);
+        print("Using stored access token: $accessToken");
+        return;
+      }
+    }
+
+    // Token is expired or doesn't exist, fetch a new one
+    accessToken = await commercepayCompoundPayment(
+        amount: "0"); // Pass amount or relevant value
+    print("Fetched new access token: $accessToken");
+  }
+
   Future<String?> commercepayCompoundPayment({required String amount}) async {
     isLoading.value = true;
     try {
@@ -175,28 +200,21 @@ class PayCompoundScreenController extends GetxController {
       if (response != null && response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         authResultModel = AuthResultModel.fromJson(jsonResponse);
-        // Set the access token
         String accessToken = authResultModel.accessToken.toString();
-        // Print the access token
-        // print("Access Token: $accessToken");
 
-        DateTime time = DateTime.now();
-        time.add(Duration(seconds: authResultModel.expireInSeconds as int));
-        Preferences.setString(
-            "AccessToken", accessToken); // Store the access token
+        DateTime tokenExpiry = DateTime.now()
+            .add(Duration(seconds: authResultModel.expireInSeconds!));
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("AccessToken", accessToken);
+        await prefs.setString("TokenExpiry", tokenExpiry.toIso8601String());
 
-        Preferences.setString("TokenExpiry", time.toString());
-
-        // Return the access token
         return accessToken;
       } else {
-        // Return null if there's an error
         return null;
       }
     } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("exception:$e \n$s");
-      // Return null if there's an error
       return null;
     } finally {
       isLoading.value = false;

@@ -52,6 +52,16 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
       _searchController.text = compoundNumber;
       // Call the search method with the compoundNumber
       widget.controller.handleCompoundNumber(compoundNumber);
+
+      bool paymentCompleted = Get.arguments?['paymentCompleted'] ?? false;
+
+      // If paymentCompleted is true, refresh the data
+      if (paymentCompleted) {
+        widget.controller.searchCompounds(
+          requestMethod: _requestMethod, // Adjust as per your logic
+          searchText: '', // Pass relevant search text if needed
+        );
+      }
     }
   }
 

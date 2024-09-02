@@ -109,385 +109,439 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
   }
 
   @override
+  void dispose() {
+    if (Get.isRegistered<PayPendingPassScreenController>()) {
+      Get.delete<PayPendingPassScreenController>();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GetX<PayPendingPassScreenController>(
-      init: PayPendingPassScreenController(),
-      dispose: (state) => state.dispose(),
       builder: (controller) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              "Checkout".tr,
-              style: const TextStyle(color: AppColors.darkGrey07),
+        return WillPopScope(
+          onWillPop: () async {
+            controller.cleanup();
+            Get.back();
+            return true;
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Checkout".tr,
+                style: const TextStyle(color: AppColors.darkGrey07),
+              ),
+              backgroundColor: AppColors.white,
+              leading: IconButton(
+                color: AppColors.darkGrey07,
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () async {
+                  controller.cleanup();
+                  Get.back();
+                  // if (result != null && result is Map<String, dynamic>) {
+                  //   setState(() {
+                  //     controller.passId = result['passId'];
+                  //     widget.selectedBankName = result['bankName'];
+                  //     controller.purchasePassModel.value.startDate;
+                  //     controller.purchasePassModel.value.endDate;
+                  //     controller.purchasePassModel.value.vehicleNo;
+                  //   });
+                  // }
+                },
+              ),
             ),
-            backgroundColor: AppColors.white,
-            leading: IconButton(
-              color: AppColors.darkGrey07,
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () async {
-                controller.cleanup();
-                final result = await Get.offAllNamed(Routes.SEASON_PASS);
-                if (result != null && result is Map<String, dynamic>) {
-                  setState(() {
-                    controller.passId = result['passId'];
-                    widget.selectedBankName = result['bankName'];
-                    controller.purchasePassModel.value.startDate;
-                    controller.purchasePassModel.value.endDate;
-                    controller.purchasePassModel.value.vehicleNo;
-                  });
-                }
-              },
-            ),
-          ),
-          body:
-              // controller.isLoading.value
-              //     ? Constant.loader()
-              //     :
-              Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12,
-            ),
-            child: Column(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Pass Details".tr,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontFamily: AppThemData.semiBold,
-                        color: AppColors.darkGrey08,
-                      ),
+            body: controller.isLoading.value
+                ? Constant.loader()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12,
                     ),
-                    const SizedBox(height: 20),
-                    _buildDetailRow("Pass Name".tr, controller.passName.value),
-                    const SizedBox(height: 5),
-                    _buildDetailRow(
-                      "Price".tr,
-                      "RM ${controller.passPrice.value.toString()}",
-                    ),
-                    const SizedBox(height: 5),
-                    _buildDetailRow(
-                        "Validity".tr, controller.passValidity.value.tr),
-                    const SizedBox(height: 5),
-                    _buildDetailRow(
-                      "Start Time".tr,
-                      Constant.timestampToDate(
-                        Timestamp.fromDate(DateTime.now()),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    _buildDetailRow(
-                      "End Time".tr,
-                      Constant.timestampToDate(
-                        Timestamp.fromDate(
-                          DateTime.timestamp().add(
-                            Duration(
-                              days: controller.checkDuration(
-                                controller.passValidity.value,
+                    child: Column(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Pass Details".tr,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: AppThemData.semiBold,
+                                color: AppColors.darkGrey08,
                               ),
                             ),
+                            const SizedBox(height: 20),
+                            _buildDetailRow(
+                                "Pass Name".tr, controller.passName.value),
+                            const SizedBox(height: 5),
+                            _buildDetailRow(
+                              "Price".tr,
+                              "RM ${controller.passPrice.value.toString()}",
+                            ),
+                            const SizedBox(height: 5),
+                            _buildDetailRow("Validity".tr,
+                                controller.passValidity.value.tr),
+                            const SizedBox(height: 5),
+                            _buildDetailRow(
+                              "Start Time".tr,
+                              Timestamp.fromDate(DateTime.now()) != null
+                                  ? Constant.timestampToDate(
+                                      Timestamp.fromDate(DateTime.now()),
+                                    )
+                                  : "Start date not available",
+                            ),
+                            const SizedBox(height: 5),
+                            _buildDetailRow(
+                              "End Time".tr,
+                              Timestamp.fromDate(DateTime.now().add(
+                                        Duration(
+                                          days: controller.checkDuration(
+                                            controller.passValidity.value,
+                                          ),
+                                        ),
+                                      )) !=
+                                      null
+                                  ? Constant.timestampToDate(
+                                      Timestamp.fromDate(
+                                        DateTime.now().add(
+                                          Duration(
+                                            days: controller.checkDuration(
+                                              controller.passValidity.value,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : "End date not available",
+                            ),
+                            const SizedBox(height: 5),
+                          ],
+                        ),
+                        const Divider(
+                          color: Colors.black,
+                        ),
+                        const SizedBox(height: 10),
+                        // Payment methods
+                        // PaymentMethodsSections(
+                        //   controller: controller,
+                        // ),
+                        Row(
+                          children: [
+                            Text(
+                              "Payment Methods".tr,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: AppThemData.semiBold,
+                                color: AppColors.darkGrey08,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Visibility(
+                          visible: controller.paymentModel.value.wallet !=
+                                  null &&
+                              controller.paymentModel.value.wallet!.enable ==
+                                  true,
+                          child: paymentDecoration(
+                            controller: controller,
+                            value: controller.paymentModel.value.wallet != null
+                                ? controller.paymentModel.value.wallet!.name!
+                                : '',
+                            image: "assets/images/wallet.png",
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                  ],
-                ),
-                const Divider(
-                  color: Colors.black,
-                ),
-                const SizedBox(height: 10),
-                // Payment methods
-                // PaymentMethodsSections(
-                //   controller: controller,
-                // ),
-                Row(
-                  children: [
-                    Text(
-                      "Payment Methods".tr,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontFamily: AppThemData.semiBold,
-                        color: AppColors.darkGrey08,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Visibility(
-                  visible: controller.paymentModel.value.wallet != null &&
-                      controller.paymentModel.value.wallet!.enable == true,
-                  child: paymentDecoration(
-                    controller: controller,
-                    value: controller.paymentModel.value.wallet != null
-                        ? controller.paymentModel.value.wallet!.name!
-                        : '',
-                    image: "assets/images/wallet.png",
-                  ),
-                ),
-                Visibility(
-                  visible: controller.paymentModel.value.commercePay != null &&
-                      controller.paymentModel.value.commercePay!.enable == true,
-                  child: paymentOnlineDecoration(
-                    controller: controller,
-                    value:
-                        controller.paymentModel.value.commercePay?.name ?? '',
-                    image: "assets/images/online_banking.png",
-                    selectedBankName: widget.selectedBankName,
-                    updateSelectedBankName: (bankName) {
-                      // Define the callback function
-                      setState(() {
-                        widget.selectedBankName =
-                            bankName!; // Update the selectedBankName state
-                      });
-                    },
-                    selectedBankId: widget.selectedBankId,
-                    updateSelectedBankId: (bankId) {
-                      setState(() {
-                        selectedBankId =
-                            bankId ?? ""; // Update selected bank ID
-                      });
-                    },
-                  ),
-                ),
-                Visibility(
-                  visible: controller.paymentModel.value.strip != null &&
-                      controller.paymentModel.value.strip!.enable == true,
-                  child: paymentDecoration(
-                    controller: controller,
-                    value: controller.paymentModel.value.strip?.name ?? '',
-                    image: "assets/images/stripe.png",
-                  ),
-                ),
-                Visibility(
-                  visible: controller.paymentModel.value.paypal != null &&
-                      controller.paymentModel.value.paypal!.enable == true,
-                  child: paymentDecoration(
-                    controller: controller,
-                    value: controller.paymentModel.value.paypal?.name ?? '',
-                    image: "assets/images/paypal.png",
-                  ),
-                ),
-                _buildPaymentInformation(
-                  controller.passPrice.value,
-                  controller.taxModel,
-                  controller.transactionFeeModel,
-                ),
-                const Divider(
-                  color: Colors.black,
-                ),
-              ],
-            ),
-          ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            child: ButtonThem.buildButton(
-              txtSize: 16,
-              context,
-              title: "Pay Now".tr,
-              txtColor: AppColors.lightGrey01,
-              bgColor: !controller.isPaymentCompleted.value
-                  ? AppColors.darkGrey06
-                  : AppColors.darkGrey10,
-              onPress: () async {
-                if (!controller.isPaymentCompleted.value) {
-                  return;
-                }
-                controller.isLoading.value = true;
-
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.darkGrey10,
+                        Visibility(
+                          visible: controller.paymentModel.value.commercePay !=
+                                  null &&
+                              controller
+                                      .paymentModel.value.commercePay!.enable ==
+                                  true,
+                          child: paymentOnlineDecoration(
+                            controller: controller,
+                            value: controller
+                                    .paymentModel.value.commercePay?.name ??
+                                '',
+                            image: "assets/images/online_banking.png",
+                            selectedBankName: widget.selectedBankName,
+                            updateSelectedBankName: (bankName) {
+                              // Define the callback function
+                              setState(() {
+                                widget.selectedBankName =
+                                    bankName!; // Update the selectedBankName state
+                              });
+                            },
+                            selectedBankId: widget.selectedBankId,
+                            updateSelectedBankId: (bankId) {
+                              setState(() {
+                                selectedBankId =
+                                    bankId ?? ""; // Update selected bank ID
+                              });
+                            },
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  barrierDismissible: false,
-                );
-                try {
-                  // Check if no payment method is selected
-                  if (controller.selectedPaymentMethod.value.isEmpty ||
-                      (controller.selectedPaymentMethod.value ==
-                              "Online Banking" &&
-                          (widget.selectedBankName == null ||
-                              widget.selectedBankName.isEmpty))) {
+                        Visibility(
+                          visible:
+                              controller.paymentModel.value.strip != null &&
+                                  controller.paymentModel.value.strip!.enable ==
+                                      true,
+                          child: paymentDecoration(
+                            controller: controller,
+                            value:
+                                controller.paymentModel.value.strip?.name ?? '',
+                            image: "assets/images/stripe.png",
+                          ),
+                        ),
+                        Visibility(
+                          visible: controller.paymentModel.value.paypal !=
+                                  null &&
+                              controller.paymentModel.value.paypal!.enable ==
+                                  true,
+                          child: paymentDecoration(
+                            controller: controller,
+                            value: controller.paymentModel.value.paypal?.name ??
+                                '',
+                            image: "assets/images/paypal.png",
+                          ),
+                        ),
+                        _buildPaymentInformation(
+                          controller.passPrice.value,
+                          controller.taxModel,
+                          controller.transactionFeeModel,
+                        ),
+                        const Divider(
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                  ),
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              child: ButtonThem.buildButton(
+                txtSize: 16,
+                context,
+                title: "Pay Now".tr,
+                txtColor: AppColors.lightGrey01,
+                bgColor: !controller.isPaymentCompleted.value
+                    ? AppColors.darkGrey06
+                    : AppColors.darkGrey10,
+                onPress: () async {
+                  if (!controller.isPaymentCompleted.value) {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return DialogBoxNotify(
-                          imageAsset: "assets/images/mobile-payment.png",
-                          onPressConfirm: () async {
-                            Navigator.of(context).pop();
-                          },
-                          onPressConfirmBtnName: "Ok".tr,
-                          onPressConfirmColor: AppColors.red04,
-                          content:
-                              "Please select payment method before proceeding to pay."
-                                  .tr,
-                          subTitle: "Select Payment".tr,
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.darkGrey10,
+                            ),
+                          ),
                         );
                       },
+                      barrierDismissible: false,
                     );
                     return;
                   }
-                  // Check the selected payment method
-                  if (controller.selectedPaymentMethod.value ==
-                      controller.paymentModel.value.commercePay!.name) {
-                    // final passData = await addSeasonPassData();
-                    final passPrice = controller.passPrice.value.toString();
-                    // Obtain the access token after selecting the bank
-                    await controller.commercepayMakePayment(
-                      amount: double.parse(passPrice).toStringAsFixed(
-                        Constant.currencyModel!.decimalDigits!,
-                      ),
-                    );
 
-                    // Calculate total price using the passPrice
-                    double totalPrice = calculateTotalPrice(
-                      passPrice,
-                      controller.taxModel!.value != null
-                          ? double.parse(controller.taxModel!.value!)
-                          : 0.0,
-                    );
-
-                    // String? accessToken = await controller.commercepayMakePayment(
-                    //   amount: double.parse(passPrice).toStringAsFixed(
-                    //     Constant.currencyModel!.decimalDigits!,
-                    //   ),
-                    // );
-
-                    // Retrieve the access token from the controller
-                    String? accessToken =
-                        controller.authResultModel.accessToken;
-
-                    // Convert Timestamp to DateTime
-                    DateTime? convertTimestampToDateOnly(Timestamp? timestamp) {
-                      if (timestamp == null) return null;
-                      DateTime dateTime = timestamp.toDate();
-                      return DateTime(
-                          dateTime.year, dateTime.month, dateTime.day);
+                  try {
+                    // Check if no payment method is selected
+                    if (controller.selectedPaymentMethod.value.isEmpty ||
+                        (controller.selectedPaymentMethod.value ==
+                                "Online Banking" &&
+                            (widget.selectedBankName == null ||
+                                widget.selectedBankName.isEmpty))) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DialogBoxNotify(
+                            imageAsset: "assets/images/mobile-payment.png",
+                            onPressConfirm: () async {
+                              Navigator.of(context).pop();
+                            },
+                            onPressConfirmBtnName: "Ok".tr,
+                            onPressConfirmColor: AppColors.red04,
+                            content:
+                                "Please select payment method before proceeding to pay."
+                                    .tr,
+                            subTitle: "Select Payment".tr,
+                          );
+                        },
+                      );
+                      return;
                     }
-
-                    onlinePaymentModel = OnlinePaymentModel(
-                      accessToken: accessToken,
-                      customerId: controller.customerId.value,
-                      selectedBankId: selectedBankId,
-                      totalPrice: totalPrice,
-                      address: controller.address.value,
-                      companyName: controller.companyName.value,
-                      companyRegistrationNo:
-                          controller.companyRegistrationNo.value,
-                      endDate: DateTime.timestamp().add(
-                        Duration(
-                          days: controller.checkDuration(
-                            controller.passValidity.value,
-                          ),
+                    // Check the selected payment method
+                    if (controller.selectedPaymentMethod.value ==
+                        controller.paymentModel.value.commercePay!.name) {
+                      // final passData = await addSeasonPassData();
+                      final passPrice = controller.passPrice.value.toString();
+                      // Obtain the access token after selecting the bank
+                      await controller.commercepayMakePayment(
+                        amount: double.parse(passPrice).toStringAsFixed(
+                          Constant.currencyModel!.decimalDigits!,
                         ),
-                      ),
-                      startDate: DateTime.now(),
-                      fullName: controller.name.value,
-                      email: controller.email.value,
-                      mobileNumber: controller.mobileNumber.value,
-                      userName: controller.username.value,
-                      identificationNo: controller.identificationNumber.value,
-                      identificationType: 2,
-                      vehicleNo: controller.vehicleNo.value,
-                      lotNo: controller.lotNo.value,
-                      selectedPassId: controller.privatePassId.value,
-                      channelId: '18',
-                      zoneId: controller.zoneId.value,
-                      zoneName: controller.zoneName.value,
-                      roadId: controller.roadId.value,
-                      roadName: controller.roadName.value,
-                    );
-                    // print('Online Payment Data: $onlinePaymentModel');
-                    // print('customerId ${passData['customerId']}');
-                    controller.cleanup();
-                    Get.offAndToNamed(
-                      Routes.WEBVIEW_SCREEN,
-                      arguments: {
-                        'onlinePaymentModel': onlinePaymentModel,
-                      },
-                    );
-                    // controller.completeOrder();
-                  } else if (controller.selectedPaymentMethod.value ==
-                      controller.paymentModel.value.strip!.name) {
-                    // Call the controller method to make the stripe payment
-                    controller.stripeMakePayment(
-                      amount: double.parse(
-                        controller
-                            .purchasePassModel.value.seasonPassModel!.price!,
-                      ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-                    );
-                  }
-                  // else if (controller.selectedPaymentMethod.value ==
-                  //     controller.paymentModel.value.paypal!.name) {
-                  //   // Call the controller method to handle PayPal payment
-                  //   controller.paypalPaymentSheet(
-                  //     double.parse(
-                  //       controller
-                  //           .purchasePassModel.value.seasonPassModel!.price!,
-                  //     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-                  //   );
-                  // }
-                  else if (controller.selectedPaymentMethod.value ==
-                      controller.paymentModel.value.wallet!.name) {
-                    // Check if the wallet amount is sufficient
-                    if (double.parse(controller.customerModel.value.walletAmount
-                            .toString()) >=
-                        double.parse(
-                          controller
-                              .purchasePassModel.value.seasonPassModel!.price!,
-                        )) {
-                      // Create a transaction model for wallet deduction
-                      WalletTransactionModel transactionModel =
-                          WalletTransactionModel(
-                        id: Constant.getUuid(),
-                        amount:
-                            "-${double.parse(controller.purchasePassModel.value.seasonPassModel!.price!).toString()}",
-                        createdDate: Timestamp.now(),
-                        paymentType: controller.selectedPaymentMethod.value,
-                        transactionId: controller.purchasePassModel.value.id,
-                        parkingId: controller
-                            .purchasePassModel.value.seasonPassModel!.passid!
-                            .toString(),
-                        note: "Season pass ".tr,
-                        type: "customer",
-                        userId: FireStoreUtils.getCurrentUid(),
-                        isCredit: false,
                       );
 
-                      // Add the wallet transaction
-                      await FireStoreUtils.setWalletTransaction(
-                        transactionModel,
-                      ).then((value) async {
-                        if (value == true) {
-                          // Update the user's wallet amount
-                          await FireStoreUtils.updateUserWallet(
-                            amount:
-                                "-${double.parse(controller.purchasePassModel.value.seasonPassModel!.price!).toString()}",
-                          ).then((value) {
-                            controller.completeOrder();
-                          });
-                        }
-                      });
-                    } else {
-                      // Show toast if wallet amount is insufficient
-                      ShowToastDialog.showToast(
-                          "Wallet Amount Insufficient".tr);
+                      // Calculate total price using the passPrice
+                      double totalPrice = calculateTotalPrice(
+                        passPrice,
+                        controller.taxModel!.value != null
+                            ? double.parse(controller.taxModel!.value!)
+                            : 0.0,
+                        controller.transactionFeeModel?.value != null
+                            ? double.parse(
+                                controller.transactionFeeModel!.value!)
+                            : 0.0,
+                      );
+
+                      // String? accessToken = await controller.commercepayMakePayment(
+                      //   amount: double.parse(passPrice).toStringAsFixed(
+                      //     Constant.currencyModel!.decimalDigits!,
+                      //   ),
+                      // );
+
+                      // Retrieve the access token from the controller
+                      // String? accessToken =
+                      //     controller.authResultModel.accessToken;
+
+                      // Convert Timestamp to DateTime
+                      DateTime? convertDateTimeToDateOnly(DateTime? dateTime) {
+                        if (dateTime == null) return null;
+                        return DateTime(
+                            dateTime.year, dateTime.month, dateTime.day);
+                      }
+
+                      if (controller.authResultModel.accessToken != null &&
+                          controller.authResultModel.accessToken!.isNotEmpty) {
+                        String accessToken =
+                            controller.authResultModel.accessToken!;
+
+                        DateTime startDate = DateTime.now();
+                        DateTime endDate = startDate.add(
+                          Duration(
+                            days: controller.checkDuration(
+                              controller.passValidity.value,
+                            ),
+                          ),
+                        );
+
+                        // Convert startDate and endDate to date-only format
+                        DateTime? dateOnlyStartDate =
+                            convertDateTimeToDateOnly(startDate);
+                        DateTime? dateOnlyEndDate =
+                            convertDateTimeToDateOnly(endDate);
+
+                        onlinePaymentModel = OnlinePaymentModel(
+                          accessToken: accessToken,
+                          customerId: controller.customerId.value,
+                          selectedBankId: selectedBankId,
+                          totalPrice: totalPrice,
+                          address: controller.address.value,
+                          companyName: controller.companyName.value,
+                          companyRegistrationNo:
+                              controller.companyRegistrationNo.value,
+                          endDate: dateOnlyEndDate,
+                          startDate: dateOnlyStartDate,
+                          fullName: controller.name.value,
+                          email: controller.email.value,
+                          mobileNumber: controller.mobileNumber.value,
+                          userName: controller.username.value,
+                          identificationNo:
+                              controller.identificationNumber.value,
+                          identificationType: 2,
+                          vehicleNo: controller.vehicleNo.value,
+                          lotNo: controller.lotNo.value,
+                          selectedPassId: controller.privatePassId.value,
+                          channelId: '18',
+                          zoneId: controller.zoneId.value,
+                          zoneName: controller.zoneName.value,
+                          roadId: controller.roadId.value,
+                          roadName: controller.roadName.value,
+                        );
+
+                        // Proceed with navigation
+                        controller.cleanup();
+                        Get.toNamed(
+                          Routes.WEBVIEW_SCREEN,
+                          arguments: {
+                            'onlinePaymentModel': onlinePaymentModel,
+                          },
+                        );
+                      } else if (controller.selectedPaymentMethod.value ==
+                          controller.paymentModel.value.strip!.name) {
+                        // Call the controller method to make the stripe payment
+                        controller.stripeMakePayment(
+                          amount: double.parse(
+                            controller.purchasePassModel.value.seasonPassModel!
+                                .price!,
+                          ).toStringAsFixed(
+                              Constant.currencyModel!.decimalDigits!),
+                        );
+                      }
                     }
+                    // else if (controller.selectedPaymentMethod.value ==
+                    //     controller.paymentModel.value.paypal!.name) {
+                    //   // Call the controller method to handle PayPal payment
+                    //   controller.paypalPaymentSheet(
+                    //     double.parse(
+                    //       controller
+                    //           .purchasePassModel.value.seasonPassModel!.price!,
+                    //     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+                    //   );
+                    // }
+                    else if (controller.selectedPaymentMethod.value ==
+                        controller.paymentModel.value.wallet!.name) {
+                      // Check if the wallet amount is sufficient
+                      if (double.parse(controller
+                              .customerModel.value.walletAmount
+                              .toString()) >=
+                          double.parse(
+                            controller.purchasePassModel.value.seasonPassModel!
+                                .price!,
+                          )) {
+                        // Create a transaction model for wallet deduction
+                        WalletTransactionModel transactionModel =
+                            WalletTransactionModel(
+                          id: Constant.getUuid(),
+                          amount:
+                              "-${double.parse(controller.purchasePassModel.value.seasonPassModel!.price!).toString()}",
+                          createdDate: Timestamp.now(),
+                          paymentType: controller.selectedPaymentMethod.value,
+                          transactionId: controller.purchasePassModel.value.id,
+                          parkingId: controller
+                              .purchasePassModel.value.seasonPassModel!.passid!
+                              .toString(),
+                          note: "Season pass ".tr,
+                          type: "customer",
+                          userId: FireStoreUtils.getCurrentUid(),
+                          isCredit: false,
+                        );
+
+                        // Add the wallet transaction
+                        await FireStoreUtils.setWalletTransaction(
+                          transactionModel,
+                        ).then((value) async {
+                          if (value == true) {
+                            // Update the user's wallet amount
+                            await FireStoreUtils.updateUserWallet(
+                              amount:
+                                  "-${double.parse(controller.purchasePassModel.value.seasonPassModel!.price!).toString()}",
+                            ).then((value) {
+                              controller.completeOrder();
+                            });
+                          }
+                        });
+                      } else {
+                        // Show toast if wallet amount is insufficient
+                        ShowToastDialog.showToast(
+                            "Wallet Amount Insufficient".tr);
+                      }
+                    }
+                  } finally {
+                    controller.isLoading.value = false;
                   }
-                } finally {
-                  controller.isLoading.value = false;
-                }
-              },
+                },
+              ),
             ),
           ),
         );
@@ -502,20 +556,30 @@ Widget _buildPaymentInformation(
   double price = double.parse(passPrice);
 
   // Calculate tax (based on the fetched tax value)
-  double tax = double.parse(taxModel!.value!) * price;
+  // double taxValue = 0.0;
+  // if (taxModel != null && taxModel.value != null) {
+  //   try {
+  //     taxValue = double.parse(taxModel.value!);
+  //   } catch (e) {
+  //     // Handle parse error
+  //     print("Error parsing tax value: $e");
+  //   }
+  // }
+  // double tax = taxValue * price;
 
-  double taxValue = 0.0;
-  if (taxModel != null) {
-    taxValue = double.parse(taxModel.value!);
-  }
   // Convert transaction fee from String to double and calculate the amount
   double transactionFeeAmount = 0.0;
-  if (transactionFee != null) {
-    transactionFeeAmount = double.parse(transactionFee.value!);
+  if (transactionFee != null && transactionFee.value != null) {
+    try {
+      transactionFeeAmount = double.parse(transactionFee.value!);
+    } catch (e) {
+      // Handle parse error
+      print("Error parsing transaction fee: $e");
+    }
   }
 
   // Calculate total amount
-  double totalPrice = price + tax + transactionFeeAmount;
+  double totalPrice = price + transactionFeeAmount;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -532,9 +596,9 @@ Widget _buildPaymentInformation(
       const SizedBox(height: 20),
       _buildDetailRow("Sub Total".tr,
           "RM ${price.toStringAsFixed(2)}"), // Convert price to string
-      _buildDetailRow(
-          "${taxModel.name}(${(taxValue * 100).toStringAsFixed(0)}%)",
-          "RM ${tax.toStringAsFixed(2)}"),
+      // _buildDetailRow(
+      //     "${taxModel?.name}(${(taxValue * 100).toStringAsFixed(0)}%)",
+      //     "RM ${tax.toStringAsFixed(2)}"),
       _buildDetailRow("Transaction Fee".tr,
           "RM ${transactionFeeAmount.toStringAsFixed(2)}"),
       const Divider(),
@@ -543,15 +607,16 @@ Widget _buildPaymentInformation(
   );
 }
 
-double calculateTotalPrice(String passPrice, double taxValue) {
+double calculateTotalPrice(
+    String passPrice, double taxValue, double transactionFeeAmount) {
   // Convert passPrice to a double
   double price = double.parse(passPrice);
 
-  // Calculate tax (6% of pass price)
+  // Calculate tax (as a percentage of pass price)
   double tax = taxValue * price;
 
-  // Calculate total amount
-  double totalPrice = price + tax;
+  // Calculate total amount including transaction fee
+  double totalPrice = price + tax + transactionFeeAmount;
 
   return totalPrice;
 }

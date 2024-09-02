@@ -1,5 +1,5 @@
 name: customer_app
-version: 1.0.10+13
+version: 1.0.11+14
 publish_to: none
 description: A new Flutter project.
 environment:

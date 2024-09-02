@@ -3,13 +3,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_model.dart';
-import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
 import 'package:customer_app/app/models/payment/stripe_failed_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/models/tax_model.dart';
@@ -30,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../utils/server.dart';
 
@@ -52,12 +51,14 @@ class SelectPaymentScreenController extends GetxController {
   RxDouble tax = RxDouble(0.0);
   Rx<String> passValidity = ''.obs;
   String? taxId;
+  String? accessToken;
 
   @override
   Future<void> onInit() async {
     getArgument();
     fetchTax();
     fetchTransactionFee();
+    await _checkAuthTokenValidity();
     super.onInit();
   }
 
@@ -82,7 +83,7 @@ class SelectPaymentScreenController extends GetxController {
     selectedBankId.value = "";
     isPaymentCompleted.value = true;
     isLoading.value = true;
-    authResultModel = AuthResultModel();
+    // authResultModel = AuthResultModel();
     transactionFeeModel = TransactionFeeModel();
     tax = RxDouble(0.0);
     passValidity.value = '';
@@ -182,6 +183,28 @@ class SelectPaymentScreenController extends GetxController {
     });
   }
 
+  Future<void> _checkAuthTokenValidity() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final storedAccessToken = prefs.getString('AccessToken');
+    final tokenExpiryString = prefs.getString('TokenExpiry');
+
+    if (storedAccessToken != null && tokenExpiryString != null) {
+      DateTime tokenExpiry = DateTime.parse(tokenExpiryString);
+      if (DateTime.now().isBefore(tokenExpiry)) {
+        // Token is still valid, use it
+        accessToken = storedAccessToken;
+        authResultModel = AuthResultModel(accessToken: accessToken);
+        print("Using stored access token: $accessToken");
+        return;
+      }
+    }
+
+    // Token is expired or doesn't exist, fetch a new one
+    accessToken = await commercepayMakePayment(
+        amount: "0"); // Pass amount or relevant value
+    print("Fetched new access token: $accessToken");
+  }
+
   Future<String?> commercepayMakePayment({required String amount}) async {
     isLoading.value = true;
     try {
@@ -189,28 +212,21 @@ class SelectPaymentScreenController extends GetxController {
       if (response != null && response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         authResultModel = AuthResultModel.fromJson(jsonResponse);
-        // Set the access token
         String accessToken = authResultModel.accessToken.toString();
-        // Print the access token
-        // print("Access Token: $accessToken");
 
-        DateTime time = DateTime.now();
-        time.add(Duration(seconds: authResultModel.expireInSeconds as int));
-        Preferences.setString(
-            "AccessToken", accessToken); // Store the access token
+        DateTime tokenExpiry = DateTime.now()
+            .add(Duration(seconds: authResultModel.expireInSeconds!));
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("AccessToken", accessToken);
+        await prefs.setString("TokenExpiry", tokenExpiry.toIso8601String());
 
-        Preferences.setString("TokenExpiry", time.toString());
-
-        // Return the access token
         return accessToken;
       } else {
-        // Return null if there's an error
         return null;
       }
     } catch (e, s) {
       log("$e \n$s");
       ShowToastDialog.showToast("exception:$e \n$s");
-      // Return null if there's an error
       return null;
     } finally {
       isLoading.value = false;
@@ -296,75 +312,4 @@ class SelectPaymentScreenController extends GetxController {
       log(e.toString());
     }
   }
-
-  // final _flutterPaypalNativePlugin = FlutterPaypalNative.instance;
-
-  // void initPayPal() async {
-  //   //set debugMode for error logging
-  //   FlutterPaypalNative.isDebugMode =
-  //       paymentModel.value.paypal!.isSandbox == true ? true : false;
-
-  //   //initiate payPal plugin
-  //   await _flutterPaypalNativePlugin.init(
-  //     //your app id !!! No Underscore!!! see readme.md for help
-  //     returnUrl: "com.terasoft.nazifaparking://paypalpay",
-  //     //client id from developer dashboard
-  //     clientID: paymentModel.value.paypal!.paypalClient.toString(),
-  //     //sandbox, staging, live etc
-  //     payPalEnvironment: paymentModel.value.paypal!.isSandbox == true
-  //         ? FPayPalEnvironment.sandbox
-  //         : FPayPalEnvironment.live,
-  //     //what currency do you plan to use? default is US dollars
-  //     currencyCode: FPayPalCurrencyCode.usd,
-  //     //action paynow?
-  //     action: FPayPalUserAction.payNow,
-  //   );
-
-  //   //call backs for payment
-  //   _flutterPaypalNativePlugin.setPayPalOrderCallback(
-  //     callback: FPayPalOrderCallback(
-  //       onCancel: () {
-  //         //user canceled the payment
-  //         ShowToastDialog.showToast("Payment canceled");
-  //       },
-  //       onSuccess: (data) {
-  //         //successfully paid
-  //         //remove all items from queue
-  //         _flutterPaypalNativePlugin.removeAllPurchaseItems();
-  //         String visitor = data.cart?.shippingAddress?.firstName ?? 'Visitor';
-  //         String address =
-  //             data.cart?.shippingAddress?.line1 ?? 'Unknown Address';
-  //         ShowToastDialog.showToast("Payment Successfully");
-  //         completeOrder();
-  //       },
-  //       onError: (data) {
-  //         //an error occured
-  //         ShowToastDialog.showToast("error: ${data.reason}");
-  //       },
-  //       onShippingChange: (data) {
-  //         //the user updated the shipping address
-  //         ShowToastDialog.showToast(
-  //             "shipping change: ${data.shippingChangeAddress?.adminArea1 ?? ""}");
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // paypalPaymentSheet(String amount) {
-  //   //add 1 item to cart. Max is 4!
-  //   if (_flutterPaypalNativePlugin.canAddMorePurchaseUnit) {
-  //     _flutterPaypalNativePlugin.addPurchaseUnit(
-  //       FPayPalPurchaseUnit(
-  //         amount: double.parse(amount),
-
-  //         ///please use your own algorithm for referenceId. Maybe ProductID?
-  //         referenceId: FPayPalStrHelper.getRandomString(16),
-  //       ),
-  //     );
-  //   }
-
-  //   _flutterPaypalNativePlugin.makeOrder(
-  //     action: FPayPalUserAction.payNow,
-  //   );
-  // }
 }

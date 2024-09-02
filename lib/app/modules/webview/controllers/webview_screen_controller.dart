@@ -78,9 +78,9 @@ class WebviewScreenController extends GetxController {
       'lotNo': onlinePaymentData.lotNo ?? '',
       'vehicleNo': onlinePaymentData.vehicleNo ?? '',
       'passId': onlinePaymentData.selectedPassId ?? '',
-      'roadId': onlinePaymentData.roadId ?? '',
+      'roadId': onlinePaymentData.roadId.toString() ?? '',
       'roadName': onlinePaymentData.roadName ?? '',
-      'zoneId': onlinePaymentData.zoneId ?? '',
+      'zoneId': onlinePaymentData.zoneId.toString() ?? '',
       'zoneName': onlinePaymentData.zoneName ?? '',
     };
     body.forEach((key, value) {

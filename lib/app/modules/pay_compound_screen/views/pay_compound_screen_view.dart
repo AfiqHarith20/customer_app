@@ -107,337 +107,362 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
     return GetX<PayCompoundScreenController>(
       init: PayCompoundScreenController(),
       builder: (controller) {
-        return Scaffold(
-          appBar: UiInterface().customAppBar(
-            context,
-            "Checkout".tr,
-            backgroundColor: AppColors.white,
-            // onBackTap: () {
-            //   Get.offAllNamed(Routes.SEARCH_SUMMON_SCREEN);
-            // },
-          ),
-          body: controller.isLoading.value
-              ? Constant.loader()
-              : Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 12,
-                  ),
-                  child: Column(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Compound Details".tr,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontFamily: AppThemData.semiBold,
-                              color: AppColors.darkGrey08,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          _buildDetailRow(
-                            "Compound Number".tr,
-                            compoundModel.compoundNo ?? '',
-                          ),
-                          _buildDetailRow(
-                            "Full Name".tr,
-                            controller.customerModel.value.fullName.toString(),
-                          ),
-                          _buildDetailRow(
-                            "Price".tr,
-                            "RM ${compoundModel.amount ?? ''}",
-                          ),
-                        ],
-                      ),
-                      const Divider(
-                        color: Colors.black,
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Text(
-                            "Payment Methods".tr,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontFamily: AppThemData.semiBold,
-                              color: AppColors.darkGrey08,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Visibility(
-                        visible: controller.paymentModel.value.wallet != null &&
-                            controller.paymentModel.value.wallet!.enable ==
-                                true,
-                        child: paymentDecoration(
-                          controller: controller,
-                          value: controller.paymentModel.value.wallet != null
-                              ? controller.paymentModel.value.wallet!.name!
-                              : '',
-                          image: "assets/images/wallet.png",
-                        ),
-                      ),
-                      Visibility(
-                        visible: controller.paymentModel.value.commercePay !=
-                                null &&
-                            controller.paymentModel.value.commercePay!.enable ==
-                                true,
-                        child: paymentOnlineDecoration(
-                          controller: controller,
-                          value:
-                              controller.paymentModel.value.commercePay?.name ??
-                                  '',
-                          image: "assets/images/online_banking.png",
-                          selectedBankName: widget.selectedBankName,
-                          updateSelectedBankName: (bankName) {
-                            // Define the callback function
-                            setState(() {
-                              widget.selectedBankName =
-                                  bankName!; // Update the selectedBankName state
-                            });
-                          },
-                          selectedBankId: widget.selectedBankId,
-                          updateSelectedBankId: (bankId) {
-                            setState(() {
-                              selectedBankId =
-                                  bankId ?? ""; // Update selected bank ID
-                            });
-                          },
-                        ),
-                      ),
-                      Visibility(
-                        visible: controller.paymentModel.value.strip != null &&
-                            controller.paymentModel.value.strip!.enable == true,
-                        child: paymentDecoration(
-                          controller: controller,
-                          value:
-                              controller.paymentModel.value.strip?.name ?? '',
-                          image: "assets/images/stripe.png",
-                        ),
-                      ),
-                      Visibility(
-                        visible: controller.paymentModel.value.paypal != null &&
-                            controller.paymentModel.value.paypal!.enable ==
-                                true,
-                        child: paymentDecoration(
-                          controller: controller,
-                          value:
-                              controller.paymentModel.value.paypal?.name ?? '',
-                          image: "assets/images/paypal.png",
-                        ),
-                      ),
-                      _buildPaymentInformation(
-                        compoundModel,
-                        controller.taxModel,
-                        controller.transactionFeeModel,
-                      ),
-                      const Divider(
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            child: ButtonThem.buildButton(
-              txtSize: 16,
+        return WillPopScope(
+          onWillPop: () async {
+            controller.cleanup();
+            Get.back();
+            return true;
+          },
+          child: Scaffold(
+            appBar: UiInterface().customAppBar(
               context,
-              title: "Pay Now".tr,
-              txtColor: AppColors.lightGrey01,
-              bgColor: !controller.isPaymentCompleted.value
-                  ? AppColors.darkGrey06
-                  : AppColors.darkGrey10,
-              onPress: () async {
-                if (!controller.isPaymentCompleted.value) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.darkGrey10,
+              "Checkout".tr,
+              backgroundColor: AppColors.white,
+              // onBackTap: () {
+              //   Get.offAllNamed(Routes.SEARCH_SUMMON_SCREEN);
+              // },
+            ),
+            body: controller.isLoading.value
+                ? Constant.loader()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12,
+                    ),
+                    child: Column(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Compound Details".tr,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: AppThemData.semiBold,
+                                color: AppColors.darkGrey08,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            _buildDetailRow(
+                              "Compound Number".tr,
+                              compoundModel.compoundNo ?? '',
+                            ),
+                            _buildDetailRow(
+                              "Full Name".tr,
+                              controller.customerModel.value.fullName
+                                  .toString(),
+                            ),
+                            _buildDetailRow(
+                              "Price".tr,
+                              "RM ${compoundModel.amount ?? ''}",
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          color: Colors.black,
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Text(
+                              "Payment Methods".tr,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: AppThemData.semiBold,
+                                color: AppColors.darkGrey08,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Visibility(
+                          visible: controller.paymentModel.value.wallet !=
+                                  null &&
+                              controller.paymentModel.value.wallet!.enable ==
+                                  true,
+                          child: paymentDecoration(
+                            controller: controller,
+                            value: controller.paymentModel.value.wallet != null
+                                ? controller.paymentModel.value.wallet!.name!
+                                : '',
+                            image: "assets/images/wallet.png",
                           ),
                         ),
-                      );
-                    },
-                    barrierDismissible: false,
-                  );
-                  return;
-                }
-                // Check if no payment method is selected
-                if (controller.selectedPaymentMethod.value.isEmpty ||
-                    (controller.selectedPaymentMethod.value ==
-                            "Online Banking" &&
-                        (widget.selectedBankName == null ||
-                            widget.selectedBankName.isEmpty))) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return DialogBoxNotify(
-                        imageAsset: "assets/images/mobile-payment.png",
-                        onPressConfirm: () async {
-                          Navigator.of(context).pop();
-                        },
-                        onPressConfirmBtnName: "Ok".tr,
-                        onPressConfirmColor: AppColors.red04,
-                        content:
-                            "Please select payment method before proceeding to pay."
-                                .tr,
-                        subTitle: "Select Payment".tr,
-                      );
-                    },
-                  );
-                  return;
-                }
-                // Check the selected payment method
-                if (controller.selectedPaymentMethod.value ==
-                    controller.paymentModel.value.commercePay!.name) {
-                  final amount = compoundModel.amount ?? '';
-                  // Obtain the access token after selecting the bank
-                  await controller.commercepayCompoundPayment(
-                    amount: double.parse(amount).toStringAsFixed(
-                      Constant.currencyModel!.decimalDigits!,
+                        Visibility(
+                          visible: controller.paymentModel.value.commercePay !=
+                                  null &&
+                              controller
+                                      .paymentModel.value.commercePay!.enable ==
+                                  true,
+                          child: paymentOnlineDecoration(
+                            controller: controller,
+                            value: controller
+                                    .paymentModel.value.commercePay?.name ??
+                                '',
+                            image: "assets/images/online_banking.png",
+                            selectedBankName: widget.selectedBankName,
+                            updateSelectedBankName: (bankName) {
+                              // Define the callback function
+                              setState(() {
+                                widget.selectedBankName =
+                                    bankName!; // Update the selectedBankName state
+                              });
+                            },
+                            selectedBankId: widget.selectedBankId,
+                            updateSelectedBankId: (bankId) {
+                              setState(() {
+                                selectedBankId =
+                                    bankId ?? ""; // Update selected bank ID
+                              });
+                            },
+                          ),
+                        ),
+                        Visibility(
+                          visible:
+                              controller.paymentModel.value.strip != null &&
+                                  controller.paymentModel.value.strip!.enable ==
+                                      true,
+                          child: paymentDecoration(
+                            controller: controller,
+                            value:
+                                controller.paymentModel.value.strip?.name ?? '',
+                            image: "assets/images/stripe.png",
+                          ),
+                        ),
+                        Visibility(
+                          visible: controller.paymentModel.value.paypal !=
+                                  null &&
+                              controller.paymentModel.value.paypal!.enable ==
+                                  true,
+                          child: paymentDecoration(
+                            controller: controller,
+                            value: controller.paymentModel.value.paypal?.name ??
+                                '',
+                            image: "assets/images/paypal.png",
+                          ),
+                        ),
+                        _buildPaymentInformation(
+                          compoundModel,
+                          controller.taxModel,
+                          controller.transactionFeeModel,
+                        ),
+                        const Divider(
+                          color: Colors.black,
+                        ),
+                      ],
                     ),
-                  );
-                  // Calculate total price using the passPrice
-                  double totalPrice = calculateTotalPrice(
-                    compoundModel,
-                    controller.taxModel!.value! != null
-                        ? double.parse(controller.taxModel!.value!)
-                        : 0.0,
-                  );
-
-                  // Retrieve the access token from the controller
-                  String? accessToken = controller.authResultModel.accessToken;
-
-                  // String? accessToken =
-                  //     await controller.commercepayCompoundPayment(
-                  //   amount: double.parse(amount).toStringAsFixed(
-                  //     Constant.currencyModel!.decimalDigits!,
-                  //   ),
-                  // );
-
-                  // Convert Timestamp to DateTime
-                  // DateTime? convertTimestampToDateOnly(Timestamp? timestamp) {
-                  //   if (timestamp == null) return null;
-                  //   DateTime dateTime = timestamp.toDate();
-                  //   return DateTime(
-                  //       dateTime.year, dateTime.month, dateTime.day);
-                  // }
-
-                  myPaymentCompoundModel = MyPaymentCompoundModel(
-                    accessToken: accessToken,
-                    customerId: FireStoreUtils.getCurrentUid(),
-                    selectedBankId: selectedBankId,
-                    amount: totalPrice.toStringAsFixed(2),
-                    address: controller.customerModel.value.address.toString(),
-                    name: controller.customerModel.value.fullName.toString(),
-                    email: controller.customerModel.value.email.toString(),
-                    mobileNumber:
-                        controller.customerModel.value.phoneNumber.toString(),
-                    userName: controller.customerModel.value.email.toString(),
-                    identificationNo: controller
-                        .customerModel.value.identificationNo
-                        .toString(),
-                    identificationType: '1',
-                    vehicleNum: compoundModel.vehicleNum ?? '',
-                    channelId: '18',
-                    compoundNo: compoundModel.compoundNo ?? '',
-                    kodHasil: compoundModel.kodHasil ?? '',
-                  );
-                  // print('Compound payment Data: $myPaymentCompoundModel');
-                  // print('accessToken: ${myPaymentCompoundModel.accessToken}');
-                  // print('customerId: ${myPaymentCompoundModel.customerId}');
-                  // print(
-                  //     'providerChannelId: ${myPaymentCompoundModel.selectedBankId}');
-                  // print('amount: ${myPaymentCompoundModel.amount}');
-                  // print('address: ${myPaymentCompoundModel.address}');
-                  // print('name: ${myPaymentCompoundModel.name}');
-                  // print('email: ${myPaymentCompoundModel.email}');
-                  // print('mobileNumber: ${myPaymentCompoundModel.mobileNumber}');
-                  // print('username: ${myPaymentCompoundModel.userName}');
-                  // print(
-                  //     'identificationNumber: ${myPaymentCompoundModel.identificationNo}');
-                  // print(
-                  //     'identificationType: ${myPaymentCompoundModel.identificationType}');
-                  // print('vehicleNo: ${myPaymentCompoundModel.vehicleNum}');
-                  // print('channelId: ${myPaymentCompoundModel.channelId}');
-                  // print('compoundNo: ${myPaymentCompoundModel.compoundNo}');
-                  // print('kodHasil: ${myPaymentCompoundModel.kodHasil}');
-                  controller.cleanup();
-                  Get.offAllNamed(
-                    Routes.WEBVIEW_COMPOUND_SCREEN,
-                    arguments: {
-                      'myPaymentCompoundModel': myPaymentCompoundModel,
-                    },
-                  );
-                  // controller.completeOrder();
-                } else if (controller.selectedPaymentMethod.value ==
-                    controller.paymentModel.value.strip!.name) {
-                  // Call the controller method to make the stripe payment
-                  controller.stripeMakePayment(
-                    amount: double.parse(
-                      controller.myPaymentCompoundModel.value.amount!,
-                    ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-                  );
-                }
-                // else if (controller.selectedPaymentMethod.value ==
-                //     controller.paymentModel.value.paypal!.name) {
-                //   // Call the controller method to handle PayPal payment
-                //   controller.paypalPaymentSheet(
-                //     double.parse(
-                //       controller.myPaymentCompoundModel.value.amount!,
-                //     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
-                //   );
-                // }
-                else if (controller.selectedPaymentMethod.value ==
-                    controller.paymentModel.value.wallet!.name) {
-                  // Check if the wallet amount is sufficient
-                  if (double.parse(controller.customerModel.value.walletAmount
-                          .toString()) >=
-                      double.parse(
-                        controller.myPaymentCompoundModel.value.amount!,
-                      )) {
-                    // Create a transaction model for wallet deduction
-                    WalletTransactionModel transactionModel =
-                        WalletTransactionModel(
-                      id: Constant.getUuid(),
-                      amount:
-                          "-${double.parse(controller.myPaymentCompoundModel.value.amount!).toString()}",
-                      createdDate: Timestamp.now(),
-                      paymentType: controller.selectedPaymentMethod.value,
-                      transactionId: controller.myPaymentCompoundModel.value.id,
-                      parkingId: controller.myPaymentCompoundModel.value.id!
-                          .toString(),
-                      note: "Season pass ".tr,
-                      type: "customer",
-                      userId: FireStoreUtils.getCurrentUid(),
-                      isCredit: false,
+                  ),
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              child: ButtonThem.buildButton(
+                txtSize: 16,
+                context,
+                title: "Pay Now".tr,
+                txtColor: AppColors.lightGrey01,
+                bgColor: !controller.isPaymentCompleted.value
+                    ? AppColors.darkGrey06
+                    : AppColors.darkGrey10,
+                onPress: () async {
+                  if (!controller.isPaymentCompleted.value) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.darkGrey10,
+                            ),
+                          ),
+                        );
+                      },
+                      barrierDismissible: false,
+                    );
+                    return;
+                  }
+                  // Check if no payment method is selected
+                  if (controller.selectedPaymentMethod.value.isEmpty ||
+                      (controller.selectedPaymentMethod.value ==
+                              "Online Banking" &&
+                          (widget.selectedBankName == null ||
+                              widget.selectedBankName.isEmpty))) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DialogBoxNotify(
+                          imageAsset: "assets/images/mobile-payment.png",
+                          onPressConfirm: () async {
+                            Navigator.of(context).pop();
+                          },
+                          onPressConfirmBtnName: "Ok".tr,
+                          onPressConfirmColor: AppColors.red04,
+                          content:
+                              "Please select payment method before proceeding to pay."
+                                  .tr,
+                          subTitle: "Select Payment".tr,
+                        );
+                      },
+                    );
+                    return;
+                  }
+                  // Check the selected payment method
+                  if (controller.selectedPaymentMethod.value ==
+                      controller.paymentModel.value.commercePay!.name) {
+                    final amount = compoundModel.amount ?? '';
+                    // Obtain the access token after selecting the bank
+                    await controller.commercepayCompoundPayment(
+                      amount: double.parse(amount).toStringAsFixed(
+                        Constant.currencyModel!.decimalDigits!,
+                      ),
+                    );
+                    // Calculate total price using the passPrice
+                    double totalPrice = calculateTotalPrice(
+                      compoundModel,
+                      controller.taxModel!.value! != null
+                          ? double.parse(controller.taxModel!.value!)
+                          : 0.0,
                     );
 
-                    // Add the wallet transaction
-                    await FireStoreUtils.setWalletTransaction(
-                      transactionModel,
-                    ).then((value) async {
-                      if (value == true) {
-                        // Update the user's wallet amount
-                        await FireStoreUtils.updateUserWallet(
-                          amount:
-                              "-${double.parse(controller.myPaymentCompoundModel.value.amount!).toString()}",
-                        ).then((value) {
-                          controller.completeOrder();
-                        });
-                      }
-                    });
-                  } else {
-                    // Show toast if wallet amount is insufficient
-                    ShowToastDialog.showToast("Wallet Amount Insufficient".tr);
+                    // Retrieve the access token from the controller
+                    // String? accessToken = controller.authResultModel.accessToken;
+
+                    // String? accessToken =
+                    //     await controller.commercepayCompoundPayment(
+                    //   amount: double.parse(amount).toStringAsFixed(
+                    //     Constant.currencyModel!.decimalDigits!,
+                    //   ),
+                    // );
+
+                    // Convert Timestamp to DateTime
+                    // DateTime? convertTimestampToDateOnly(Timestamp? timestamp) {
+                    //   if (timestamp == null) return null;
+                    //   DateTime dateTime = timestamp.toDate();
+                    //   return DateTime(
+                    //       dateTime.year, dateTime.month, dateTime.day);
+                    // }
+
+                    if (controller.authResultModel.accessToken != null &&
+                        controller.authResultModel.accessToken!.isNotEmpty) {
+                      String accessToken =
+                          controller.authResultModel.accessToken!;
+
+                      myPaymentCompoundModel = MyPaymentCompoundModel(
+                        accessToken: accessToken,
+                        customerId: FireStoreUtils.getCurrentUid(),
+                        selectedBankId: selectedBankId,
+                        amount: totalPrice.toStringAsFixed(2),
+                        address:
+                            controller.customerModel.value.address.toString(),
+                        name:
+                            controller.customerModel.value.fullName.toString(),
+                        email: controller.customerModel.value.email.toString(),
+                        mobileNumber: controller.customerModel.value.phoneNumber
+                            .toString(),
+                        userName:
+                            controller.customerModel.value.email.toString(),
+                        identificationNo: controller
+                            .customerModel.value.identificationNo
+                            .toString(),
+                        identificationType: '1',
+                        vehicleNum: compoundModel.vehicleNum ?? '',
+                        channelId: '18',
+                        compoundNo: compoundModel.compoundNo ?? '',
+                        kodHasil: compoundModel.kodHasil ?? '',
+                      );
+                      // print('Compound payment Data: $myPaymentCompoundModel');
+                      // print('accessToken: ${myPaymentCompoundModel.accessToken}');
+                      // print('customerId: ${myPaymentCompoundModel.customerId}');
+                      // print(
+                      //     'providerChannelId: ${myPaymentCompoundModel.selectedBankId}');
+                      // print('amount: ${myPaymentCompoundModel.amount}');
+                      // print('address: ${myPaymentCompoundModel.address}');
+                      // print('name: ${myPaymentCompoundModel.name}');
+                      // print('email: ${myPaymentCompoundModel.email}');
+                      // print('mobileNumber: ${myPaymentCompoundModel.mobileNumber}');
+                      // print('username: ${myPaymentCompoundModel.userName}');
+                      // print(
+                      //     'identificationNumber: ${myPaymentCompoundModel.identificationNo}');
+                      // print(
+                      //     'identificationType: ${myPaymentCompoundModel.identificationType}');
+                      // print('vehicleNo: ${myPaymentCompoundModel.vehicleNum}');
+                      // print('channelId: ${myPaymentCompoundModel.channelId}');
+                      // print('compoundNo: ${myPaymentCompoundModel.compoundNo}');
+                      // print('kodHasil: ${myPaymentCompoundModel.kodHasil}');
+                      controller.cleanup();
+                      Get.offAllNamed(
+                        Routes.WEBVIEW_COMPOUND_SCREEN,
+                        arguments: {
+                          'myPaymentCompoundModel': myPaymentCompoundModel,
+                        },
+                      );
+                      // controller.completeOrder();
+                    } else if (controller.selectedPaymentMethod.value ==
+                        controller.paymentModel.value.strip!.name) {
+                      // Call the controller method to make the stripe payment
+                      controller.stripeMakePayment(
+                        amount: double.parse(
+                          controller.myPaymentCompoundModel.value.amount!,
+                        ).toStringAsFixed(
+                            Constant.currencyModel!.decimalDigits!),
+                      );
+                    }
                   }
-                }
-              },
+                  // else if (controller.selectedPaymentMethod.value ==
+                  //     controller.paymentModel.value.paypal!.name) {
+                  //   // Call the controller method to handle PayPal payment
+                  //   controller.paypalPaymentSheet(
+                  //     double.parse(
+                  //       controller.myPaymentCompoundModel.value.amount!,
+                  //     ).toStringAsFixed(Constant.currencyModel!.decimalDigits!),
+                  //   );
+                  // }
+                  else if (controller.selectedPaymentMethod.value ==
+                      controller.paymentModel.value.wallet!.name) {
+                    // Check if the wallet amount is sufficient
+                    if (double.parse(controller.customerModel.value.walletAmount
+                            .toString()) >=
+                        double.parse(
+                          controller.myPaymentCompoundModel.value.amount!,
+                        )) {
+                      // Create a transaction model for wallet deduction
+                      WalletTransactionModel transactionModel =
+                          WalletTransactionModel(
+                        id: Constant.getUuid(),
+                        amount:
+                            "-${double.parse(controller.myPaymentCompoundModel.value.amount!).toString()}",
+                        createdDate: Timestamp.now(),
+                        paymentType: controller.selectedPaymentMethod.value,
+                        transactionId:
+                            controller.myPaymentCompoundModel.value.id,
+                        parkingId: controller.myPaymentCompoundModel.value.id!
+                            .toString(),
+                        note: "Season pass ".tr,
+                        type: "customer",
+                        userId: FireStoreUtils.getCurrentUid(),
+                        isCredit: false,
+                      );
+
+                      // Add the wallet transaction
+                      await FireStoreUtils.setWalletTransaction(
+                        transactionModel,
+                      ).then((value) async {
+                        if (value == true) {
+                          // Update the user's wallet amount
+                          await FireStoreUtils.updateUserWallet(
+                            amount:
+                                "-${double.parse(controller.myPaymentCompoundModel.value.amount!).toString()}",
+                          ).then((value) {
+                            controller.completeOrder();
+                          });
+                        }
+                      });
+                    } else {
+                      // Show toast if wallet amount is insufficient
+                      ShowToastDialog.showToast(
+                          "Wallet Amount Insufficient".tr);
+                    }
+                  }
+                },
+              ),
             ),
           ),
         );
@@ -654,9 +679,9 @@ Widget _buildPaymentInformation(CompoundModel compoundModel, TaxModel? taxModel,
       const SizedBox(height: 20),
       _buildDetailRow("Sub Total".tr,
           "RM ${price.toStringAsFixed(2)}"), // Convert price to string
-      _buildDetailRow(
-          "${taxModel.name}(${(taxValue * 100).toStringAsFixed(0)}%)",
-          "RM ${tax.toStringAsFixed(2)}"),
+      // _buildDetailRow(
+      //     "${taxModel.name}(${(taxValue * 100).toStringAsFixed(0)}%)",
+      //     "RM ${tax.toStringAsFixed(2)}"),
       _buildDetailRow("Transaction Fee".tr,
           "RM ${transactionFeeAmount.toStringAsFixed(2)}"),
       const Divider(),

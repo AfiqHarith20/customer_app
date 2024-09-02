@@ -16,8 +16,7 @@ class WebviewScreen extends StatefulWidget {
 
 class _WebviewScreenState extends State<WebviewScreen> {
   double _progress = 0;
-  final WebviewScreenController controller =
-      Get.put(WebviewScreenController());
+  final WebviewScreenController controller = Get.put(WebviewScreenController());
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +29,23 @@ class _WebviewScreenState extends State<WebviewScreen> {
             // controller.cleanup();
             //  Get.delete<OnlinePaymentModel>();
             // Navigate to the dashboard screen
-            Get.offAllNamed(
-              Routes.DASHBOARD_SCREEN,
+            Get.offNamedUntil(
+              Routes
+                  .DASHBOARD_SCREEN, // Replace with your actual route for the search compound page
+              (route) => route
+                  .isFirst, // Removes all intermediate pages (checkout page, etc.)
+              arguments: {
+                'paymentCompleted':
+                    true, // Pass a signal that the payment was completed
+              },
             );
 
             // Fetch and update the dashboard controller
-            DashboardScreenController dashboardController = Get.find();
-            dashboardController.refreshData();
-            DashboardScreenController newDashboardController =
-                Get.put(DashboardScreenController());
-            newDashboardController.selectedIndex(1);
+            // DashboardScreenController dashboardController = Get.find();
+            // dashboardController.refreshData();
+            // DashboardScreenController newDashboardController =
+            //     Get.put(DashboardScreenController());
+            // newDashboardController.selectedIndex(1);
           },
           icon: const Icon(
             Icons.close,

@@ -15,61 +15,71 @@ import '../../../routes/app_pages.dart';
 import '../controllers/my_season_pass_controller.dart';
 
 class MySeasonPassView extends GetView<MySeasonPassController> {
-  const MySeasonPassView({Key? key}) : super(key: key);
+  const MySeasonPassView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    bool paymentCompleted = Get.arguments?['paymentCompleted'] ?? false;
+    if (paymentCompleted) {
+      controller.reload(); // Adjust this method to refresh your data
+    }
     return GetX<MySeasonPassController>(
         init: MySeasonPassController(),
         builder: (controller) {
-          return Scaffold(
-            backgroundColor: AppColors.lightGrey02,
-            appBar: UiInterface().customAppBar(
+          return WillPopScope(
+            onWillPop: () async {
+              Get.back();
+              return false;
+            },
+            child: Scaffold(
               backgroundColor: AppColors.lightGrey02,
-              context,
-              "My Pass".tr,
-              isBack: false,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {
-                      Get.toNamed(Routes.SEASON_PASS);
-                      // Get.find<SeasonPassController>().reload();
-                    },
-                    child: Container(
-                      height: 40,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          color: AppColors.yellow04,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Center(
-                        child: Text(
-                          "Add".tr,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontFamily: AppThemData.bold,
-                            color: AppColors.darkGrey08,
+              appBar: UiInterface().customAppBar(
+                backgroundColor: AppColors.lightGrey02,
+                context,
+                "My Pass".tr,
+                isBack: false,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        Get.toNamed(Routes.SEASON_PASS);
+                        // Get.find<SeasonPassController>().reload();
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color: AppColors.yellow04,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(
+                          child: Text(
+                            "Add".tr,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontFamily: AppThemData.bold,
+                              color: AppColors.darkGrey08,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
+              body: controller.isLoading.value
+                  ? Constant.loader()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Custom sliding segmented control
+                        _buildCustomSliding(controller),
+                        // Content based on selected segment
+                        _buildContent(context, controller.mySeasonPassList,
+                            controller.pendingPassList),
+                      ],
+                    ),
             ),
-            body: controller.isLoading.value
-                ? Constant.loader()
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Custom sliding segmented control
-                      _buildCustomSliding(controller),
-                      // Content based on selected segment
-                      _buildContent(context, controller.mySeasonPassList,
-                          controller.pendingPassList),
-                    ],
-                  ),
           );
         });
   }
@@ -77,7 +87,7 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
   Widget _buildCustomSliding(MySeasonPassController controller) {
     return Center(
       child: SlidingSwitch(
-        value: controller.selectedSegment == 0 ? true : false,
+        value: controller.selectedSegment.value,
         width: 350,
         onChanged: (bool value) {
           controller.changeSegment(value);
@@ -109,27 +119,24 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
 
     return Expanded(
       child: Obx(() {
-        if (controller.selectedSegment.value == false) {
-          return RefreshIndicator(
-            color: Colors.black,
-            key: refreshIndicatorKey,
-            onRefresh: () async {
-              // Trigger refresh for purchase pass list
-              await controller.getMySeasonPass();
-            },
-            child: _buildPassSection(context, purchasePassList),
-          );
-        } else {
-          return RefreshIndicator(
-            color: Colors.black,
-            key: refreshIndicatorKey,
-            onRefresh: () async {
+        final isSelected = controller.selectedSegment.value;
+
+        return RefreshIndicator(
+          color: Colors.black,
+          key: refreshIndicatorKey,
+          onRefresh: () async {
+            if (isSelected) {
               // Trigger refresh for pending pass list
               await controller.getPendingPass();
-            },
-            child: _buildPrivatePassSection(context, pendingPassList),
-          );
-        }
+            } else {
+              // Trigger refresh for purchase pass list
+              await controller.getMySeasonPass();
+            }
+          },
+          child: isSelected
+              ? _buildPrivatePassSection(context, pendingPassList)
+              : _buildPassSection(context, purchasePassList),
+        );
       }),
     );
   }
