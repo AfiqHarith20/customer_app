@@ -370,17 +370,16 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                       );
                       return;
                     }
+
+                    // Check if the stored access token is valid before proceeding
+                    await controller.checkAuthTokenValidity();
+
                     // Check the selected payment method
                     if (controller.selectedPaymentMethod.value ==
                         controller.paymentModel.value.commercePay!.name) {
                       // final passData = await addSeasonPassData();
                       final passPrice = controller.passPrice.value.toString();
                       // Obtain the access token after selecting the bank
-                      await controller.commercepayMakePayment(
-                        amount: double.parse(passPrice).toStringAsFixed(
-                          Constant.currencyModel!.decimalDigits!,
-                        ),
-                      );
 
                       // Calculate total price using the passPrice
                       double totalPrice = calculateTotalPrice(
@@ -393,16 +392,6 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                                 controller.transactionFeeModel!.value!)
                             : 0.0,
                       );
-
-                      // String? accessToken = await controller.commercepayMakePayment(
-                      //   amount: double.parse(passPrice).toStringAsFixed(
-                      //     Constant.currencyModel!.decimalDigits!,
-                      //   ),
-                      // );
-
-                      // Retrieve the access token from the controller
-                      // String? accessToken =
-                      //     controller.authResultModel.accessToken;
 
                       // Convert Timestamp to DateTime
                       DateTime? convertDateTimeToDateOnly(DateTime? dateTime) {
@@ -462,7 +451,7 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                         // Proceed with navigation
                         controller.cleanup();
                         Get.toNamed(
-                          Routes.WEBVIEW_SCREEN,
+                          Routes.WEBVIEW_RESERVED_SCREEN,
                           arguments: {
                             'onlinePaymentModel': onlinePaymentModel,
                           },

@@ -372,52 +372,43 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                       );
                       return;
                     }
-                    // Check the selected payment method
+                    // Check if the stored access token is valid before proceeding
+                    await controller.checkAuthTokenValidity();
+
+                    // Now the token should be valid or newly fetched
                     if (controller.selectedPaymentMethod.value ==
                         controller.paymentModel.value.commercePay!.name) {
+                      // Calculate the total pass price
                       final passData = await addSeasonPassData();
                       final passPrice = controller
                           .purchasePassModel.value.seasonPassModel!.price!;
-                      // Obtain the access token after selecting the bank
-                      await controller.commercepayMakePayment(
-                        amount: double.parse(passPrice).toStringAsFixed(
-                          Constant.currencyModel!.decimalDigits!,
-                        ),
-                      );
 
-                      // Calculate total price using the passPrice
-                      double totalPrice = calculateTotalPrice(
-                        passPrice,
-                        controller.taxModel!.value! != null
-                            ? double.parse(controller.taxModel!.value!)
-                            : 0.0,
-                        controller.transactionFeeModel?.value != null
-                            ? double.parse(
-                                controller.transactionFeeModel!.value!)
-                            : 0.0,
-                      );
-
-                      // String? accessToken = await controller.commercepayMakePayment(
-                      //   amount: double.parse(passPrice).toStringAsFixed(
-                      //     Constant.currencyModel!.decimalDigits!,
-                      //   ),
-                      // );
-
-                      // Convert Timestamp to DateTime
-                      DateTime? convertTimestampToDateOnly(
-                          Timestamp? timestamp) {
-                        if (timestamp == null) return null;
-                        DateTime dateTime = timestamp.toDate();
-                        return DateTime(
-                            dateTime.year, dateTime.month, dateTime.day);
-                      }
-
-                      // Ensure that the access token is not null and properly fetched
+                      // Ensure the access token is valid before proceeding to payment
                       if (controller.authResultModel.accessToken != null &&
                           controller.authResultModel.accessToken!.isNotEmpty) {
                         String accessToken =
                             controller.authResultModel.accessToken!;
-                        // Continue with your logic, passing the access token to OnlinePaymentModel
+
+                        // Calculate total price using the passPrice
+                        double totalPrice = calculateTotalPrice(
+                          passPrice,
+                          controller.taxModel!.value! != null
+                              ? double.parse(controller.taxModel!.value!)
+                              : 0.0,
+                          controller.transactionFeeModel?.value != null
+                              ? double.parse(
+                                  controller.transactionFeeModel!.value!)
+                              : 0.0,
+                        );
+                        DateTime? convertTimestampToDateOnly(
+                            Timestamp? timestamp) {
+                          if (timestamp == null) return null;
+                          DateTime dateTime = timestamp.toDate();
+                          return DateTime(
+                              dateTime.year, dateTime.month, dateTime.day);
+                        }
+
+                        // Prepare your payment data using the valid access token
                         onlinePaymentModel = OnlinePaymentModel(
                           accessToken: accessToken,
                           customerId: passData['customerId'],
@@ -442,17 +433,12 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                           selectedPassId: widget.passId,
                           channelId: '18',
                         );
-                        // print('Online Payment Data: $onlinePaymentModel');
-                        // print('startDate ${passData['startDate']}');
-                        // print('endDate ${passData['endDate']}');
+
+                        // Navigate to the WebView with payment data
                         controller.cleanup();
-                        Get.toNamed(
-                          Routes.WEBVIEW_SCREEN,
-                          arguments: {
-                            'onlinePaymentModel': onlinePaymentModel,
-                          },
-                        );
-                        // controller.completeOrder();
+                        Get.toNamed(Routes.WEBVIEW_SCREEN, arguments: {
+                          'onlinePaymentModel': onlinePaymentModel,
+                        });
                       } else if (controller.selectedPaymentMethod.value ==
                           controller.paymentModel.value.strip!.name) {
                         // Call the controller method to make the stripe payment

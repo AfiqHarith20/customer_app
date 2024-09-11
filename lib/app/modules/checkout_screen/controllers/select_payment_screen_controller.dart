@@ -58,7 +58,7 @@ class SelectPaymentScreenController extends GetxController {
     getArgument();
     fetchTax();
     fetchTransactionFee();
-    await _checkAuthTokenValidity();
+    await checkAuthTokenValidity();
     super.onInit();
   }
 
@@ -183,15 +183,18 @@ class SelectPaymentScreenController extends GetxController {
     });
   }
 
-  Future<void> _checkAuthTokenValidity() async {
+  Future<void> checkAuthTokenValidity() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final storedAccessToken = prefs.getString('AccessToken');
     final tokenExpiryString = prefs.getString('TokenExpiry');
 
     if (storedAccessToken != null && tokenExpiryString != null) {
       DateTime tokenExpiry = DateTime.parse(tokenExpiryString);
-      if (DateTime.now().isBefore(tokenExpiry)) {
-        // Token is still valid, use it
+
+      // Check if the token is still valid and within 24 hours
+      if (DateTime.now().isBefore(tokenExpiry) &&
+          DateTime.now().difference(tokenExpiry).inHours < 24) {
+        // Token is valid and within 24 hours, use it
         accessToken = storedAccessToken;
         authResultModel = AuthResultModel(accessToken: accessToken);
         print("Using stored access token: $accessToken");
@@ -199,10 +202,14 @@ class SelectPaymentScreenController extends GetxController {
       }
     }
 
-    // Token is expired or doesn't exist, fetch a new one
+    // Token is expired or older than 24 hours, fetch a new one
     accessToken = await commercepayMakePayment(
-        amount: "0"); // Pass amount or relevant value
-    print("Fetched new access token: $accessToken");
+        amount: "0"); // Pass the amount or relevant value
+    if (accessToken != null) {
+      print("Fetched new access token: $accessToken");
+    } else {
+      print("Failed to fetch new access token");
+    }
   }
 
   Future<String?> commercepayMakePayment({required String amount}) async {
@@ -218,6 +225,7 @@ class SelectPaymentScreenController extends GetxController {
             .add(Duration(seconds: authResultModel.expireInSeconds!));
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("AccessToken", accessToken);
+        print(accessToken);
         await prefs.setString("TokenExpiry", tokenExpiry.toIso8601String());
 
         return accessToken;

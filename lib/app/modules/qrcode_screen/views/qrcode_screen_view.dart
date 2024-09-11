@@ -1,27 +1,21 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:customer_app/app/models/compound_model.dart';
 import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
-import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
-import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../themes/app_colors.dart';
-import '../../../../themes/app_them_data.dart';
 import '../../../../themes/common_ui.dart';
-import '../../../routes/app_pages.dart';
 
 class QRCodeScanScreenView extends StatefulWidget {
   final QRCodeScanController controller;
 
   const QRCodeScanScreenView({
-    Key? key,
+    super.key,
     required this.controller,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _QRCodeScreenViewState();

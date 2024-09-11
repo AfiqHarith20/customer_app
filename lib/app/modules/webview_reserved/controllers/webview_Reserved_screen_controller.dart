@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../../utils/server.dart';
 
-class WebviewScreenController extends GetxController {
+class WebviewReservedScreenController extends GetxController {
   Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
   Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
       MyPaymentCompoundModel().obs;
@@ -78,9 +78,9 @@ class WebviewScreenController extends GetxController {
       'lotNo': onlinePaymentData.lotNo ?? '',
       'vehicleNo': onlinePaymentData.vehicleNo ?? '',
       'passId': onlinePaymentData.selectedPassId ?? '',
-      'roadId': onlinePaymentData.roadId ?? '',
+      'roadId': onlinePaymentData.roadId.toString() ?? '',
       'roadName': onlinePaymentData.roadName ?? '',
-      'zoneId': onlinePaymentData.zoneId ?? '',
+      'zoneId': onlinePaymentData.zoneId.toString() ?? '',
       'zoneName': onlinePaymentData.zoneName ?? '',
     };
     body.forEach((key, value) {
