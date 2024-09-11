@@ -34,6 +34,8 @@ import 'package:customer_app/app/modules/webview/controllers/webview_screen_cont
 import 'package:customer_app/app/modules/webview/views/webview_screen_view.dart';
 import 'package:customer_app/app/modules/webview_compound_screen/bindings/webview_compound_screen_binding.dart';
 import 'package:customer_app/app/modules/webview_compound_screen/views/webview_compound_screen_view.dart';
+import 'package:customer_app/app/modules/webview_reserved/controllers/webview_Reserved_screen_controller.dart';
+import 'package:customer_app/app/modules/webview_reserved/views/webview_reserved_screen_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/MySeason_Pass/bindings/my_season_pass_binding.dart';
@@ -369,8 +371,16 @@ class AppPages {
     GetPage(
       name: _Paths.WEBVIEW_SCREEN,
       page: () => const WebviewScreen(),
-     binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
         Get.lazyPut<WebviewScreenController>(() => WebviewScreenController());
+      }),
+    ),
+    GetPage(
+      name: _Paths.WEBVIEW_RESERVED_SCREEN,
+      page: () => const WebviewReservedScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<WebviewReservedScreenController>(
+            () => WebviewReservedScreenController());
       }),
     ),
     GetPage(

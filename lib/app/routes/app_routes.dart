@@ -45,6 +45,7 @@ abstract class Routes {
   static const NOTIFICATION_SCREEN = _Paths.NOTIFICATION_SCREEN;
   static const SELECT_BANK_PROVIDER_SCREEN = _Paths.SELECT_BANK_PROVIDER_SCREEN;
   static const WEBVIEW_SCREEN = _Paths.WEBVIEW_SCREEN;
+  static const WEBVIEW_RESERVED_SCREEN = _Paths.WEBVIEW_RESERVED_SCREEN;
   static const WEBVIEW_COMPOUND_SCREEN = _Paths.WEBVIEW_COMPOUND_SCREEN;
   static const PAY_COMPOUND = _Paths.PAY_COMPOUND;
   static const WEBVIEW_WALLET_SCREEN = _Paths.WEBVIEW_WALLET_SCREEN;
@@ -101,6 +102,7 @@ abstract class _Paths {
   static const NOTIFICATION_SCREEN = '/notification-screen';
   static const SELECT_BANK_PROVIDER_SCREEN = '/select-bank-provider-screen';
   static const WEBVIEW_SCREEN = '/webview-screen';
+  static const WEBVIEW_RESERVED_SCREEN = '/webview-reserved-screen';
   static const WEBVIEW_COMPOUND_SCREEN = '/webview-compound-screen';
   static const PAY_COMPOUND = '/pay-compound-screen';
   static const WEBVIEW_WALLET_SCREEN = '/webview-wallet-screen';

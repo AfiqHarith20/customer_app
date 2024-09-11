@@ -304,16 +304,13 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                     );
                     return;
                   }
+
+                  // Check if the stored access token is valid before proceeding
+                  await controller.checkAuthTokenValidity();
+
                   // Check the selected payment method
                   if (controller.selectedPaymentMethod.value ==
                       controller.paymentModel.value.commercePay!.name) {
-                    final amount = compoundModel.amount ?? '';
-                    // Obtain the access token after selecting the bank
-                    await controller.commercepayCompoundPayment(
-                      amount: double.parse(amount).toStringAsFixed(
-                        Constant.currencyModel!.decimalDigits!,
-                      ),
-                    );
                     // Calculate total price using the passPrice
                     double totalPrice = calculateTotalPrice(
                       compoundModel,
