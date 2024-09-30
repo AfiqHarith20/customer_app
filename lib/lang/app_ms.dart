@@ -364,4 +364,12 @@ const Map<String, String> msMY = {
   "Select vehicle manufacture": "Pilih pembuat kenderaan",
   'Enter vehicle model': 'Masukkan model kenderaan',
   "Select color": "Pilih Warna",
+  "Please proceed to login at the profile page":
+      "Sila log masuk di halaman profil",
+  "Please login or register before proceeding.":
+      "Sila log masuk atau daftar sebelum meneruskan.",
+  "Login Required": "Log masuk Diperlukan",
+  'Compound Not Found': 'Kompaun Tidak Ditemui',
+  'No matching compounds were found for the search criteria.':
+      'Tiada kompaun sepadan ditemui untuk kriteria carian.',
 };

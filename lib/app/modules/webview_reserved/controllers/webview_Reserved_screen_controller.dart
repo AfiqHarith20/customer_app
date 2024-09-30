@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
+import 'package:customer_app/app/models/commercepay/pending_payment_model.dart';
 import 'package:customer_app/app/models/compound_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/my_payment_compound_model.dart';
@@ -19,7 +20,7 @@ class WebviewReservedScreenController extends GetxController {
   Rx<CompoundModel> compoundModel = CompoundModel().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
   Rx<PaymentModel> paymentModel = PaymentModel().obs;
-  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
+  Rx<PendingPaymentModel> pendingPaymentModel = PendingPaymentModel().obs;
   Server server = Server();
   RxBool isLoading = true.obs;
   RxBool isFormVisible = false.obs;
@@ -44,8 +45,8 @@ class WebviewReservedScreenController extends GetxController {
 
       // Fetch the arguments
       dynamic argumentData = Get.arguments;
-      if (argumentData != null && argumentData['onlinePaymentModel'] != null) {
-        onlinePaymentModel.value = argumentData['onlinePaymentModel'];
+      if (argumentData != null && argumentData['pendingPaymentModel'] != null) {
+        pendingPaymentModel.value = argumentData['pendingPaymentModel'];
 
         // Call fetchPayment after arguments are set
         await fetchPayment();
@@ -57,31 +58,31 @@ class WebviewReservedScreenController extends GetxController {
   }
 
   String getRequestBody() {
-    final onlinePaymentData = onlinePaymentModel.value;
+    final pendingPaymentData = pendingPaymentModel.value;
     final body = {
-      'accessToken': onlinePaymentData.accessToken ?? '',
-      'customerId': onlinePaymentData.customerId ?? '',
-      'channelId': onlinePaymentData.channelId ?? '',
-      'providerChannelId': onlinePaymentData.selectedBankId ?? '',
-      'amount': onlinePaymentData.totalPrice?.toString() ?? '',
-      'address': onlinePaymentData.address ?? '',
-      'companyName': onlinePaymentData.companyName ?? '',
-      'companyRegistrationNo': onlinePaymentData.companyRegistrationNo ?? '',
-      'endDate': onlinePaymentData.endDate?.toString() ?? '',
-      'startDate': onlinePaymentData.startDate?.toString() ?? '',
-      'name': onlinePaymentData.fullName ?? '',
-      'email': onlinePaymentData.email ?? '',
-      'mobileNumber': onlinePaymentData.mobileNumber ?? '',
-      'username': onlinePaymentData.userName ?? '',
-      'identificationNumber': onlinePaymentData.identificationNo ?? '',
-      'identificationType': onlinePaymentData.identificationType ?? '',
-      'lotNo': onlinePaymentData.lotNo ?? '',
-      'vehicleNo': onlinePaymentData.vehicleNo ?? '',
-      'passId': onlinePaymentData.selectedPassId ?? '',
-      'roadId': onlinePaymentData.roadId.toString() ?? '',
-      'roadName': onlinePaymentData.roadName ?? '',
-      'zoneId': onlinePaymentData.zoneId.toString() ?? '',
-      'zoneName': onlinePaymentData.zoneName ?? '',
+      'accessToken': pendingPaymentData.accessToken ?? '',
+      'customerId': pendingPaymentData.customerId ?? '',
+      'channelId': pendingPaymentData.channelId ?? '',
+      'providerChannelId': pendingPaymentData.selectedBankId ?? '',
+      'amount': pendingPaymentData.totalPrice?.toString() ?? '',
+      'address': pendingPaymentData.address ?? '',
+      'companyName': pendingPaymentData.companyName ?? '',
+      'companyRegistrationNo': pendingPaymentData.companyRegistrationNo ?? '',
+      'endDate': pendingPaymentData.endDate?.toString() ?? '',
+      'startDate': pendingPaymentData.startDate?.toString() ?? '',
+      'name': pendingPaymentData.fullName ?? '',
+      'email': pendingPaymentData.email ?? '',
+      'mobileNumber': pendingPaymentData.mobileNumber ?? '',
+      'username': pendingPaymentData.userName ?? '',
+      'identificationNumber': pendingPaymentData.identificationNo ?? '',
+      'identificationType': pendingPaymentData.identificationType ?? '',
+      'lotNo': pendingPaymentData.lotNo ?? '',
+      'vehicleNo': pendingPaymentData.vehicleNo ?? '',
+      'passId': pendingPaymentData.selectedPassId ?? '',
+      'roadId': pendingPaymentData.roadId.toString() ?? '',
+      'roadName': pendingPaymentData.roadName ?? '',
+      'zoneId': pendingPaymentData.zoneId.toString() ?? '',
+      'zoneName': pendingPaymentData.zoneName ?? '',
     };
     body.forEach((key, value) {
       print('$key: $value');
@@ -180,7 +181,7 @@ class WebviewReservedScreenController extends GetxController {
     compoundModel.value = CompoundModel();
     customerModel.value = CustomerModel();
     paymentModel.value = PaymentModel();
-    onlinePaymentModel.value = OnlinePaymentModel();
+    pendingPaymentModel.value = PendingPaymentModel();
     isLoading.value = true;
     isFormVisible.value = false;
     paymentResponse = '';

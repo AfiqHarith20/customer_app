@@ -2,6 +2,7 @@
 
 import 'package:customer_app/app/models/private_pass_model.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
+import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -203,36 +204,65 @@ class _SeasonPassViewState extends State<SeasonPassView> {
                 subText: '${passModel.validity}'.tr, title: "Validity:".tr),
             InkWell(
               onTap: () async {
-                bool emailVerified = await controller.isEmailVerified();
-                if (emailVerified) {
-                  // Adjust navigation based on the pass type
-                  if (passModel is SeasonPassModel) {
-                    Get.toNamed(Routes.PURCHASE_PASS,
-                        arguments: {"seasonPassModel": passModel});
-                  } else if (passModel is PrivatePassModel) {
-                    Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {
-                      "privatePassModel": passModel,
-                      "selectedSegment": controller.selectedSegment.value,
-                    });
-                  }
-                } else {
-                  // Show a message to inform the user to verify their email
+                bool isLogin = await FireStoreUtils.isLogin();
+
+                if (!isLogin) {
+                  // If the user is not logged in, show the login dialog
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return DialogBoxNotify(
-                        imageAsset: "assets/images/ic_email.png",
+                      return DialogBox(
+                        imageAsset: "assets/images/ic_log_in.png",
                         onPressConfirm: () async {
-                          Navigator.of(context).pop();
+                          // Navigate to the login screen
+                          Get.offAllNamed(Routes.LOGIN_SCREEN);
                         },
-                        onPressConfirmBtnName: "Ok".tr,
-                        onPressConfirmColor: AppColors.yellow04,
+                        onPressConfirmBtnName: "Login".tr,
+                        onPressConfirmColor: AppColors.green04,
+                        onPressCancel: () {
+                          Get.back();
+                        },
                         content:
-                            "Please verify your email before proceeding.".tr,
-                        subTitle: "Email Verification".tr,
+                            "Please login or register before proceeding.".tr,
+                        subTitle: "Login Required".tr,
+                        onPressCancelBtnName: "Cancel".tr,
+                        onPressCancelColor: AppColors.darkGrey01,
                       );
                     },
                   );
+                } else {
+                  // If the user is logged in, check email verification
+                  bool emailVerified = await controller.isEmailVerified();
+                  if (!emailVerified) {
+                    // Show the email verification message
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DialogBoxNotify(
+                          imageAsset: "assets/images/ic_email.png",
+                          onPressConfirm: () async {
+                            Navigator.of(context).pop();
+                          },
+                          onPressConfirmBtnName: "Ok".tr,
+                          onPressConfirmColor: AppColors.yellow04,
+                          content:
+                              "Please verify your email before proceeding.".tr,
+                          subTitle: "Email Verification".tr,
+                        );
+                      },
+                    );
+                  } else {
+                    // Email is verified, navigate to the respective purchase page
+                    if (passModel is SeasonPassModel) {
+                      Get.toNamed(Routes.PURCHASE_PASS,
+                          arguments: {"seasonPassModel": passModel});
+                    } else if (passModel is PrivatePassModel) {
+                      Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {
+                        "privatePassModel": passModel,
+                        "selectedSegment": controller.selectedSegment.value,
+                      });
+                    }
+                  }
                 }
               },
               child: Container(

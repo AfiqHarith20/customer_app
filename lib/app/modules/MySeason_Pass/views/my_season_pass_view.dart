@@ -2,6 +2,7 @@ import 'package:customer_app/app/models/my_purchase_pass_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/modules/Season_pass/controllers/season_pass_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -19,17 +20,20 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure the controller is put in the dependency tree
+    Get.put(MySeasonPassController());
     bool paymentCompleted = Get.arguments?['paymentCompleted'] ?? false;
     if (paymentCompleted) {
       controller.reload(); // Adjust this method to refresh your data
     }
+
     return GetX<MySeasonPassController>(
         init: MySeasonPassController(),
         builder: (controller) {
           return WillPopScope(
             onWillPop: () async {
-              Get.back();
-              return false;
+              _exitApp();
+              return true;
             },
             child: Scaffold(
               backgroundColor: AppColors.lightGrey02,
@@ -44,14 +48,14 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                     child: InkWell(
                       onTap: () {
                         Get.toNamed(Routes.SEASON_PASS);
-                        // Get.find<SeasonPassController>().reload();
                       },
                       child: Container(
                         height: 40,
                         width: 100,
                         decoration: BoxDecoration(
-                            color: AppColors.yellow04,
-                            borderRadius: BorderRadius.circular(20)),
+                          color: AppColors.yellow04,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                         child: Center(
                           child: Text(
                             "Add".tr,
@@ -64,24 +68,51 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
               body: controller.isLoading.value
                   ? Constant.loader()
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Custom sliding segmented control
-                        _buildCustomSliding(controller),
-                        // Content based on selected segment
-                        _buildContent(context, controller.mySeasonPassList,
-                            controller.pendingPassList),
-                      ],
-                    ),
+                  : _buildBodyContent(controller),
             ),
           );
         });
+  }
+
+  Widget _buildBodyContent(MySeasonPassController controller) {
+    // Check if the user is logged in
+    if (!controller.isUserLoggedIn.value) {
+      // User is not logged in, show login prompt message
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            "Please proceed to login at the profile page".tr,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: AppThemData.bold,
+              color: AppColors.darkGrey08,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    // User is logged in, show the actual content
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Custom sliding segmented control
+        _buildCustomSliding(controller),
+        // Content based on selected segment
+        _buildContent(
+          Get.context!,
+          controller.mySeasonPassList,
+          controller.pendingPassList,
+        ),
+      ],
+    );
   }
 
   Widget _buildCustomSliding(MySeasonPassController controller) {
@@ -704,5 +735,9 @@ class MySeasonPassView extends GetView<MySeasonPassController> {
         ],
       ).marginOnly(left: 10, right: 10),
     );
+  }
+
+  void _exitApp() {
+    SystemNavigator.pop(); // This will close the app
   }
 }

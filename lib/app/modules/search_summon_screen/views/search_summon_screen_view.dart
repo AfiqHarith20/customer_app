@@ -10,6 +10,7 @@ import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen
 import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
+import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -239,9 +240,9 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                   : '',
                               amount: amounts.isNotEmpty ? amounts[i] : '',
                               dateTime: dateTimes.isNotEmpty
-                                  ? Timestamp.fromDate(
-                                      DateTime.parse(dateTimes[i]))
-                                  : Timestamp.now(),
+                                  ? dateTimes[i] // Assign the string directly
+                                  : DateTime.now()
+                                      .toIso8601String(), // Provide a default value in ISO 8601 format
                               status: statuses.isNotEmpty ? statuses[i] : '',
                               offence: offences.isNotEmpty ? offences[i] : '',
                               kodHasil:
@@ -363,14 +364,23 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                         ),
                                         Text(
                                           Constant.amountShow(
-                                              amount: compoundModel.amount
-                                                  .toString()),
+                                            amount: (compoundModel.amount !=
+                                                        null &&
+                                                    double.tryParse(
+                                                            compoundModel
+                                                                .amount!) !=
+                                                        null)
+                                                ? compoundModel.amount
+                                                    .toString()
+                                                : '0.00', // Use a default value if invalid
+                                          ),
                                           style: const TextStyle(
                                             color: AppColors.darkGrey07,
                                             fontFamily: AppThemData.medium,
                                             fontSize: 14,
                                           ),
                                         ),
+
                                         const SizedBox(height: 3),
                                         Text(
                                           compoundModel.vehicleNum ?? '',
@@ -382,8 +392,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                         ),
                                         const SizedBox(height: 3),
                                         Text(
-                                          Constant.timestampToDate(
-                                              compoundModel.dateTime!),
+                                          compoundModel.dateTime!,
                                           style: const TextStyle(
                                             color: AppColors.darkGrey03,
                                             fontFamily: AppThemData.medium,
@@ -407,7 +416,9 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                         // ),
                                         // const SizedBox(height: 3),
                                         Text(
-                                          '${compoundModel.offence.toString().substring(0, 30)}\n${compoundModel.offence.toString().substring(30, 51)}',
+                                          // Safely handle the substring to prevent RangeError
+                                          '${compoundModel.offence != null && compoundModel.offence!.isNotEmpty ? compoundModel.offence!.length > 30 ? compoundModel.offence!.substring(0, 30) : compoundModel.offence : ''}\n'
+                                          '${compoundModel.offence != null && compoundModel.offence!.length > 51 ? compoundModel.offence!.substring(30, 51) : ''}',
                                           style: const TextStyle(
                                             color: AppColors.darkGrey03,
                                             fontFamily: AppThemData.medium,
@@ -418,7 +429,6 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                           maxLines:
                                               2, // Set the maximum number of lines
                                         ),
-
                                         const SizedBox(height: 10),
                                       ],
                                     ),
@@ -431,66 +441,108 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                             ? Container()
                                             : InkWell(
                                                 onTap: () async {
-                                                  bool emailVerified =
-                                                      await widget.controller
-                                                          .isEmailVerified();
-                                                  if (emailVerified) {
+                                                  bool isLogin =
+                                                      await FireStoreUtils
+                                                          .isLogin();
+                                                  if (!isLogin) {
+                                                    // If the user is not logged in, show the login dialog
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext
                                                           context) {
-                                                        return Dialog(
-                                                          child: SizedBox(
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                            height: 215,
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: GridView
-                                                                  .builder(
-                                                                gridDelegate:
-                                                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                                                  crossAxisCount:
-                                                                      3,
-                                                                  crossAxisSpacing:
-                                                                      4.0,
-                                                                  mainAxisSpacing:
-                                                                      4.0,
-                                                                ),
-                                                                itemCount:
-                                                                    imageUrls
-                                                                        .length,
-                                                                itemBuilder:
-                                                                    (context,
-                                                                        index) {
-                                                                  return InkWell(
-                                                                    onTap: () {
-                                                                      showImageFullScreen(
-                                                                          imageUrls[
-                                                                              index]);
-                                                                    },
-                                                                    child: Image
-                                                                        .network(
-                                                                      imageUrls[
-                                                                          index],
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                  );
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ),
+                                                        return DialogBox(
+                                                          imageAsset:
+                                                              "assets/images/ic_log_in.png",
+                                                          onPressConfirm:
+                                                              () async {
+                                                            // Navigate to the login screen
+                                                            Get.offAllNamed(Routes
+                                                                .LOGIN_SCREEN);
+                                                          },
+                                                          onPressConfirmBtnName:
+                                                              "Login".tr,
+                                                          onPressConfirmColor:
+                                                              AppColors.green04,
+                                                          onPressCancel: () {
+                                                            Get.back();
+                                                          },
+                                                          content:
+                                                              "Please login or register before proceeding."
+                                                                  .tr,
+                                                          subTitle:
+                                                              "Login Required"
+                                                                  .tr,
+                                                          onPressCancelBtnName:
+                                                              "Cancel".tr,
+                                                          onPressCancelColor:
+                                                              AppColors
+                                                                  .darkGrey01,
                                                         );
                                                       },
                                                     );
                                                   } else {
-                                                    showVerifyEmailDialog();
+                                                    bool emailVerified =
+                                                        await widget.controller
+                                                            .isEmailVerified();
+                                                    if (emailVerified) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return Dialog(
+                                                            child: SizedBox(
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                              height: 215,
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child: GridView
+                                                                    .builder(
+                                                                  gridDelegate:
+                                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                    crossAxisCount:
+                                                                        3,
+                                                                    crossAxisSpacing:
+                                                                        4.0,
+                                                                    mainAxisSpacing:
+                                                                        4.0,
+                                                                  ),
+                                                                  itemCount:
+                                                                      imageUrls
+                                                                          .length,
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          index) {
+                                                                    return InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        showImageFullScreen(
+                                                                            imageUrls[index]);
+                                                                      },
+                                                                      child: Image
+                                                                          .network(
+                                                                        imageUrls[
+                                                                            index],
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    } else {
+                                                      showVerifyEmailDialog();
+                                                    }
                                                   }
                                                 },
                                                 child: Container(
@@ -518,14 +570,56 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                         const SizedBox(width: 2),
                                         InkWell(
                                           onTap: () async {
-                                            bool emailVerified = await widget
-                                                .controller
-                                                .isEmailVerified();
-                                            if (emailVerified) {
-                                              navigateToPayCompound(
-                                                  compoundModel);
+                                            // Check if the user is logged in
+                                            bool isLogin =
+                                                await FireStoreUtils.isLogin();
+
+                                            if (!isLogin) {
+                                              // If the user is not logged in, show the login dialog
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return DialogBox(
+                                                    imageAsset:
+                                                        "assets/images/ic_log_in.png",
+                                                    onPressConfirm: () async {
+                                                      // Navigate to the login screen
+                                                      Get.offAllNamed(
+                                                          Routes.LOGIN_SCREEN);
+                                                    },
+                                                    onPressConfirmBtnName:
+                                                        "Login".tr,
+                                                    onPressConfirmColor:
+                                                        AppColors.green04,
+                                                    onPressCancel: () {
+                                                      Get.back();
+                                                    },
+                                                    content:
+                                                        "Please login or register before proceeding."
+                                                            .tr,
+                                                    subTitle:
+                                                        "Login Required".tr,
+                                                    onPressCancelBtnName:
+                                                        "Cancel".tr,
+                                                    onPressCancelColor:
+                                                        AppColors.darkGrey01,
+                                                  );
+                                                },
+                                              );
                                             } else {
-                                              showVerifyEmailDialog();
+                                              // If the user is logged in, check email verification
+                                              bool emailVerified = await widget
+                                                  .controller
+                                                  .isEmailVerified();
+                                              if (emailVerified) {
+                                                // Navigate to pay compound if email is verified
+                                                navigateToPayCompound(
+                                                    compoundModel);
+                                              } else {
+                                                // Show the email verification dialog
+                                                showVerifyEmailDialog();
+                                              }
                                             }
                                           },
                                           child: Container(
@@ -536,8 +630,6 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                             decoration: BoxDecoration(
                                               shape: BoxShape.rectangle,
                                               color: Colors.amber,
-                                              // border: Border.all(
-                                              // ),
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
                                             ),
@@ -657,8 +749,9 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
           compoundNo: compoundNums[i],
           amount: amounts.isNotEmpty ? amounts[i] : '',
           dateTime: dateTimes.isNotEmpty
-              ? Timestamp.fromDate(DateTime.parse(dateTimes[i]))
-              : Timestamp.now(),
+              ? dateTimes[i] // Assign the string directly
+              : DateTime.now()
+                  .toIso8601String(), // Provide a default value in ISO 8601 format
           status: statuses.isNotEmpty ? statuses[i] : '',
           offence: offences.isNotEmpty ? offences[i] : '',
           kodHasil: kodHasils.isNotEmpty ? kodHasils[i] : '',

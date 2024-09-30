@@ -30,7 +30,7 @@ class ProfileScreenController extends GetxController {
   Rx<LanguageModel> selectedLanguage = LanguageModel().obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     // TODO: implement onInit
     getProfileData();
     getLanguage();
@@ -48,19 +48,54 @@ class ProfileScreenController extends GetxController {
   }
 
   getProfileData() async {
-    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
-        .then((value) {
-      if (value != null) {
-        customerModel.value = value;
-        fullNameController.value.text = customerModel.value.fullName!;
-        emailController.value.text = customerModel.value.email!;
-        countryCode.value.text = customerModel.value.countryCode!;
-        phoneNumberController.value.text = customerModel.value.phoneNumber!;
+    // Start loading
+    isLoading.value = true;
 
-        profileImage.value = customerModel.value.profilePic!;
-        isLoading.value = true;
+    try {
+      bool isLogin =
+          await FireStoreUtils.isLogin(); // Check if the user is logged in
+
+      if (isLogin) {
+        // If logged in, fetch the user profile data
+        var value =
+            await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid());
+        if (value != null) {
+          customerModel.value = value;
+          fullNameController.value.text =
+              customerModel.value.fullName ?? 'Guest';
+          emailController.value.text =
+              customerModel.value.email ?? 'guest@email.com';
+          countryCode.value.text = customerModel.value.countryCode ?? '';
+          phoneNumberController.value.text =
+              customerModel.value.phoneNumber ?? '';
+          profileImage.value = customerModel.value.profilePic ?? '';
+        }
+      } else {
+        // If the user is not logged in, set guest information
+        customerModel.value = CustomerModel(
+          fullName: 'Guest',
+          email: 'guest@email.com',
+          countryCode: '',
+          phoneNumber: '',
+          profilePic: '', // Optionally, you can use a placeholder image here
+        );
+
+        // Update the controllers with the guest info
+        fullNameController.value.text = 'Guest';
+        emailController.value.text = 'guest@email.com';
+        countryCode.value.text = '';
+        phoneNumberController.value.text = '';
+        profileImage.value =
+            ''; // Optionally, set a placeholder image for the guest
       }
-    });
+    } catch (e) {
+      // Handle any errors that may occur
+      print("Error fetching profile data: $e");
+      // Optionally, you can show an error message to the user or log the error
+    } finally {
+      // Mark loading as finished
+      isLoading.value = false;
+    }
   }
 
   getLanguage() {

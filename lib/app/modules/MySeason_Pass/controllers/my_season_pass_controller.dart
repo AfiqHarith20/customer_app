@@ -9,6 +9,7 @@ import '../../../../utils/fire_store_utils.dart';
 class MySeasonPassController extends GetxController {
   //TODO: Implement MySeasonPassController
   RxBool selectedSegment = false.obs;
+  var isUserLoggedIn = false.obs;
   RxBool isLoading = true.obs;
   RxList<MyPurchasePassModel> mySeasonPassList = <MyPurchasePassModel>[].obs;
   RxList<PendingPassModel> pendingPassList = <PendingPassModel>[].obs;
@@ -16,6 +17,7 @@ class MySeasonPassController extends GetxController {
   Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
   @override
   void onInit() {
+    checkLoginStatus();
     getMySeasonPass();
     getPendingPass();
     super.onInit();
@@ -101,5 +103,13 @@ class MySeasonPassController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void checkLoginStatus() {
+    // Assuming FireStoreUtils.isLogin() checks login state
+    FireStoreUtils.isLogin().then((isLoggedIn) {
+      isUserLoggedIn.value = isLoggedIn;
+      isLoading.value = false;
+    });
   }
 }

@@ -363,5 +363,13 @@ const Map<String, String> enUS = {
   "Start Date*": "Start Date*",
   "No Plate Number Available": "No  Plate Number Available",
   "Please add your vehicle.": "Please add your vehicle.",
-  "Other": "Other"
+  "Other": "Other",
+  "Please proceed to login at the profile page":
+      "Please proceed to login at the profile page",
+  "Please login or register before proceeding.":
+      "Please login or register before proceeding.",
+  "Login Required": "Login Required",
+  'Compound Not Found': 'Compound Not Found',
+  'No matching compounds were found for the search criteria.':
+      'No matching compounds were found for the search criteria.',
 };

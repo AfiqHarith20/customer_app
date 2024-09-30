@@ -60,6 +60,7 @@ class PurchasePassController extends GetxController {
     vehicleNoController.value.clear();
     lotNoController.value.clear();
     companyNameController.value.clear();
+    vehicleNoController.value.clear();
     companyRegistrationNoController.value.clear();
     addressController.value.clear();
     // Add similar lines for other controllers as needed
@@ -125,46 +126,45 @@ class PurchasePassController extends GetxController {
   }
 
   Future<void> fetchVehicle() async {
-  try {
-    isLoading.value = true;
-    print('Listening for vehicle data changes for user: ${getCurrentUid()}');
+    try {
+      isLoading.value = true;
+      print('Listening for vehicle data changes for user: ${getCurrentUid()}');
 
-    FirebaseFirestore.instance
-        .collection(CollectionName.custVehicle)
-        .doc(getCurrentUid())
-        .collection('vehicles')
-        .where('active', isEqualTo: true)
-        .snapshots()
-        .listen((querySnapshot) {
-          List<Map<String, dynamic>> vehicleInfo = querySnapshot.docs.map((doc) {
-            return {
-              "vehicleNo": doc.data()['vehicleNo'].toString(),
-              "colorHex": doc.data()['colorHex'].toString(),
-              "vehicleManufacturer": doc.data()['vehicleManufacturer'].toString(),
-              "vehicleModel": doc.data()['vehicleModel'].toString(),
-              "active": doc.data()['active'] == true,
-              "default": doc.data()['default'] == true,
-              "documentId": doc.id,
-            };
-          }).toList();
+      FirebaseFirestore.instance
+          .collection(CollectionName.custVehicle)
+          .doc(getCurrentUid())
+          .collection('vehicles')
+          .where('active', isEqualTo: true)
+          .snapshots()
+          .listen((querySnapshot) {
+        List<Map<String, dynamic>> vehicleInfo = querySnapshot.docs.map((doc) {
+          return {
+            "vehicleNo": doc.data()['vehicleNo'].toString(),
+            "colorHex": doc.data()['colorHex'].toString(),
+            "vehicleManufacturer": doc.data()['vehicleManufacturer'].toString(),
+            "vehicleModel": doc.data()['vehicleModel'].toString(),
+            "active": doc.data()['active'] == true,
+            "default": doc.data()['default'] == true,
+            "documentId": doc.id,
+          };
+        }).toList();
 
-          print('Updated vehicle data: $vehicleInfo');
+        print('Updated vehicle data: $vehicleInfo');
 
-          if (vehicleInfo.isNotEmpty) {
-            vehicleList.assignAll(vehicleInfo);
-            customerVehicleModel.value = VehicleModel.fromJson(vehicleInfo.first);
-          } else {
-            print('No active vehicles found for user: ${getCurrentUid()}');
-          }
-    });
-  } catch (e) {
-    print('Error listening for information: $e');
-    _error.value = e.toString();
-  } finally {
-    isLoading.value = false;
+        if (vehicleInfo.isNotEmpty) {
+          vehicleList.assignAll(vehicleInfo);
+          customerVehicleModel.value = VehicleModel.fromJson(vehicleInfo.first);
+        } else {
+          print('No active vehicles found for user: ${getCurrentUid()}');
+        }
+      });
+    } catch (e) {
+      print('Error listening for information: $e');
+      _error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
-
 
   Future<void> getQueryPass() async {
     isLoading.value = true;

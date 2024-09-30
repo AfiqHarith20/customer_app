@@ -59,47 +59,52 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
         child: GetBuilder<WebviewCompoundScreenController>(
           init: controller,
           builder: (controller) {
-            return InAppWebView(
-              initialUrlRequest: URLRequest(
-                // Load empty page initially
-                url: Uri.parse('about:blank'),
-              ),
-              onProgressChanged:
-                  (InAppWebViewController controller, int progress) {
-                setState(() {
-                  _progress = progress / 100;
-                });
-              },
-              onWebViewCreated: (InAppWebViewController controller) async {
-                // Fetch payment details and get HTML response
-                final response = await this.controller.fetchPayCompound();
+            return Stack(
+              children: [
+                InAppWebView(
+                  initialUrlRequest: URLRequest(
+                    // Load empty page initially
+                    url: Uri.parse('about:blank'),
+                  ),
+                  onProgressChanged:
+                      (InAppWebViewController controller, int progress) {
+                    setState(() {
+                      _progress = progress / 100;
+                    });
+                  },
+                  onWebViewCreated: (InAppWebViewController controller) async {
+                    // Fetch payment details and get HTML response
+                    final response = await this.controller.fetchPayCompound();
 
-                // Handle redirection based on the type
-                final int redirectionType = response.redirectionType;
-                final String redirectUrl = response.redirectUrl;
-                final String clientScript = response.clientScript;
+                    // Handle redirection based on the type
+                    final int redirectionType = response.redirectionType;
+                    final String redirectUrl = response.redirectUrl;
+                    final String clientScript = response.clientScript;
 
-                if (redirectionType == 1) {
-                  // Redirect using URL
-                  await controller.loadUrl(
-                      urlRequest: URLRequest(url: Uri.parse(redirectUrl)));
-                } else if (redirectionType == 2) {
-                  // Redirect using client script
-                  // Load the HTML form content into WebView
-                  await controller.loadData(
-                    data: clientScript,
-                    // Set base URL for relative paths (optional)
-                    baseUrl: Uri.parse('https://mepsfpx.com.my/'),
-                    // Set MIME type (optional)
-                    mimeType: 'text/html',
-                    // Set encoding (optional)
-                    encoding: 'utf8',
-                  );
-                } else {
-                  print('Invalid redirection type');
-                  // Handle invalid redirection type here
-                }
-              },
+                    if (redirectionType == 1) {
+                      // Redirect using URL
+                      await controller.loadUrl(
+                          urlRequest: URLRequest(url: Uri.parse(redirectUrl)));
+                    } else if (redirectionType == 2) {
+                      // Redirect using client script
+                      // Load the HTML form content into WebView
+                      await controller.loadData(
+                        data: clientScript,
+                        // Set base URL for relative paths (optional)
+                        baseUrl: Uri.parse('https://mepsfpx.com.my/'),
+                        // Set MIME type (optional)
+                        mimeType: 'text/html',
+                        // Set encoding (optional)
+                        encoding: 'utf8',
+                      );
+                    } else {
+                      print('Invalid redirection type');
+                      // Handle invalid redirection type here
+                    }
+                  },
+                ),
+                if (_progress < 1) LinearProgressIndicator(value: _progress),
+              ],
             );
           },
         ),

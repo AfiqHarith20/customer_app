@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
+import 'package:customer_app/app/models/commercepay/pending_payment_model.dart';
 import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_model.dart';
@@ -41,7 +42,7 @@ class PayPendingPassScreenController extends GetxController {
   RxBool isPaymentCompleted = true.obs;
   AuthResultModel authResultModel = AuthResultModel();
   Server server = Server();
-  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
+  Rx<PendingPaymentModel> pendingPaymentModel = PendingPaymentModel().obs;
   late String _selectedBankId;
   String? amount;
   RxDouble tax = RxDouble(0.0);
@@ -74,9 +75,9 @@ class PayPendingPassScreenController extends GetxController {
   Rx<Timestamp> startDate = Timestamp.now().obs;
   Rx<Timestamp> endDate = Timestamp.now().obs;
   Rx<String> status = ''.obs;
-  Rx<int> zoneId = 0.obs;
+  Rx<String> zoneId = ''.obs;
   Rx<String> zoneName = ''.obs;
-  Rx<int> roadId = 0.obs;
+  Rx<String> roadId = ''.obs;
   Rx<String> roadName = ''.obs;
 
   @override
@@ -104,16 +105,16 @@ class PayPendingPassScreenController extends GetxController {
     image = ''.obs;
     companyRegistrationNo = ''.obs;
     companyName = ''.obs;
-    zoneId = 0.obs;
+    zoneId = ''.obs;
     zoneName = ''.obs;
-    roadId = 0.obs;
+    roadId = ''.obs;
     roadName = ''.obs;
     startDate = Timestamp.now().obs;
     endDate = Timestamp.now().obs;
     purchasePassModel.value = MyPurchasePassModel();
     customerModel.value = CustomerModel();
     paymentModel.value = PaymentModel();
-    onlinePaymentModel.value = OnlinePaymentModel();
+    pendingPaymentModel.value = PendingPaymentModel();
     selectedPaymentMethod.value = "";
     selectedBankId.value = "";
     isPaymentCompleted.value = true;
@@ -156,9 +157,12 @@ class PayPendingPassScreenController extends GetxController {
       endDate.value =
           Timestamp.fromDate(DateTime.parse(argumentData["endDate"] ?? ''));
       status.value = argumentData['status'];
-      zoneId.value = argumentData['zoneId'];
+
+      // Convert zoneId and roadId to String if they are int
+      zoneId.value = (argumentData['zoneId']?.toString())!;
+      roadId.value = (argumentData['roadId']?.toString())!;
+
       zoneName.value = argumentData['zoneName'];
-      roadId.value = argumentData['roadId'];
       roadName.value = argumentData['roadName'];
     } else {
       ShowToastDialog.showToast("Error: Data is missing");

@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/my_payment_compound_model.dart';
+import 'package:customer_app/constant/dialogue_box.dart';
+import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/server.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -114,7 +117,6 @@ class SearchSummonScreenController extends GetxController {
       'compound_num': compoundNum,
       'car_num': carNum,
     };
-    // print('Request body: $requestBody');
 
     // Set up the headers
     Map<String, String> headers = {
@@ -134,11 +136,44 @@ class SearchSummonScreenController extends GetxController {
 
       // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
-        setLoading(true);
+        setLoading(false);
         // Parse the response JSON
         Map<String, dynamic> responseData = jsonDecode(response.body);
-        print(responseData);
-        // setLoading(false);
+
+        // Check for invalid or empty compound data
+        bool isInvalidData = responseData['vehicle_num'] == "" &&
+            responseData['compound_num'] == "" &&
+            responseData['status'] == "" &&
+            responseData['amount'] == "" &&
+            responseData['datetime'] == "" &&
+            responseData['offence'] == "" &&
+            responseData['kod_hasil'] == "" &&
+            responseData['msg'] != null &&
+            responseData['allCompoundImage'] == "";
+
+        if (isInvalidData) {
+          // Show dialog if compound data is invalid or empty
+          Get.dialog(
+            DialogBoxNotify(
+              imageAsset:
+                  "assets/images/ic_parking.png", // Adjust the image asset as needed
+              onPressConfirm: () {
+                Get.back(); // Close the dialog
+              },
+              onPressConfirmBtnName: "Ok".tr, // Use the appropriate button name
+              onPressConfirmColor:
+                  AppColors.yellow04, // Set color for confirm button
+              content:
+                  'No matching compounds were found for the search criteria.'
+                      .tr,
+              subTitle: 'Compound Not Found'.tr,
+            ),
+          );
+
+          // Return an empty map or throw an exception to stop further processing
+          return {}; // or throw Exception('No data found');
+        }
+
         return responseData;
       } else {
         // Request failed with a non-200 status code
