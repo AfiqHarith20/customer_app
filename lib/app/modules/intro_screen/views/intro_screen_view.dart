@@ -28,22 +28,29 @@ class IntroScreenView extends GetView<IntroScreenController> {
                     InkWell(
                         onTap: () {
                           controller.selectedPageIndex.value--;
-                          controller.pageController
-                              .animateToPage(controller.selectedPageIndex.value, curve: Curves.linear, duration: const Duration(milliseconds: 300));
+                          controller.pageController.animateToPage(
+                              controller.selectedPageIndex.value,
+                              curve: Curves.linear,
+                              duration: const Duration(milliseconds: 300));
                         },
-                        child: SvgPicture.asset("assets/icons/ic_arrow_left.svg")),
+                        child:
+                            SvgPicture.asset("assets/icons/ic_arrow_left.svg")),
                   const Spacer(),
                   if (controller.selectedPageIndex.value != 1)
                     InkWell(
                       onTap: () {
-                        Preferences.setBoolean(Preferences.isFinishOnBoardingKey, true);
+                        Preferences.setBoolean(
+                            Preferences.isFinishOnBoardingKey, true);
                         Get.toNamed(Routes.WELCOME_SCREEN);
                       },
                       child: Row(
                         children: [
                           const Text(
                             "Skip",
-                            style: TextStyle(color: AppColors.lightGrey10, fontSize: 16, fontWeight: FontWeight.w400),
+                            style: TextStyle(
+                                color: AppColors.lightGrey10,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
                           ),
                           SvgPicture.asset("assets/icons/ic_right.svg")
                         ],
@@ -62,7 +69,8 @@ class IntroScreenView extends GetView<IntroScreenController> {
               controller: controller.pageController,
               itemCount: controller.introScreenList.length,
               itemBuilder: (context, index) {
-                IntroScreenModel introScreenModel = controller.introScreenList[index];
+                IntroScreenModel introScreenModel =
+                    controller.introScreenList[index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
@@ -71,14 +79,20 @@ class IntroScreenView extends GetView<IntroScreenController> {
                       Container(
                         height: 300,
                         width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(image: DecorationImage(image: AssetImage("${introScreenModel.image}"))),
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image:
+                                    AssetImage("${introScreenModel.image}"))),
                       ),
                       const SizedBox(
                         height: 60,
                       ),
                       Text(
                         introScreenModel.title.toString(),
-                        style: const TextStyle(color: AppColors.darkGrey10, fontFamily: AppThemData.bold, fontSize: 24),
+                        style: const TextStyle(
+                            color: AppColors.darkGrey10,
+                            fontFamily: AppThemData.bold,
+                            fontSize: 24),
                       ),
                       const SizedBox(
                         height: 8,
@@ -86,7 +100,10 @@ class IntroScreenView extends GetView<IntroScreenController> {
                       Text(
                         introScreenModel.description.toString(),
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: AppColors.lightGrey10, fontFamily: AppThemData.regular, fontSize: 16),
+                        style: const TextStyle(
+                            color: AppColors.lightGrey10,
+                            fontFamily: AppThemData.regular,
+                            fontSize: 16),
                       ),
                       const SizedBox(
                         height: 40,
@@ -108,10 +125,13 @@ class IntroScreenView extends GetView<IntroScreenController> {
             onPress: () {
               if (controller.selectedPageIndex.value == 1) {
                 Preferences.setBoolean(Preferences.isFinishOnBoardingKey, true);
-                Get.toNamed(Routes.WELCOME_SCREEN);
+                Get.offAndToNamed(Routes.DASHBOARD_SCREEN);
               } else {
                 controller.selectedPageIndex.value++;
-                controller.pageController.animateToPage(controller.selectedPageIndex.value, curve: Curves.linear, duration: const Duration(milliseconds: 300));
+                controller.pageController.animateToPage(
+                    controller.selectedPageIndex.value,
+                    curve: Curves.linear,
+                    duration: const Duration(milliseconds: 300));
               }
             },
           ),

@@ -243,7 +243,7 @@ class _PayCompoundScreenViewState extends State<PayCompoundScreenView> {
                         ),
                         _buildPaymentInformation(
                           compoundModel,
-                          controller.taxModel,
+                          // controller.taxModel,
                           controller.transactionFeeModel,
                         ),
                         const Divider(
@@ -640,18 +640,18 @@ Widget paymentDecoration({
   );
 }
 
-Widget _buildPaymentInformation(CompoundModel compoundModel, TaxModel? taxModel,
-    TransactionFeeModel? transactionFee) {
+Widget _buildPaymentInformation(
+    CompoundModel compoundModel, TransactionFeeModel? transactionFee) {
   // Convert passPrice to a double
   double price = double.parse(compoundModel.amount ?? '0.0');
 
   // Calculate tax (based on the fetched tax value)
-  double tax = double.parse(taxModel!.value!) * price;
+  // double tax = double.parse(taxModel!.value!) * price;
 
-  double taxValue = 0.0;
-  if (taxModel != null) {
-    taxValue = double.parse(taxModel.value!);
-  }
+  // double taxValue = 0.0;
+  // if (taxModel != null) {
+  //   taxValue = double.parse(taxModel.value!);
+  // }
   // Convert transaction fee from String to double and calculate the amount
   double transactionFeeAmount = 0.0;
   if (transactionFee != null) {
@@ -659,7 +659,7 @@ Widget _buildPaymentInformation(CompoundModel compoundModel, TaxModel? taxModel,
   }
 
   // Calculate total amount
-  double totalPrice = price + tax + transactionFeeAmount;
+  double totalPrice = price + transactionFeeAmount;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,

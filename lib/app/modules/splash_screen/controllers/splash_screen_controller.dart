@@ -46,23 +46,9 @@ class SplashScreenController extends GetxController {
 
   redirectScreen() async {
     if (Preferences.getBoolean(Preferences.isFinishOnBoardingKey) == false) {
-      Get.offAllNamed(Routes.INTRO_SCREEN);
+      Get.offAllNamed(Routes.DASHBOARD_SCREEN);
     } else {
-      bool isLogin = await FireStoreUtils.isLogin();
-      if (isLogin == true) {
-        await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
-            .then((value) async {
-          if (value!.active == true) {
-            Get.offAllNamed(Routes.DASHBOARD_SCREEN);
-          } else {
-            await FirebaseAuth.instance.signOut();
-            await GoogleSignIn().signOut();
-            Get.offAllNamed(Routes.WELCOME_SCREEN);
-          }
-        });
-      } else {
-        Get.offAllNamed(Routes.WELCOME_SCREEN);
-      }
+      Get.offAllNamed(Routes.INTRO_SCREEN);
     }
   }
 

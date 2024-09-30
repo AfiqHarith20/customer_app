@@ -135,14 +135,24 @@ class HomeController extends GetxController {
   }
 
   getProfileData() async {
+    isLoading.value = true;
     try {
-      isLoading.value = true;
-      await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
-          .then((value) {
-        if (value != null) {
-          customerModel.value = value;
-        }
-      });
+      bool isLogin = await FireStoreUtils.isLogin();
+      if (isLogin) {
+        await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
+            .then((value) {
+          if (value != null) {
+            customerModel.value = value;
+          }
+        });
+      } else {
+        // If user is not logged in, set guest profile
+        customerModel.value = CustomerModel(
+          fullName: "Guest",
+          countryCode: "+60",
+          phoneNumber: "123456789",
+        );
+      }
     } finally {
       isLoading.value = false;
     }

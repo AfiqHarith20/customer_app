@@ -13,19 +13,28 @@ import 'package:http/http.dart' as http;
 import '../../../../utils/server.dart';
 
 class WebviewScreenController extends GetxController {
-  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
-  Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
-      MyPaymentCompoundModel().obs;
   Rx<CompoundModel> compoundModel = CompoundModel().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
-  Rx<PaymentModel> paymentModel = PaymentModel().obs;
-  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
-  Server server = Server();
-  RxBool isLoading = true.obs;
   RxBool isFormVisible = false.obs;
+  RxBool isLoading = true.obs;
+  bool isPaymentFetched = false;
+  Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
+      MyPaymentCompoundModel().obs;
+
+  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
+  Rx<PaymentModel> paymentModel = PaymentModel().obs;
   String paymentResponse = '';
   RxString paymentType = RxString('');
-  bool isPaymentFetched = false;
+  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
+  Server server = Server();
+
+  @override
+  void dispose() {
+    // Perform cleanup before disposing
+    cleanup();
+    // Call dispose method of superclass
+    super.dispose();
+  }
 
   @override
   void onInit() {
@@ -165,14 +174,6 @@ class WebviewScreenController extends GetxController {
     }
   }
 
-  @override
-  void dispose() {
-    // Perform cleanup before disposing
-    cleanup();
-    // Call dispose method of superclass
-    super.dispose();
-  }
-
   void cleanup() {
     // Reset or clear any data here
     purchasePassModel.value = MyPurchasePassModel();
@@ -200,13 +201,13 @@ class WebviewScreenController extends GetxController {
 }
 
 class WebViewResponse {
-  final int redirectionType;
-  final String redirectUrl;
-  final String clientScript;
-
   WebViewResponse({
     required this.redirectionType,
     required this.redirectUrl,
     required this.clientScript,
   });
+
+  final String clientScript;
+  final String redirectUrl;
+  final int redirectionType;
 }

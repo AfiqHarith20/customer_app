@@ -93,79 +93,103 @@ class PurchasePassView extends GetView<PurchasePassController> {
                           countryCode: controller.countryCode.value,
                           onPress: () {},
                         ),
-                        TextFieldWidgetPrefixUpper(
-                          prefix: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: SvgPicture.asset(
-                              "assets/icons/ic_carsimple.svg",
-                            ),
-                          ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                          ],
-                          title: "Plate No.*".tr,
-                          hintText: "Enter Plate No.".tr,
-                          validator: (value) =>
-                              value != null && value.isNotEmpty
-                                  ? null
-                                  : 'Plate No. required'.tr,
-                          controller: controller.vehicleNoController.value,
-                          readOnly: true,
-                          onPress: () {
-                            if (controller.vehicleList.isNotEmpty) {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.6,
-                                    child: ListView.separated(
-                                      itemCount: controller.vehicleList.length,
-                                      itemBuilder: (context, index) {
-                                        var vehicle =
-                                            controller.vehicleList[index];
-                                        return ListTile(
-                                          title: Center(
-                                            child: Text(vehicle['vehicleNo']),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: TextFieldWidgetPrefixUpper(
+                                prefix: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: SvgPicture.asset(
+                                    "assets/icons/ic_carsimple.svg",
+                                  ),
+                                ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'\s')),
+                                ],
+                                title: "Plate No.*".tr,
+                                hintText: "Enter Plate No.".tr,
+                                validator: (value) =>
+                                    value != null && value.isNotEmpty
+                                        ? null
+                                        : 'Plate No. required'.tr,
+                                controller:
+                                    controller.vehicleNoController.value,
+                                readOnly: true,
+                                onPress: () {
+                                  if (controller.vehicleList.isNotEmpty) {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.6,
+                                          child: ListView.separated(
+                                            itemCount:
+                                                controller.vehicleList.length,
+                                            itemBuilder: (context, index) {
+                                              var vehicle =
+                                                  controller.vehicleList[index];
+                                              return ListTile(
+                                                title: Center(
+                                                  child: Text(
+                                                      vehicle['vehicleNo']),
+                                                ),
+                                                onTap: () {
+                                                  // Set selected vehicle data to the text field
+                                                  controller.vehicleNoController
+                                                          .value.text =
+                                                      vehicle['vehicleNo'];
+                                                  Navigator.pop(
+                                                      context); // Close the bottom sheet
+                                                },
+                                              );
+                                            },
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    const Divider(),
                                           ),
-                                          onTap: () {
-                                            // Set selected vehicle data to the text field
-                                            controller.vehicleNoController.value
-                                                .text = vehicle['vehicleNo'];
-                                            Navigator.pop(
-                                                context); // Close the bottom sheet
-                                          },
                                         );
                                       },
-                                      separatorBuilder: (context, index) =>
-                                          const Divider(), // Adds a separator between items
-                                    ),
-                                  );
-                                },
-                              );
-                            } else {
-                              // Show a dialog if no vehicles are available
-                              Get.dialog(
-                                DialogBoxNotify(
-                                  imageAsset: "assets/images/car.png",
-                                  onPressConfirm: () async {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                    // Navigate to the profile page
-                                    Get.offNamed(
-                                      Routes.VEHICLE_SCREEN,
                                     );
-                                  },
-                                  onPressConfirmBtnName: "Ok".tr,
-                                  onPressConfirmColor: AppColors.green04,
-                                  content: "Please add your vehicle.".tr,
-                                  subTitle: "No Plate Number Available".tr.tr,
-                                ),
-                                barrierDismissible: false,
-                              );
-                            }
-                          },
-                          textCapitalization: TextCapitalization.characters,
+                                  } else {
+                                    // Show a dialog if no vehicles are available
+                                    Get.dialog(
+                                      DialogBoxNotify(
+                                        imageAsset: "assets/images/car.png",
+                                        onPressConfirm: () async {
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                          // Navigate to the profile page
+                                          Get.offNamed(Routes.VEHICLE_SCREEN);
+                                        },
+                                        onPressConfirmBtnName: "Ok".tr,
+                                        onPressConfirmColor: AppColors.green04,
+                                        content: "Please add your vehicle.".tr,
+                                        subTitle:
+                                            "No Plate Number Available".tr,
+                                      ),
+                                      barrierDismissible: false,
+                                    );
+                                  }
+                                },
+                                textCapitalization:
+                                    TextCapitalization.characters,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons
+                                  .add), // You can change this icon as needed
+                              onPressed: () {
+                                Get.offNamed(Routes
+                                    .VEHICLE_SCREEN); // Navigate to vehicle screen
+                              },
+                              tooltip: "Add Vehicle", // Tooltip for the icon
+                            ),
+                          ],
                         ),
                         TextFieldWidgetPrefix(
                           prefix: Padding(

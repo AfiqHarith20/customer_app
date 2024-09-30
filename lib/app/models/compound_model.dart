@@ -1,11 +1,10 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class CompoundModel {
   String? amount;
-  Timestamp? dateTime;
+  String? dateTime; // Change Timestamp to String
   String? id;
   String? customerId;
   String? compoundNo;
@@ -34,12 +33,17 @@ class CompoundModel {
 
   CompoundModel.fromJson(Map<String, dynamic> json) {
     amount = json['amount'];
-    dateTime = json['datetime'];
+
+    // Handle empty or null datetime, now it's a String
+    dateTime = (json['datetime'] != null && json['datetime'].isNotEmpty)
+        ? json['datetime'] // Directly assign the string value
+        : null;
+
     id = json['id'];
     customerId = json['userId'];
     compoundNo = json['compound_num'];
     status = json['status'];
-    vehicleNum = json['vehicle_num']; // Correct key
+    vehicleNum = json['vehicle_num'];
     kodHasil = json['kod_hasil'];
     offence = json['offence'];
     msg = json['msg'];
@@ -54,7 +58,7 @@ class CompoundModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['amount'] = amount;
-    data['datetime'] = dateTime;
+    data['datetime'] = dateTime; // Keep as String
     data['id'] = id;
     data['compound_num'] = compoundNo;
     data['userId'] = customerId;

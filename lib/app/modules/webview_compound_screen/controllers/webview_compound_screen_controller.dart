@@ -2,9 +2,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
 import 'package:customer_app/app/models/compound_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
@@ -16,26 +14,38 @@ import 'package:customer_app/utils/api-list.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/response/response.dart';
-import 'package:http/http.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../utils/server.dart';
 
 class WebviewCompoundScreenController extends GetxController {
-  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
-  Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
-      MyPaymentCompoundModel().obs;
   Rx<CompoundModel> compoundModel = CompoundModel().obs;
   Rx<CustomerModel> customerModel = CustomerModel().obs;
-  Rx<PaymentModel> paymentModel = PaymentModel().obs;
-  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
-  Server server = Server();
-  RxBool isLoading = true.obs;
   RxBool isFormVisible = false.obs;
+  RxBool isLoading = true.obs;
+  bool isPaymentFetched = false;
+  Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
+      MyPaymentCompoundModel().obs;
+
+  Rx<OnlinePaymentModel> onlinePaymentModel = OnlinePaymentModel().obs;
+  Rx<PaymentModel> paymentModel = PaymentModel().obs;
   String paymentResponse = '';
   RxString paymentType = RxString('');
-   bool isPaymentFetched = false;
+  Rx<MyPurchasePassModel> purchasePassModel = MyPurchasePassModel().obs;
+  Server server = Server();
+
+  @override
+  void dispose() {
+    // Perform cleanup before disposing
+    cleanup();
+    // Call dispose method of superclass
+    super.dispose();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    cleanup();
+  }
 
   @override
   void onInit() {
@@ -170,8 +180,7 @@ class WebviewCompoundScreenController extends GetxController {
         await updateArgumentAndMakePayment();
         // Retry fetchPayment after updating arguments
         return fetchPayCompound();
-      }
-      else {
+      } else {
         // If response status code is not 200, handle the error
         print('Error: ${response.statusCode}');
         // Return an empty WebViewResponse
@@ -203,20 +212,6 @@ class WebviewCompoundScreenController extends GetxController {
     );
   }
 
-    @override
-  void dispose() {
-    // Perform cleanup before disposing
-    cleanup();
-    // Call dispose method of superclass
-    super.dispose();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-    cleanup();
-  }
-
   void cleanup() {
     // Reset or clear any data here
     purchasePassModel.value = MyPurchasePassModel();
@@ -233,13 +228,13 @@ class WebviewCompoundScreenController extends GetxController {
 }
 
 class WebViewResponse {
-  final int redirectionType;
-  final String redirectUrl;
-  final String clientScript;
-
   WebViewResponse({
     required this.redirectionType,
     required this.redirectUrl,
     required this.clientScript,
   });
+
+  final String clientScript;
+  final String redirectUrl;
+  final int redirectionType;
 }

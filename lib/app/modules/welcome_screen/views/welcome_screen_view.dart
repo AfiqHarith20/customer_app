@@ -52,7 +52,7 @@ class WelcomeScreenView extends GetView<WelcomeScreenController> {
                   txtColor: AppColors.lightGrey01,
                   bgColor: AppColors.darkGrey10,
                   onPress: () {
-                    Get.toNamed(Routes.LOGIN_SCREEN);
+                    Get.toNamed(Routes.DASHBOARD_SCREEN);
                   },
                 ),
                 const SizedBox(

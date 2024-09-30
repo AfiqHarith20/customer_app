@@ -1,19 +1,21 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
+import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
 import '../controllers/dashboard_screen_controller.dart';
 
 class DashboardScreenView extends GetView<DashboardScreenController> {
-  const DashboardScreenView({Key? key}) : super(key: key);
+  const DashboardScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
     bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return Obx(
       () => Scaffold(
         body: controller.pageList[controller.selectedIndex.value],
@@ -22,7 +24,17 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
           currentIndex: controller.selectedIndex.value,
           showUnselectedLabels: true,
           onTap: (int index) async {
-            controller.selectedIndex.value = index;
+            if (index == 3 || index == 4) {
+              // Check if the user is logged in before allowing access to History or Profile
+              bool isLoggedIn = await FireStoreUtils.isLogin();
+              if (!isLoggedIn) {
+                Get.toNamed(
+                    Routes.LOGIN_SCREEN); // Redirect to login if not logged in
+                return;
+              }
+            }
+            controller.selectedIndex.value =
+                index; // Normal navigation if logged in
           },
           selectedItemColor: AppColors.yellow04,
           showSelectedLabels: true,
@@ -82,18 +94,19 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
               shape: const CircleBorder(),
               backgroundColor: AppColors.yellow04,
               onPressed: () async {
-                //LocationResult? result = await Utils.showPlacePicker(context);
-                //if (result != null) {
+                // Check if user is logged in before allowing access to floating action
+                bool isLoggedIn = await FireStoreUtils.isLogin();
+                if (!isLoggedIn) {
+                  Get.toNamed(Routes
+                      .LOGIN_SCREEN); // Redirect to login if not logged in
+                  return;
+                }
+
+                // If logged in, navigate to the inspect page
                 DashboardScreenController dashboardScreenController =
                     Get.put(DashboardScreenController());
-                dashboardScreenController.selectedIndex(2);
-                //Get.toNamed(Routes.SEARCH_SUMMON_SCREEN);
-
-                //HomeController controller = Get.put(HomeController());
-                //controller.addressController.value.text = result.formattedAddress.toString();
-                //controller.locationLatLng.value = LocationLatLng(latitude: result.latLng!.latitude, longitude: result.latLng!.longitude);
-                //await controller.getNearbyParking();
-                //}
+                dashboardScreenController
+                    .selectedIndex(2); // Go to Inspect page
               },
               child: SvgPicture.asset(
                 "assets/icons/ic_frame_inspect.svg",

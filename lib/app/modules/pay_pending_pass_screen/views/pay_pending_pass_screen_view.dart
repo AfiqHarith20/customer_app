@@ -1,12 +1,8 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:customer_app/app/models/commercepay/online_payment_model.dart';
+import 'package:customer_app/app/models/commercepay/pending_payment_model.dart';
 import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
-import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
-import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/tax_model.dart';
 import 'package:customer_app/app/models/wallet_transaction_model.dart';
 import 'package:customer_app/app/modules/pay_pending_pass_screen/controllers/pay_pending_pass_screen_controller.dart';
@@ -18,38 +14,15 @@ import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/themes/app_them_data.dart';
 import 'package:customer_app/themes/button_theme.dart';
-import 'package:customer_app/themes/common_ui.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+// ignore: unnecessary_import
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PayPendingPassScreenView extends StatefulWidget {
-  final String passId;
-  final String passName;
-  final String passPrice;
-  final String passValidity;
-  late String selectedBankName;
-  final String? selectedBankId;
-  final String selectedPassId;
-  final String accessToken;
-  final String customerId;
-  final double totalPrice;
-  final String address;
-  final String companyName;
-  final String companyRegistrationNo;
-  final Timestamp endDate;
-  final Timestamp startDate;
-  final String fullName;
-  final String email;
-  final String mobileNumber;
-  final String userName;
-  final String identificationNo;
-  final String identificationType;
-  final String vehicleNo;
-  final String lotNo;
   PayPendingPassScreenView({
-    Key? key,
+    super.key,
     required this.passId,
     required this.passName,
     required this.passPrice,
@@ -73,7 +46,31 @@ class PayPendingPassScreenView extends StatefulWidget {
     required this.vehicleNo,
     required this.identificationType,
     required this.lotNo,
-  }) : super(key: key);
+  });
+
+  final String accessToken;
+  final String address;
+  final String companyName;
+  final String companyRegistrationNo;
+  final String customerId;
+  final String email;
+  final Timestamp endDate;
+  final String fullName;
+  final String identificationNo;
+  final String identificationType;
+  final String lotNo;
+  final String mobileNumber;
+  final String passId;
+  final String passName;
+  final String passPrice;
+  final String passValidity;
+  final String? selectedBankId;
+  late String selectedBankName;
+  final String selectedPassId;
+  final Timestamp startDate;
+  final double totalPrice;
+  final String userName;
+  final String vehicleNo;
 
   @override
   State<PayPendingPassScreenView> createState() =>
@@ -83,13 +80,21 @@ class PayPendingPassScreenView extends StatefulWidget {
 class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
     with SingleTickerProviderStateMixin {
   late PayPendingPassScreenController controller;
-  late OnlinePaymentModel onlinePaymentModel = OnlinePaymentModel();
+  late PendingPaymentModel pendingPaymentModel = PendingPaymentModel();
   late String selectedBankId;
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<PayPendingPassScreenController>()) {
+      Get.delete<PayPendingPassScreenController>();
+    }
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    onlinePaymentModel = OnlinePaymentModel();
+    pendingPaymentModel = PendingPaymentModel();
     controller = Get.put(PayPendingPassScreenController());
     controller.onInit(); // Call onInit manually
 
@@ -106,14 +111,6 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
       // Do something with the accessToken
       // print("Access token from select payment screen: $accessToken");
     }
-  }
-
-  @override
-  void dispose() {
-    if (Get.isRegistered<PayPendingPassScreenController>()) {
-      Get.delete<PayPendingPassScreenController>();
-    }
-    super.dispose();
   }
 
   @override
@@ -420,7 +417,7 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                         DateTime? dateOnlyEndDate =
                             convertDateTimeToDateOnly(endDate);
 
-                        onlinePaymentModel = OnlinePaymentModel(
+                        pendingPaymentModel = PendingPaymentModel(
                           accessToken: accessToken,
                           customerId: controller.customerId.value,
                           selectedBankId: selectedBankId,
@@ -453,7 +450,7 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                         Get.toNamed(
                           Routes.WEBVIEW_RESERVED_SCREEN,
                           arguments: {
-                            'onlinePaymentModel': onlinePaymentModel,
+                            'pendingPaymentModel': pendingPaymentModel,
                           },
                         );
                       } else if (controller.selectedPaymentMethod.value ==
