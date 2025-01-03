@@ -29,7 +29,7 @@ class HomeController extends GetxController {
   onInit() async {
     getProfileData();
     _initializeApp();
-    fetchCarousel();
+    await fetchCarousel();
     if (box.read('carouselData') != null) {
       List<dynamic>? carouselDataList = box.read('carouselData');
       if (carouselDataList != null) {
@@ -158,7 +158,7 @@ class HomeController extends GetxController {
     }
   }
 
-  void fetchCarousel() async {
+  Future<void> fetchCarousel() async {
     try {
       isLoading.value = true;
       update();

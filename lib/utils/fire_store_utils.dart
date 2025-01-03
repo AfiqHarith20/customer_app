@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/models/admin_commission.dart';
 import 'package:customer_app/app/models/app_version_model.dart';
 import 'package:customer_app/app/models/booking_model.dart';
+import 'package:customer_app/app/models/cart_model.dart';
 import 'package:customer_app/app/models/commercepay/transaction_fee_model.dart';
 import 'package:customer_app/app/models/contact_us_model.dart';
 import 'package:customer_app/app/models/coupon_model.dart';
@@ -17,7 +18,6 @@ import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
 import 'package:customer_app/app/models/pending_pass_model.dart';
 import 'package:customer_app/app/models/server_maintenance_model.dart';
-import 'package:customer_app/app/models/transaction_history_model.dart';
 import 'package:customer_app/app/models/vehicle_model.dart';
 import 'package:customer_app/app/models/wallet_topup_model.dart';
 import 'package:customer_app/app/models/private_pass_model.dart';
@@ -31,7 +31,7 @@ import 'package:customer_app/constant/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
-import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 import '../app/models/carousel_model.dart';
 import '../app/models/my_payment_compound_model.dart';
 import '../app/models/my_purchase_pass_model.dart';
@@ -40,8 +40,14 @@ import '../app/models/season_pass_model.dart';
 class FireStoreUtils {
   static FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
+  StreamController<List<ParkingModel>>? getNearestParkingRequestController;
+
   static String getCurrentUid() {
     return FirebaseAuth.instance.currentUser!.uid;
+  }
+
+  static String getUuid() {
+    return const Uuid().v4();
   }
 
   static Future<bool> updateUserProfile(
@@ -641,8 +647,6 @@ class FireStoreUtils {
     return contactUsModel;
   }
 
-  StreamController<List<ParkingModel>>? getNearestParkingRequestController;
-
   Stream<List<ParkingModel>> getParkingNearest(
       {double? latitude, double? longLatitude}) async* {
     getNearestParkingRequestController =
@@ -922,20 +926,21 @@ class FireStoreUtils {
 
   static Future<List<CarouselModel>?> getCarousel() async {
     List<CarouselModel> carouselData = [];
-    await fireStore
-        .collection(CollectionName.carousel)
-        .where("active", isEqualTo: true)
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
+    try {
+      final querySnapshot = await fireStore
+          .collection(CollectionName.carousel)
+          .where("active", isEqualTo: true)
+          .get();
+
+      for (var element in querySnapshot.docs) {
         CarouselModel carouselModel = CarouselModel.fromJson(element.data());
         carouselData.add(carouselModel);
-        print('-------length----->${carouselData.length}');
+        print('Data length: ${carouselData.length}');
       }
-    }).catchError((error) {
+    } catch (error) {
       log("Failed to get data: $error");
       return null;
-    });
+    }
     return carouselData;
   }
 
@@ -949,7 +954,7 @@ class FireStoreUtils {
 
       for (var element in querySnapshot.docs) {
         taxModel = TaxModel.fromJson(element.data());
-        print('${taxModel}');
+        print('$taxModel');
       }
     } catch (error) {
       log("Failed to fetch tax model: $error");
@@ -1066,5 +1071,184 @@ class FireStoreUtils {
       return null;
     });
     return colorHexList;
+  }
+
+  static Future<bool> addCart(CartModel cartModel) async {
+    try {
+      String userId = getCurrentUid();
+      String? cartItemId = cartModel.id;
+      String? uuid;
+
+      // Fetch the existing UUID and check for status 1 in existing items
+      DocumentSnapshot userCartDoc = await FirebaseFirestore.instance
+          .collection(CollectionName.cart)
+          .doc(userId)
+          .get();
+
+      // Check if the document exists and contains the 'uuid' field
+      if (userCartDoc.exists && userCartDoc.data() != null) {
+        Map<String, dynamic> userCartData =
+            userCartDoc.data() as Map<String, dynamic>;
+
+        // Get the UUID if it exists
+        uuid = userCartData['uuid'];
+
+        // Check if any existing items in the cart have status 1
+        var cartItemsSnapshot = await FirebaseFirestore.instance
+            .collection(CollectionName.cart)
+            .doc(userId)
+            .collection(uuid!)
+            .get();
+
+        for (var item in cartItemsSnapshot.docs) {
+          CartModel existingCartItem = CartModel.fromJson(item.data());
+          if (existingCartItem.status == 1) {
+            // If any item has status 1, generate a new UUID
+            uuid = getUuid();
+            break;
+          }
+        }
+      }
+
+      // If no UUID exists, generate a new one
+      uuid ??= getUuid();
+
+      // Save the cart item in the sub-collection using the existing or new UUID
+      await FirebaseFirestore.instance
+          .collection(CollectionName.cart)
+          .doc(userId)
+          .collection(uuid)
+          .doc(cartItemId)
+          .set(cartModel.toJson());
+
+      // Ensure the UUID is saved in the user's document
+      await FirebaseFirestore.instance
+          .collection(CollectionName.cart)
+          .doc(userId)
+          .set({'uuid': uuid}, SetOptions(merge: true));
+
+      return true;
+    } catch (error) {
+      print("Failed to add cart item: $error");
+      return false;
+    }
+  }
+
+  static Future<bool> updateCart(CartModel cartModel) async {
+    try {
+      String userId = getCurrentUid();
+      String? cartItemId = cartModel.id;
+
+      // Fetch the existing UUID from the user's document
+      String? uuid = await getSavedUuid(userId);
+
+      // Ensure the UUID exists
+      if (uuid == null) {
+        print("UUID not found for user $userId");
+        return false;
+      }
+
+      await FirebaseFirestore.instance
+          .collection(CollectionName.cart)
+          .doc(userId)
+          .collection(uuid)
+          .doc(cartItemId)
+          .update(cartModel.toJson());
+
+      return true;
+    } catch (error) {
+      print("Failed to update cart item: $error");
+      return false;
+    }
+  }
+
+  static Future<String?> getSavedUuid(String userId) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection(CollectionName.cart)
+        .doc(userId)
+        .get();
+
+    // Cast userDoc.data() to a Map<String, dynamic>
+    Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
+
+    // Now you can access the 'uuid' key
+    return data?['uuid'] as String?;
+  }
+
+  static Future<List<CartModel>> getCartItems() async {
+    List<CartModel> cartItemList = [];
+    String userId = getCurrentUid();
+
+    try {
+      // Retrieve the saved UUID
+      String? uuid = await getSavedUuid(userId);
+
+      if (uuid != null) {
+        QuerySnapshot snap = await FirebaseFirestore.instance
+            .collection(CollectionName.cart)
+            .doc(userId)
+            .collection(uuid)
+            .where("status", isEqualTo: 0)
+            .get();
+
+        print('Documents retrieved: ${snap.docs.length}');
+
+        for (var document in snap.docs) {
+          Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+          if (data != null) {
+            cartItemList.add(CartModel.fromJson(data));
+          }
+        }
+      } else {
+        print("UUID not found for user $userId");
+      }
+    } catch (e) {
+      print("Error fetching cart items: $e");
+    }
+
+    return cartItemList;
+  }
+
+  static Future<bool> deleteCart(CartModel cartModel) async {
+    try {
+      String userId = getCurrentUid();
+
+      // Fetch the existing UUID from the user's document
+      String? uuid = await getSavedUuid(userId);
+
+      // Ensure the UUID exists
+      if (uuid == null) {
+        print("UUID not found for user $userId");
+        return false;
+      }
+
+      if (cartModel.id == null) {
+        // Delete the entire subcollection if cartItemId is null
+        QuerySnapshot snap = await FirebaseFirestore.instance
+            .collection(CollectionName.cart)
+            .doc(userId)
+            .collection(uuid)
+            .get();
+
+        // Loop through the documents and delete each one
+        for (var document in snap.docs) {
+          await document.reference.delete();
+        }
+      } else {
+        // Delete the specific document if cartItemId is not null
+        String? cartItemId = cartModel.id;
+        await FirebaseFirestore.instance
+            .collection(CollectionName.cart)
+            .doc(userId)
+            .collection(uuid)
+            .doc(cartItemId)
+            .delete();
+      }
+
+      return true;
+    } catch (error) {
+      print("Failed to delete cart item: $error");
+      return false;
+    }
   }
 }

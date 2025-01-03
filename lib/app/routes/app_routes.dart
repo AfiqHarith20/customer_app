@@ -58,6 +58,8 @@ abstract class Routes {
       _Paths.TRANSACTION_HISTORY_DETAIL_SCREEN;
   static const VEHICLE_SCREEN = _Paths.VEHICLE_SCREEN;
   static const ADD_NEW_VEHICLE = _Paths.ADD_NEW_VEHICLE;
+  static const CART = _Paths.CART;
+  static const CAROUSEL_DETAIL_SCREEN = _Paths.CAROUSEL_DETAIL_SCREEN;
 }
 
 abstract class _Paths {
@@ -115,4 +117,6 @@ abstract class _Paths {
       '/transaction-history-detail-screen';
   static const VEHICLE_SCREEN = '/vehicle-screen';
   static const ADD_NEW_VEHICLE = '/add-vehicle-screen';
+  static const CART = '/cart';
+  static const CAROUSEL_DETAIL_SCREEN = '/carouselDetail';
 }

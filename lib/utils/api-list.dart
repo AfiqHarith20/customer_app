@@ -19,4 +19,10 @@ class APIList {
   static String? road = "${baseUrl!}/api/v1/Parking/Road?ZoneId=";
   static String? queryPass = "${baseUrl!}/api/v1/Parking/QueryPass?";
   static String? queryLot = "${baseUrl!}/api/v1/Parking/QueryLot?";
+  static String? bulkPaySeasonPass =
+      "${baseUrl!}/api/v1/firebase/bulkpayseasonpass";
+  static String? bulkpayreservelot =
+      "${baseUrl!}/api/v1/firebase/bulkpayreservelot";
+  static String? bulkpaycompound =
+      "${baseUrl!}/api/v1/firebase/bulkpaycompound";
 }

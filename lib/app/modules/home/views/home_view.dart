@@ -46,7 +46,10 @@ class _HomeViewState extends State<HomeView> {
   void fetchCarouselImages() async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance.collection('carousel').get();
+          await FirebaseFirestore.instance
+              .collection('carousel')
+              .orderBy('date', descending: true) // Order by 'date' descending
+              .get();
 
       // Extract image URLs from documents in the 'carousel' collection
       List<String> urls = querySnapshot.docs
@@ -259,45 +262,16 @@ class _HomeViewState extends State<HomeView> {
                                         ),
                                       ],
                                     ),
-                                    // const SizedBox(
-                                    //   height: 10,
-                                    // ),
-                                    // Row(
-                                    //   mainAxisAlignment: MainAxisAlignment.center,
-                                    //   children: [
-                                    //     SvgPicture.asset(
-                                    //       "assets/icons/ic_wallet.svg",
-                                    //       height: 25,
-                                    //       width: 25,
-                                    //       color: Colors.black,
-                                    //     ),
-                                    //     const SizedBox(
-                                    //       width: 10,
-                                    //     ),
-                                    //     Text(
-                                    //       Constant.amountShow(
-                                    //         amount: controller.customerModel.value
-                                    //                 .walletAmount
-                                    //                 ?.toString() ??
-                                    //             '0',
-                                    //       ),
-                                    //       style: const TextStyle(
-                                    //         fontSize: 20,
-                                    //         color: Colors.black,
-                                    //         fontWeight: FontWeight.w900,
-                                    //       ),
-                                    //     ),
-                                    //   ],
-                                    // ),
                                   ],
                                 ),
                               ),
                               CarouselSlider(
                                 options: CarouselOptions(
                                   autoPlay: true,
-                                  enlargeCenterPage: false,
+                                  enlargeCenterPage: true,
                                   scrollDirection: Axis.horizontal,
-                                  height: 230,
+                                  viewportFraction:
+                                      0.8, // Adjust this to show partial items on the sides
                                   onPageChanged: (index, reason) {
                                     setState(() {
                                       _currentIndex = index;
@@ -305,28 +279,44 @@ class _HomeViewState extends State<HomeView> {
                                   },
                                 ),
                                 items: controller.carouselData.map((carousel) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Card(
-                                      margin: const EdgeInsets.only(
-                                        top: 10.0,
-                                        bottom: 10.0,
-                                      ),
-                                      elevation: 6.0,
-                                      shadowColor: Colors.redAccent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(30.0),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      // Navigate to CarouselDetailScreen when tapped
+                                      Get.toNamed(
+                                        Routes.CAROUSEL_DETAIL_SCREEN,
+                                        arguments: {
+                                          'image': carousel.image,
+                                          'title': carousel.title,
+                                          'desc': carousel.desc,
+                                        },
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Card(
+                                        margin: const EdgeInsets.only(
+                                          top: 5.0,
+                                          bottom: 5.0,
                                         ),
-                                        child: Image.network(
-                                          carousel.image!,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
+                                        elevation: 6.0,
+                                        shadowColor: Colors.redAccent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(20.0),
+                                          ),
+                                          child: Image.network(
+                                            carousel.image!,
+                                            fit: BoxFit
+                                                .fill, // Change this to scale down the image
+                                            width:
+                                                null, // Remove double.infinity to let the image set its width
+                                            height:
+                                                null, // Remove double.infinity to let the image set its height
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -468,7 +458,7 @@ class _HomeViewState extends State<HomeView> {
                                                       TextOverflow.ellipsis,
                                                   style: const TextStyle(
                                                     fontStyle: FontStyle.normal,
-                                                    color: Colors.grey,
+                                                    color: AppColors.darkGrey07,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 5),

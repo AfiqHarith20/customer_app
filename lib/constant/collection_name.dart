@@ -26,4 +26,5 @@ class CollectionName {
   static const String vehicleManufacture = "vehicle_manufacturers";
   static const String serverMaintenance = "server_maintenance_logs";
   static const String compoundTransaction = "compound_transaction";
+  static const String cart = "payment_checkout";
 }

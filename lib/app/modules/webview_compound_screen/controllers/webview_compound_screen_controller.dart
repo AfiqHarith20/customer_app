@@ -79,7 +79,10 @@ class WebviewCompoundScreenController extends GetxController {
         String compoundNo = myPaymentCompoundModel.value.compoundNo ?? '';
         String kodHasil = myPaymentCompoundModel.value.kodHasil ?? '';
         String channelId = myPaymentCompoundModel.value.channelId ?? '';
-        String amount = myPaymentCompoundModel.value.amount.toString();
+        String amount =
+            double.tryParse(myPaymentCompoundModel.value.amount ?? '')
+                    ?.toStringAsFixed(2) ??
+                '';
         String userName = myPaymentCompoundModel.value.userName ?? '';
         String identificationType =
             myPaymentCompoundModel.value.identificationType ?? '';

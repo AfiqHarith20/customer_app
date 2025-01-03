@@ -372,4 +372,60 @@ const Map<String, String> msMY = {
   'Compound Not Found': 'Kompaun Tidak Ditemui',
   'No matching compounds were found for the search criteria.':
       'Tiada kompaun sepadan ditemui untuk kriteria carian.',
+  'No Results Found': "Tiada Padanan",
+  "Amount:": "Jumlah:",
+  "Date:": "Tarikh:",
+  'Remove All': 'Keluarkan Semua',
+  "Cart": "Troli",
+  'Pass Name:': 'Nama Pas:',
+  "Reserved Lot added to cart": "Petak khas ditambah pada troli",
+  "Failed to add reserved lot to cart": "Gagal menambah petak khas pada troli",
+  "An error occurred while adding the reserved lot":
+      "Ralat berlaku semasa menambah petak khas",
+  "A reserved lot with the same plate number is already in the cart. Please use a different plate number or delete the old reserved lot to use this plate number.":
+      "Petak khas dengan nombor plat yang sama sudah ada di dalam troli. Sila gunakan nombor plat lain atau padam petak kgas lama untuk menggunakan nombor plat ini.",
+  "Duplicate Plate Number": "Nombor Plat Sama",
+  "A reserved lot with the same lot number is already in the cart. Please use a different plate number or delete the old reserved lot to use this lot number.":
+      "Petak khas dengan nombor lot yang sama sudah ada dalam troli. Sila gunakan nombor plat lain atau padamkan petak khas lama untuk menggunakan nombor lot ini.",
+  "Duplicate Lot Number": "Nombor Lot Sama",
+  "Your cart already contains a season pass. Please empty the cart before adding a new reserved lot.":
+      "Troli anda sudah mengandungi Pas Bermusim. Sila kosongkan troli sebelum menambah petak khas baharu.",
+  "Season Pass Found": "Pas Bermusim Ditemui",
+  "Your cart already contains a compound. Please empty the cart before adding a new reserved lot.":
+      "Troli anda sudah mengandungi kompaun. Sila kosongkan troli sebelum menambah petak khas baharu.",
+  "Compound Found": "Kompaun Ditemui",
+  "Same compound number is already in the cart. Please enter a different compound number.":
+      "Nombor kompaun yang sama terdapat pada troli. Sila pilih nombor kompaun yang lain.",
+  "Duplicate Compound Number": "Nombor Kompaun Sama",
+  "Reserved Lot Found": "Petak Khas Ditemui",
+  "Your cart already contains a reserved lot. Please empty the cart before adding a new season pass.":
+      "Troli anda sudah mengandungi petak khas. Sila kosongkan troli sebelum menambah Pas Bermusim baharu.",
+  "Compound added to cart": "Kompaun telah ditambah pada troli",
+  "Failed to add compound to cart": "Gagal menambah kompaun pada troli",
+  "An error occurred while adding the compound":
+      "Ralat berlaku semasa menambah kompaun",
+  "Season pass added to cart": "Pas Bermusim telah ditambah pada troli",
+  "Failed to add season pass to cart": "Gagal menambah Pas Bermusim pada troli",
+  "An error occurred while adding the season pass":
+      "Ralat berlaku semasa menambah Pas Bermusim",
+  'Please select only Season Pass or Reserved Lot items.':
+      'Sila pilih item Pas Bermusim atau Petak Khas sahaja.',
+  'Please select items to proceed.': 'Sila pilih item untuk diteruskan.',
+  'Proceed to Checkout': 'Teruskan ke Bayaran Keluar',
+  'No items in your cart.': 'Tiada barang dalam troli anda.',
+  "Item removed from cart": "Item dialih keluar dari troli",
+  'Failed to remove item from cart': 'Gagal mengalih keluar item dari troli',
+  "Are you sure you want to pay the compound?":
+      "Adakah anda pasti mahu membayar kompaun?",
+  "Your cart already contains a compound. Please empty the cart before adding a new season pass.":
+      "Troli anda sudah mengandungi kompaun. Sila kosongkan troli sebelum menambah pas bermusim baharu.",
+  "Add to Cart": "Tambah ke Troli",
+  "Are you sure you want to delete the selected items from the cart?":
+      "Adakah anda pasti untuk memadamkan item yang dipilih daripada troli?",
+  "Delete Confirmation": "Padam Pengesahan",
+  "Customer Detail": "Butiran Pelanggan ",
+  "Proceed to Payment": "Teruskan ke Pembayaran",
+  "Payment Success for vehicle ": "Bayaran berjaya untuk Kenderaan ",
+  "Payment Success for company name ": "Bayaran berjaya untuk syarikat ",
+  "Compound Details": "Maklumat Kompaun",
 };

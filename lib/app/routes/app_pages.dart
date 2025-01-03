@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/add_vehicle_screen/bindings/add_vehicle_screen_binding.dart';
 import 'package:customer_app/app/modules/add_vehicle_screen/views/add_vehicle_screen_view.dart';
+import 'package:customer_app/app/modules/carousel_details_screen/bindings/carousel_details_screen_binding.dart';
+import 'package:customer_app/app/modules/carousel_details_screen/views/carousel_details_screen_view.dart';
+import 'package:customer_app/app/modules/cart/bindings/cart_binding.dart';
+import 'package:customer_app/app/modules/cart/views/cart_view.dart';
 import 'package:customer_app/app/modules/news_detail_screen/bindings/news_detail_screen_binding.dart';
 import 'package:customer_app/app/modules/news_detail_screen/views/news_detail_screen_view.dart';
 import 'package:customer_app/app/modules/news_screen/bindings/news_screen_binding.dart';
@@ -469,6 +473,16 @@ class AppPages {
       name: _Paths.ADD_NEW_VEHICLE,
       page: () => const AddVehicleScreenView(),
       binding: AddVehicleScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.CART,
+      page: () => const CartView(),
+      binding: CartBinding(),
+    ),
+    GetPage(
+      name: _Paths.CAROUSEL_DETAIL_SCREEN,
+      page: () => const CarouselDetailsScreenView(),
+      binding: CarouselDetailsScreenBinding(),
     ),
   ];
 }

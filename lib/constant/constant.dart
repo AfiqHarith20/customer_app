@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -95,7 +96,7 @@ class Constant {
   static LanguageModel getLanguage() {
     final String user = Preferences.getString(Preferences.languageCodeKey);
     Map<String, dynamic> userMap = jsonDecode(user);
-    log(userMap.toString());
+    // log(userMap.toString());
     return LanguageModel.fromJson(userMap);
   }
 
@@ -304,3 +305,9 @@ class Constant {
     }
   }
 }
+
+const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+final Random _rnd = Random();
+
+String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+    length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
