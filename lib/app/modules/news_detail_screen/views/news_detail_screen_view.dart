@@ -56,7 +56,7 @@ class NewsDetailScreenView extends StatelessWidget {
                         textAlign: TextAlign.justify,
                         style: const TextStyle(
                           fontFamily: AppThemData.regular,
-                          color: Colors.black,
+                          color: AppColors.darkGrey08,
                         ),
                       ),
                     ],

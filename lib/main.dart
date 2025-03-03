@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:customer_app/app/models/app_version_model.dart';
 import 'package:customer_app/app/models/server_maintenance_model.dart';
+import 'package:customer_app/app/modules/cart/controllers/cart_controller.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/firebase_options.dart';
 import 'package:customer_app/services/localization_service.dart';
@@ -34,6 +35,7 @@ Future<void> main() async {
 
   final bool shouldShowUpdateDialog = await checkForAppUpdate();
   final ServerMaintenanceModel? maintenanceInfo = await checkForMaintenance();
+  Get.put(CartController());
 
   runApp(
     MyApp(

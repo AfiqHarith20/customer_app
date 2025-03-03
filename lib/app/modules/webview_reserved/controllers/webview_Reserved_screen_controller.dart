@@ -64,7 +64,7 @@ class WebviewReservedScreenController extends GetxController {
       'customerId': pendingPaymentData.customerId ?? '',
       'channelId': pendingPaymentData.channelId ?? '',
       'providerChannelId': pendingPaymentData.selectedBankId ?? '',
-      'amount': pendingPaymentData.totalPrice?.toString() ?? '',
+      'amount': pendingPaymentData.totalPrice?.toStringAsFixed(2) ?? '',
       'address': pendingPaymentData.address ?? '',
       'companyName': pendingPaymentData.companyName ?? '',
       'companyRegistrationNo': pendingPaymentData.companyRegistrationNo ?? '',

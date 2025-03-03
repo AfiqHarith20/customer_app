@@ -72,7 +72,7 @@ class WebviewScreenController extends GetxController {
       'customerId': onlinePaymentData.customerId ?? '',
       'channelId': onlinePaymentData.channelId ?? '',
       'providerChannelId': onlinePaymentData.selectedBankId ?? '',
-      'amount': onlinePaymentData.totalPrice?.toString() ?? '',
+      'amount': onlinePaymentData.totalPrice?.toStringAsFixed(2) ?? '',
       'address': onlinePaymentData.address ?? '',
       'companyName': onlinePaymentData.companyName ?? '',
       'companyRegistrationNo': onlinePaymentData.companyRegistrationNo ?? '',

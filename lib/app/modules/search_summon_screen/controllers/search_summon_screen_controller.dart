@@ -1,8 +1,12 @@
 import 'dart:convert';
 
+import 'package:customer_app/app/models/cart_model.dart';
 import 'package:customer_app/app/models/commercepay/auth_model.dart';
 import 'package:customer_app/app/models/my_payment_compound_model.dart';
+import 'package:customer_app/app/modules/cart/controllers/cart_controller.dart';
+import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
+import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/utils/api-list.dart';
 import 'package:customer_app/utils/server.dart';
@@ -20,6 +24,8 @@ class SearchSummonScreenController extends GetxController {
   RxList<CompoundModel> compoundImage = <CompoundModel>[].obs;
   Rx<MyPaymentCompoundModel> myPaymentCompoundModel =
       MyPaymentCompoundModel().obs;
+  final CartController cartController =
+      Get.put<CartController>(CartController());
   Server server = Server();
   final AuthModel authModel = AuthModel();
   final _isLoading = false.obs;
@@ -218,5 +224,171 @@ class SearchSummonScreenController extends GetxController {
       setLoading(
           false); // Set isLoading to false after the search operation completes
     }
+  }
+
+  Future<void> addToCart(CompoundModel compoundModel) async {
+    print("addToCart called");
+    CompoundModel payCompoundModel = CompoundModel(
+      compoundNo: compoundModel.compoundNo,
+      amount: compoundModel.amount,
+      dateTime: compoundModel.dateTime,
+      status: compoundModel.status,
+      offence: compoundModel.offence,
+      kodHasil: compoundModel.kodHasil,
+      vehicleNum: compoundModel.vehicleNum,
+    );
+
+    CartModel newCartModel = CartModel(
+      id: getRandomString(20),
+      status: 0,
+      compoundModel: payCompoundModel,
+    );
+
+    bool hasDuplicate = await checkForDuplicateCompoundNo(newCartModel);
+    print("hasDuplicate: $hasDuplicate");
+    bool hasSeasonPass = await checkForSeasonPassInCart();
+    bool hasReservedLot = await checkForReservedLotInCart();
+
+    if (hasDuplicate) {
+      print("Duplicate found, showing duplicate dialog");
+      showDuplicateCompoundNo(); // Pass context here
+      return;
+    } else if (hasSeasonPass) {
+      showSeasonPassPopup(); // Pass context here
+      return;
+    } else if (hasReservedLot) {
+      showReservedLotPopup(); // Pass context here
+      return;
+    }
+
+    bool success = await FireStoreUtils.addCart(newCartModel);
+
+    if (success) {
+      await cartController.refreshCartItems();
+      update();
+      Get.back();
+      ShowToastDialog.showToast("Compound added to cart".tr);
+    } else {
+      ShowToastDialog.showToast("Failed to add compound to cart".tr);
+    }
+  }
+
+  void showVerifyEmailDialog() {
+    showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return DialogBoxNotify(
+          imageAsset: "assets/images/ic_email.png",
+          onPressConfirm: () async {
+            Navigator.of(context).pop();
+          },
+          onPressConfirmBtnName: "Ok".tr,
+          onPressConfirmColor: AppColors.yellow04,
+          content: "Please verify your email before proceeding.".tr,
+          subTitle: "Email Verification".tr,
+        );
+      },
+    );
+  }
+
+  Future<bool> checkForDuplicateCompoundNo(CartModel newCartModel) async {
+    List<CartModel> cartItems = await FireStoreUtils.getCartItems();
+    for (var item in cartItems) {
+      if (item.compoundModel?.compoundNo ==
+          newCartModel.compoundModel?.compoundNo) {
+        return true; // Duplicate found
+      }
+    }
+    return false; // No duplicates
+  }
+
+  Future<bool> checkForSeasonPassInCart() async {
+    List<CartModel> cartItems = await FireStoreUtils.getCartItems();
+    for (var item in cartItems) {
+      if (item.purchasePassModel != null) {
+        return true; // Season pass found
+      }
+    }
+    return false; // No season passes
+  }
+
+  Future<bool> checkForReservedLotInCart() async {
+    List<CartModel> cartItems = await FireStoreUtils.getCartItems();
+    for (var item in cartItems) {
+      if (item.purchaseReservedLotModel != null) {
+        return true; // Reserved lot found
+      }
+    }
+    return false; // No reserved lots
+  }
+
+  void showDuplicateCompoundNo() {
+    print("showDuplicateCompoundNo called");
+    showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return DialogBoxNotify(
+          imageAsset: "assets/images/ic_warning.png",
+          onPressConfirm: () {
+            print("Confirm button pressed");
+            Get.back();
+            Get.back();
+          },
+          onPressConfirmBtnName: "OK",
+          onPressConfirmColor: AppColors.yellow04,
+          content:
+              "Same compound number is already in the cart. Please enter a different compound number."
+                  .tr,
+          subTitle: "Duplicate Compound Number".tr,
+        );
+      },
+      barrierDismissible: false,
+    );
+  }
+
+  void showSeasonPassPopup() {
+    showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return DialogBoxNotify(
+          imageAsset:
+              "assets/images/ic_warning.png", // You can replace this with a relevant asset
+          onPressConfirm: () {
+            Get.back();
+            Get.back();
+          },
+          onPressConfirmBtnName: "OK", // Button label
+          onPressConfirmColor: AppColors.yellow04, // Button color
+          content:
+              "Your cart already contains a season pass. Please empty the cart before adding a new reserved lot."
+                  .tr,
+          subTitle: "Season Pass Found".tr, // Title of the dialog
+        );
+      },
+      barrierDismissible: false, // Prevent dismissal by tapping outside
+    );
+  }
+
+  void showReservedLotPopup() {
+    showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return DialogBoxNotify(
+          imageAsset:
+              "assets/images/ic_warning.png", // You can replace this with a relevant asset
+          onPressConfirm: () {
+            Get.back();
+            Get.back();
+          },
+          onPressConfirmBtnName: "OK", // Button label
+          onPressConfirmColor: AppColors.yellow04, // Button color
+          content:
+              "Your cart already contains a reserved lot. Please empty the cart before adding a new season pass."
+                  .tr,
+          subTitle: "Reserved Lot Found".tr, // Title of the dialog
+        );
+      },
+      barrierDismissible: false, // Prevent dismissal by tapping outside
+    );
   }
 }

@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:customer_app/app/modules/cart/controllers/cart_controller.dart';
 import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
 import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
@@ -25,11 +26,11 @@ import '../../../../themes/common_ui.dart';
 import '../../../models/compound_model.dart';
 import '../../../models/wallet_transaction_model.dart';
 import '../../../routes/app_pages.dart';
+import 'package:badges/badges.dart' as badges;
 
 class SearchSummonScreenView extends StatefulWidget {
   final SearchSummonScreenController controller;
-  const SearchSummonScreenView({Key? key, required this.controller})
-      : super(key: key);
+  const SearchSummonScreenView({super.key, required this.controller});
 
   @override
   State<SearchSummonScreenView> createState() => _SearchSummonScreenViewState();
@@ -37,6 +38,8 @@ class SearchSummonScreenView extends StatefulWidget {
 
 class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
   late TextEditingController _searchController;
+  final CartController cartController =
+      Get.put<CartController>(CartController());
   late String _hintText;
   String _requestMethod = 'compound';
   // bool _selectAll = false;
@@ -91,11 +94,57 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
           return Scaffold(
             backgroundColor: AppColors.lightGrey02,
             appBar: UiInterface().customAppBar(
-              backgroundColor: AppColors.lightGrey02,
-              context,
-              "Search & Pay Compound".tr,
-              isBack: false,
-            ),
+                backgroundColor: AppColors.lightGrey02,
+                context,
+                "Search & Pay Compound".tr,
+                isBack: false,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 6,
+                      right: 20,
+                      top: 12,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Get.toNamed(Routes.CART); // Navigate to cart page
+                      },
+                      child: Stack(
+                        children: [
+                          const Icon(
+                            Icons.shopping_cart, // Cart icon
+                            size: 30.0,
+                            color: AppColors.darkGrey08,
+                          ),
+                          // Cart item count with badge
+                          Obx(() {
+                            int documentCount =
+                                cartController.cartItemCount.value;
+
+                            return badges.Badge(
+                              // Use the badges prefix here
+                              badgeContent: Text(
+                                '$documentCount',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              showBadge: documentCount >
+                                  0, // Only show badge if count > 0
+                              badgeStyle: const badges.BadgeStyle(
+                                // Use BadgeStyle to set the badge color
+                                badgeColor:
+                                    AppColors.red04, // Set badge color here
+                              ),
+                              position: badges.BadgePosition.topStart(
+                                  top: -10, start: 20), // Position of the badge
+                              child:
+                                  const SizedBox(), // Placeholder for the Badge widget
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                ]),
             body: Column(
               children: [
                 Text(
@@ -140,11 +189,11 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                     textCapitalization: TextCapitalization.characters,
                     controller: _searchController,
                     leading: const Icon(Icons.search),
-                    side: MaterialStateProperty.all(
+                    side: WidgetStateProperty.all(
                       const BorderSide(color: Colors.grey),
                     ),
                     hintText: _hintText,
-                    shape: MaterialStateProperty.all(
+                    shape: WidgetStateProperty.all(
                       const ContinuousRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
@@ -392,7 +441,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                         ),
                                         const SizedBox(height: 3),
                                         Text(
-                                          compoundModel.dateTime!,
+                                          compoundModel.dateTime.toString(),
                                           style: const TextStyle(
                                             color: AppColors.darkGrey03,
                                             fontFamily: AppThemData.medium,
@@ -613,9 +662,28 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                                                   .controller
                                                   .isEmailVerified();
                                               if (emailVerified) {
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: false,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                Color>(
+                                                          AppColors.darkGrey10,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                                await widget.controller
+                                                    .addToCart(compoundModel);
                                                 // Navigate to pay compound if email is verified
-                                                navigateToPayCompound(
-                                                    compoundModel);
+                                                // navigateToPayCompound(
+                                                //     compoundModel);
                                               } else {
                                                 // Show the email verification dialog
                                                 showVerifyEmailDialog();

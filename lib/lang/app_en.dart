@@ -372,4 +372,61 @@ const Map<String, String> enUS = {
   'Compound Not Found': 'Compound Not Found',
   'No matching compounds were found for the search criteria.':
       'No matching compounds were found for the search criteria.',
+  "Amount:": "Amount:",
+  "Date:": "Date:",
+  'Remove All': 'Remove All',
+  "Cart": "Cart",
+  'Pass Name:': 'Pass Name:',
+  "Reserved Lot added to cart": "Reserved Lot added to cart",
+  "Failed to add reserved lot to cart": "Failed to add reserved lot to cart",
+  "An error occurred while adding the reserved lot":
+      "An error occurred while adding the reserved lot",
+  "A reserved lot with the same plate number is already in the cart. Please use a different plate number or delete the old reserved lot to use this plate number.":
+      "A reserved lot with the same plate number is already in the cart. Please use a different plate number or delete the old reserved lot to use this plate number.",
+  "Duplicate Plate Number": "Duplicate Plate Number",
+  "A reserved lot with the same lot number is already in the cart. Please use a different plate number or delete the old reserved lot to use this lot number.":
+      "A reserved lot with the same lot number is already in the cart. Please use a different plate number or delete the old reserved lot to use this lot number.",
+  "Duplicate Lot Number": "Duplicate Lot Number",
+  "Your cart already contains a season pass. Please empty the cart before adding a new reserved lot.":
+      "Your cart already contains a season pass. Please empty the cart before adding a new reserved lot.",
+  "Season Pass Found": "Season Pass Found",
+  "Your cart already contains a compound. Please empty the cart before adding a new reserved lot.":
+      "Your cart already contains a compound. Please empty the cart before adding a new reserved lot.",
+  "Compound Found": "Compound Found",
+  "Same compound number is already in the cart. Please enter a different compound number.":
+      "Same compound number is already in the cart. Please enter a different compound number.",
+  "Duplicate Compound Number": "Duplicate Compound Number",
+  "Reserved Lot Found": "Reserved Lot Found",
+  "Your cart already contains a reserved lot. Please empty the cart before adding a new season pass.":
+      "Your cart already contains a reserved lot. Please empty the cart before adding a new season pass.",
+  "Compound added to cart": "Compound added to cart",
+  "Failed to add compound to cart": "Failed to add compound to cart",
+  "An error occurred while adding the compound":
+      "An error occurred while adding the compound",
+  "Season pass added to cart": "Season pass added to cart",
+  "Failed to add season pass to cart": "Failed to add season pass to cart",
+  "An error occurred while adding the season pass":
+      "An error occurred while adding the season pass",
+  "A season pass with the same plate number is already in the cart. Please use a different plate number or delete the old season pass to use this plate number.":
+      "A season pass with the same plate number is already in the cart. Please use a different plate number or delete the old season pass to use this plate number.",
+  'Please select only Season Pass or Reserved Lot items.':
+      'Please select only Season Pass or Reserved Lot items.',
+  'Please select items to proceed.': 'Please select items to proceed.',
+  'Proceed to Checkout': 'Proceed to Checkout',
+  'No items in your cart.': 'No items in your cart.',
+  "Item removed from cart": "Item removed from cart",
+  'Failed to remove item from cart': 'Failed to remove item from cart',
+  "Are you sure you want to pay the compound?":
+      "Are you sure you want to pay the compound?",
+  "Your cart already contains a compound. Please empty the cart before adding a new season pass.":
+      "Your cart already contains a compound. Please empty the cart before adding a new season pass.",
+  "Add to Cart": "Add to Cart",
+  "Are you sure you want to delete the selected items from the cart?":
+      "Are you sure you want to delete the selected items from the cart?",
+  "Delete Confirmation": "Delete Confirmation",
+  "Customer Detail": "Customer Detail",
+  "Proceed to Payment": "Proceed to Payment",
+  "Payment Success for vehicle ": "Payment Success for vehicle ",
+  "Payment Success for company name ": "Payment Success for company name ",
+  "Compound Details": "Compound Details",
 };
