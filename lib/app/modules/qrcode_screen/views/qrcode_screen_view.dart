@@ -4,7 +4,7 @@ import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
 import '../../../../themes/app_colors.dart';
 import '../../../../themes/common_ui.dart';

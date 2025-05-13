@@ -428,4 +428,5 @@ const Map<String, String> msMY = {
   "Payment Success for vehicle ": "Bayaran berjaya untuk Kenderaan ",
   "Payment Success for company name ": "Bayaran berjaya untuk syarikat ",
   "Compound Details": "Maklumat Kompaun",
+  "Carousel Details": "Butiran Berita",
 };

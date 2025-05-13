@@ -429,4 +429,5 @@ const Map<String, String> enUS = {
   "Payment Success for vehicle ": "Payment Success for vehicle ",
   "Payment Success for company name ": "Payment Success for company name ",
   "Compound Details": "Compound Details",
+  "Carousel Details": "Carousel Details",
 };

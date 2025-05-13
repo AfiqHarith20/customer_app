@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_paypal_native/models/custom/purchase_unit.dart';
 // import 'package:flutter_paypal_native/models/custom/user_action.dart';
 // import 'package:flutter_paypal_native/str_helper.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
+// import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -61,10 +61,10 @@ class WalletScreenController extends GetxController {
       if (value != null) {
         paymentModel.value = value;
 
-        Stripe.publishableKey =
-            paymentModel.value.strip!.clientpublishableKey.toString();
-        Stripe.merchantIdentifier = 'NAZIFA Customer';
-        Stripe.instance.applySettings();
+        // Stripe.publishableKey =
+        //     paymentModel.value.strip!.clientpublishableKey.toString();
+        // Stripe.merchantIdentifier = 'NAZIFA Customer';
+        // Stripe.instance.applySettings();
       }
     });
     // initPayPal();
@@ -264,57 +264,57 @@ class WalletScreenController extends GetxController {
   // }
 
   // Strip
-  Future<void> stripeMakePayment({required String amount}) async {
-    log(double.parse(amount).toStringAsFixed(0));
-    try {
-      Map<String, dynamic>? paymentIntentData =
-          await createStripeIntent(amount: amount);
-      if (paymentIntentData!.containsKey("error")) {
-        Get.back();
+  // Future<void> stripeMakePayment({required String amount}) async {
+  //   log(double.parse(amount).toStringAsFixed(0));
+  //   try {
+  //     Map<String, dynamic>? paymentIntentData =
+  //         await createStripeIntent(amount: amount);
+  //     if (paymentIntentData!.containsKey("error")) {
+  //       Get.back();
 
-        ShowToastDialog.showToast(
-            "Something went wrong, please contact admin.");
-      } else {
-        await Stripe.instance.initPaymentSheet(
-            paymentSheetParameters: SetupPaymentSheetParameters(
-                paymentIntentClientSecret: paymentIntentData['client_secret'],
-                allowsDelayedPaymentMethods: false,
-                googlePay: const PaymentSheetGooglePay(
-                  merchantCountryCode: 'US',
-                  testEnv: true,
-                  currencyCode: "USD",
-                ),
-                customFlow: true,
-                style: ThemeMode.system,
-                appearance: const PaymentSheetAppearance(
-                  colors: PaymentSheetAppearanceColors(
-                    primary: AppColors.orange04,
-                  ),
-                ),
-                merchantDisplayName: 'NAZIFA Customer'));
-        displayStripePaymentSheet(amount: amount);
-      }
-    } catch (e, s) {
-      log("$e \n$s");
-      ShowToastDialog.showToast("exception:$e \n$s");
-    }
-  }
+  //       ShowToastDialog.showToast(
+  //           "Something went wrong, please contact admin.");
+  //     } else {
+  //       await Stripe.instance.initPaymentSheet(
+  //           paymentSheetParameters: SetupPaymentSheetParameters(
+  //               paymentIntentClientSecret: paymentIntentData['client_secret'],
+  //               allowsDelayedPaymentMethods: false,
+  //               googlePay: const PaymentSheetGooglePay(
+  //                 merchantCountryCode: 'US',
+  //                 testEnv: true,
+  //                 currencyCode: "USD",
+  //               ),
+  //               customFlow: true,
+  //               style: ThemeMode.system,
+  //               appearance: const PaymentSheetAppearance(
+  //                 colors: PaymentSheetAppearanceColors(
+  //                   primary: AppColors.orange04,
+  //                 ),
+  //               ),
+  //               merchantDisplayName: 'NAZIFA Customer'));
+  //       displayStripePaymentSheet(amount: amount);
+  //     }
+  //   } catch (e, s) {
+  //     log("$e \n$s");
+  //     ShowToastDialog.showToast("exception:$e \n$s");
+  //   }
+  // }
 
-  displayStripePaymentSheet({required String amount}) async {
-    try {
-      await Stripe.instance.presentPaymentSheet().then((value) {
-        ShowToastDialog.showToast("Payment successfully");
-        walletTopUp();
-      });
-    } on StripeException catch (e) {
-      var lo1 = jsonEncode(e);
-      var lo2 = jsonDecode(lo1);
-      StripePayFailedModel lom = StripePayFailedModel.fromJson(lo2);
-      ShowToastDialog.showToast(lom.error.message);
-    } catch (e) {
-      ShowToastDialog.showToast(e.toString());
-    }
-  }
+  // displayStripePaymentSheet({required String amount}) async {
+  //   try {
+  //     await Stripe.instance.presentPaymentSheet().then((value) {
+  //       ShowToastDialog.showToast("Payment successfully");
+  //       walletTopUp();
+  //     });
+  //   } on StripeException catch (e) {
+  //     var lo1 = jsonEncode(e);
+  //     var lo2 = jsonDecode(lo1);
+  //     StripePayFailedModel lom = StripePayFailedModel.fromJson(lo2);
+  //     ShowToastDialog.showToast(lom.error.message);
+  //   } catch (e) {
+  //     ShowToastDialog.showToast(e.toString());
+  //   }
+  // }
 
   createStripeIntent({required String amount}) async {
     try {

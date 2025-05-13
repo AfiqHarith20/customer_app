@@ -30,7 +30,7 @@ import 'package:customer_app/constant/collection_name.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:geoflutterfire2/geoflutterfire2.dart';
+// import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:uuid/uuid.dart';
 import '../app/models/carousel_model.dart';
 import '../app/models/my_payment_compound_model.dart';
@@ -647,38 +647,38 @@ class FireStoreUtils {
     return contactUsModel;
   }
 
-  Stream<List<ParkingModel>> getParkingNearest(
-      {double? latitude, double? longLatitude}) async* {
-    getNearestParkingRequestController =
-        StreamController<List<ParkingModel>>.broadcast();
-    List<ParkingModel> parkingList = [];
-    Query query = fireStore
-        .collection(CollectionName.parkings)
-        .where("active", isEqualTo: true);
+  // Stream<List<ParkingModel>> getParkingNearest(
+  //     {double? latitude, double? longLatitude}) async* {
+  //   getNearestParkingRequestController =
+  //       StreamController<List<ParkingModel>>.broadcast();
+  //   List<ParkingModel> parkingList = [];
+  //   Query query = fireStore
+  //       .collection(CollectionName.parkings)
+  //       .where("active", isEqualTo: true);
 
-    GeoFirePoint center = GeoFlutterFire()
-        .point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
+  //   GeoFirePoint center = GeoFlutterFire()
+  //       .point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
 
-    Stream<List<DocumentSnapshot>> stream = GeoFlutterFire()
-        .collection(collectionRef: query)
-        .within(
-            center: center,
-            radius: double.parse(Constant.radius),
-            field: 'position',
-            strictMode: true);
+  //   Stream<List<DocumentSnapshot>> stream = GeoFlutterFire()
+  //       .collection(collectionRef: query)
+  //       .within(
+  //           center: center,
+  //           radius: double.parse(Constant.radius),
+  //           field: 'position',
+  //           strictMode: true);
 
-    stream.listen((List<DocumentSnapshot> documentList) {
-      parkingList.clear();
-      for (var document in documentList) {
-        final data = document.data() as Map<String, dynamic>;
-        ParkingModel orderModel = ParkingModel.fromJson(data);
-        parkingList.add(orderModel);
-      }
-      getNearestParkingRequestController!.sink.add(parkingList);
-    });
+  //   stream.listen((List<DocumentSnapshot> documentList) {
+  //     parkingList.clear();
+  //     for (var document in documentList) {
+  //       final data = document.data() as Map<String, dynamic>;
+  //       ParkingModel orderModel = ParkingModel.fromJson(data);
+  //       parkingList.add(orderModel);
+  //     }
+  //     getNearestParkingRequestController!.sink.add(parkingList);
+  //   });
 
-    yield* getNearestParkingRequestController!.stream;
-  }
+  //   yield* getNearestParkingRequestController!.stream;
+  // }
 
   static Future<List<WalletTransactionModel>?> getWalletTransaction() async {
     List<WalletTransactionModel> walletTransactionModel = [];

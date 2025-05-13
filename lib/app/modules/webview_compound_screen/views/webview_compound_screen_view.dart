@@ -7,7 +7,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
 class WebviewCompoundScreen extends StatefulWidget {
-  const WebviewCompoundScreen({Key? key}) : super(key: key);
+  const WebviewCompoundScreen({super.key});
 
   @override
   State<WebviewCompoundScreen> createState() => _WebviewCompoundScreenState();
@@ -64,7 +64,7 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
                 InAppWebView(
                   initialUrlRequest: URLRequest(
                     // Load empty page initially
-                    url: Uri.parse('about:blank'),
+                    url: WebUri.uri(Uri.parse('about:blank')),
                   ),
                   onProgressChanged:
                       (InAppWebViewController controller, int progress) {
@@ -84,14 +84,16 @@ class _WebviewCompoundScreenState extends State<WebviewCompoundScreen> {
                     if (redirectionType == 1) {
                       // Redirect using URL
                       await controller.loadUrl(
-                          urlRequest: URLRequest(url: Uri.parse(redirectUrl)));
+                          urlRequest: URLRequest(
+                              url: WebUri.uri(Uri.parse(redirectUrl))));
                     } else if (redirectionType == 2) {
                       // Redirect using client script
                       // Load the HTML form content into WebView
                       await controller.loadData(
                         data: clientScript,
                         // Set base URL for relative paths (optional)
-                        baseUrl: Uri.parse('https://mepsfpx.com.my/'),
+                        baseUrl:
+                            WebUri.uri(Uri.parse('https://mepsfpx.com.my/')),
                         // Set MIME type (optional)
                         mimeType: 'text/html',
                         // Set encoding (optional)

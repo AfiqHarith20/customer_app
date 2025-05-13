@@ -70,7 +70,7 @@ class _WebviewScreenState extends State<WebviewScreen> {
                 InAppWebView(
                   initialUrlRequest: URLRequest(
                     // Load empty page initially
-                    url: Uri.parse('about:blank'),
+                    url: WebUri.uri(Uri.parse('about:blank')),
                   ),
                   onProgressChanged:
                       (InAppWebViewController webViewController, int progress) {
@@ -91,14 +91,15 @@ class _WebviewScreenState extends State<WebviewScreen> {
                     if (redirectionType == 1) {
                       // Redirect using URL
                       await webViewController.loadUrl(
-                          urlRequest: URLRequest(url: Uri.parse(redirectUrl)));
+                          urlRequest: URLRequest(
+                              url: WebUri.uri(Uri.parse(redirectUrl))));
                     } else if (redirectionType == 2) {
                       // Redirect using client script
                       // Load the HTML form content into WebView
                       await webViewController.loadData(
                         data: clientScript,
-                        baseUrl: Uri.parse(
-                            'https://mepsfpx.com.my/'), // Set base URL for relative paths (optional)
+                        baseUrl: WebUri.uri(Uri.parse(
+                            'https://mepsfpx.com.my/')), // Set base URL for relative paths (optional)
                         mimeType: 'text/html', // Set MIME type (optional)
                         encoding: 'utf8', // Set encoding (optional)
                       );
