@@ -139,30 +139,19 @@ class LoginScreenController extends GetxController {
       // Show loader dialog
       ShowToastDialog.showLoader("Please Wait..".tr);
 
-      // Sign in with Google
-      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        // Google sign-in canceled or failed
-        print('Google sign-in canceled or failed');
+      // Attempt Google sign-in
+      UserCredential? userCredential = await signInWithGoogle();
+      if (userCredential == null) {
+        print("Google sign-in canceled or failed.");
         ShowToastDialog.closeLoader();
         return;
       }
-      GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
-      AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in with Firebase using the credential
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
 
       // Close loader dialog
       ShowToastDialog.closeLoader();
 
       // Handle user based on whether they are new or existing
       if (userCredential.additionalUserInfo!.isNewUser) {
-        // New user: navigate to information screen to complete registration
         CustomerModel customerModel = CustomerModel(
           id: userCredential.user!.uid,
           email: userCredential.user!.email,
@@ -173,14 +162,11 @@ class LoginScreenController extends GetxController {
         Get.toNamed(Routes.INFORMATION_SCREEN,
             arguments: {"customerModel": customerModel});
       } else {
-        // Existing user: check if user exists in Firestore
         bool userExists =
             await FireStoreUtils.userExistOrNot(userCredential.user!.uid);
         if (userExists) {
-          // User exists in Firestore, navigate to dashboard screen
           Get.offAllNamed(Routes.DASHBOARD_SCREEN);
         } else {
-          // User does not exist in Firestore, navigate to information screen to complete registration
           CustomerModel customerModel = CustomerModel(
             id: userCredential.user!.uid,
             email: userCredential.user!.email,
@@ -193,7 +179,6 @@ class LoginScreenController extends GetxController {
         }
       }
     } catch (e) {
-      // Handle any errors
       print("Error signing in with Google: $e");
       ShowToastDialog.closeLoader();
       ShowToastDialog.showToast("Something went wrong. Please try again.");

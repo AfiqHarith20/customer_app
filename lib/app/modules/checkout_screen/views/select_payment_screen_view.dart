@@ -439,17 +439,18 @@ class _SelectPaymentScreenViewState extends State<SelectPaymentScreenView>
                         Get.toNamed(Routes.WEBVIEW_SCREEN, arguments: {
                           'onlinePaymentModel': onlinePaymentModel,
                         });
-                      } else if (controller.selectedPaymentMethod.value ==
-                          controller.paymentModel.value.strip!.name) {
-                        // Call the controller method to make the stripe payment
-                        controller.stripeMakePayment(
-                          amount: double.parse(
-                            controller.purchasePassModel.value.seasonPassModel!
-                                .price!,
-                          ).toStringAsFixed(
-                              Constant.currencyModel!.decimalDigits!),
-                        );
                       }
+                      // else if (controller.selectedPaymentMethod.value ==
+                      //     controller.paymentModel.value.strip!.name) {
+                      //   // Call the controller method to make the stripe payment
+                      //   controller.stripeMakePayment(
+                      //     amount: double.parse(
+                      //       controller.purchasePassModel.value.seasonPassModel!
+                      //           .price!,
+                      //     ).toStringAsFixed(
+                      //         Constant.currencyModel!.decimalDigits!),
+                      //   );
+                      // }
                       // else if (controller.selectedPaymentMethod.value ==
                       //     controller.paymentModel.value.paypal!.name) {
                       //   // Call the controller method to handle PayPal payment

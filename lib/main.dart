@@ -35,7 +35,7 @@ Future<void> main() async {
 
   final bool shouldShowUpdateDialog = await checkForAppUpdate();
   final ServerMaintenanceModel? maintenanceInfo = await checkForMaintenance();
-  Get.put(CartController());
+  // Get.put(CartController());
 
   runApp(
     MyApp(
@@ -50,10 +50,10 @@ class MyApp extends StatelessWidget {
   final ServerMaintenanceModel? maintenanceInfo;
 
   const MyApp({
-    Key? key,
+    super.key,
     this.shouldShowUpdateDialog,
     this.maintenanceInfo,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

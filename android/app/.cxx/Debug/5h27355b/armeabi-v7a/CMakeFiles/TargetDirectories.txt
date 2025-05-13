@@ -1,0 +1,2 @@
+/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/Debug/5h27355b/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/Debug/5h27355b/armeabi-v7a/CMakeFiles/rebuild_cache.dir

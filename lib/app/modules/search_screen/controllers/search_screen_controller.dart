@@ -18,13 +18,13 @@ class SearchScreenController extends GetxController {
   int cnt = 1;
 
   getNearbyParking() {
-    FireStoreUtils()
-        .getParkingNearest(latitude: locationLatLng.value.latitude, longLatitude: locationLatLng.value.longitude)
-        .listen((event) {
-      parkingList.value = event;
-      parkingList.refresh();
-      log("  >>>>${cnt++}<<<<  ${parkingList.toJson()}");
-      isLoading.value = true;
-    });
+    // FireStoreUtils()
+    //     .getParkingNearest(latitude: locationLatLng.value.latitude, longLatitude: locationLatLng.value.longitude)
+    //     .listen((event) {
+    //   parkingList.value = event;
+    //   parkingList.refresh();
+    //   log("  >>>>${cnt++}<<<<  ${parkingList.toJson()}");
+    //   isLoading.value = true;
+    // });
   }
 }

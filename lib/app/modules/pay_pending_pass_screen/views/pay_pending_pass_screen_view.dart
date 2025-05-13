@@ -453,17 +453,18 @@ class _PayPendingPassScreenViewState extends State<PayPendingPassScreenView>
                             'pendingPaymentModel': pendingPaymentModel,
                           },
                         );
-                      } else if (controller.selectedPaymentMethod.value ==
-                          controller.paymentModel.value.strip!.name) {
-                        // Call the controller method to make the stripe payment
-                        controller.stripeMakePayment(
-                          amount: double.parse(
-                            controller.purchasePassModel.value.seasonPassModel!
-                                .price!,
-                          ).toStringAsFixed(
-                              Constant.currencyModel!.decimalDigits!),
-                        );
                       }
+                      // else if (controller.selectedPaymentMethod.value ==
+                      //     controller.paymentModel.value.strip!.name) {
+                      //   // Call the controller method to make the stripe payment
+                      //   controller.stripeMakePayment(
+                      //     amount: double.parse(
+                      //       controller.purchasePassModel.value.seasonPassModel!
+                      //           .price!,
+                      //     ).toStringAsFixed(
+                      //         Constant.currencyModel!.decimalDigits!),
+                      //   );
+                      // }
                     }
                     // else if (controller.selectedPaymentMethod.value ==
                     //     controller.paymentModel.value.paypal!.name) {
