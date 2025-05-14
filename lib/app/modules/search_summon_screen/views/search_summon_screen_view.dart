@@ -1,11 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:customer_app/app/modules/qrcode_screen/controllers/qrcode_screen_controller.dart';
 import 'package:customer_app/app/modules/search_summon_screen/controllers/search_summon_screen_controller.dart';
@@ -13,7 +9,6 @@ import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/constant/show_toast_dialogue.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_switch/sliding_switch.dart';
@@ -24,7 +19,6 @@ import '../../../../themes/app_them_data.dart';
 import '../../../../themes/button_theme.dart';
 import '../../../../themes/common_ui.dart';
 import '../../../models/compound_model.dart';
-import '../../../models/wallet_transaction_model.dart';
 import '../../../routes/app_pages.dart';
 
 class SearchSummonScreenView extends StatefulWidget {
