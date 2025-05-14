@@ -42,7 +42,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
 
   late String _hintText;
   String _requestMethod = 'compound';
-  // bool _selectAll = false;
+  bool _isPageLoading = false;
 
   @override
   void initState() {
@@ -166,118 +166,11 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                       title: "Search".tr,
                       txtColor: AppColors.lightGrey01,
                       bgColor: AppColors.darkGrey10,
-                      onPress: () async {
-                        String searchText = _searchController.text;
-                        // Set loading state to true immediately after clicking search
-                        widget.controller.setLoading(true);
-
-                        try {
-                          Map<String, dynamic> searchResult =
-                              await SearchSummonScreenController()
-                                  .searchCompound(
-                            id: 'vendor_mptemerloh',
-                            pass:
-                                'M=Lu5k%r8uw!6yBq^T924bdjE_piB3DU2^d9eB39^7u9^GdAKe_IG5KbK&V2vt5=KpxkB',
-                            requestMethod: _requestMethod,
-                            compoundNum:
-                                _requestMethod == 'compound' ? searchText : '',
-                            carNum: _requestMethod == 'car' ? searchText : '',
-                          );
-
-                          String convertBase64ToUrl(String base64Strings) {
-                            final String decodedUrl =
-                                utf8.decode(base64.decode(base64Strings));
-                            return decodedUrl;
-                          }
-
-                          // Parse the JSON response into a list of CompoundModel objects
-                          List<CompoundModel> compounds = [];
-                          List<String> compoundNums =
-                              searchResult['compound_num'] != null &&
-                                      searchResult['compound_num'] is String
-                                  ? searchResult['compound_num'].split("::")
-                                  : [];
-                          List<String> amounts =
-                              searchResult['amount'] != null &&
-                                      searchResult['amount'] is String
-                                  ? searchResult['amount'].split("::")
-                                  : [searchResult['amount'].toString()];
-                          List<String> dateTimes =
-                              searchResult['datetime'] != null &&
-                                      searchResult['datetime'] is String
-                                  ? searchResult['datetime'].split("::")
-                                  : [];
-                          List<String> statuses =
-                              searchResult['status'] != null &&
-                                      searchResult['status'] is String
-                                  ? searchResult['status'].split("::")
-                                  : [];
-                          List<String> offences =
-                              searchResult['offence'] != null &&
-                                      searchResult['offence'] is String
-                                  ? searchResult['offence'].split("::")
-                                  : [];
-                          List<String> kodHasils =
-                              searchResult['kod_hasil'] != null &&
-                                      searchResult['kod_hasil'] is String
-                                  ? searchResult['kod_hasil'].split("::")
-                                  : [];
-                          List<String> vehicleNums =
-                              searchResult['vehicle_num'] != null &&
-                                      searchResult['vehicle_num'] is String
-                                  ? searchResult['vehicle_num'].split("::")
-                                  : [];
-
-                          List<String> imageUrls =
-                              searchResult['allCompoundImage'] != null &&
-                                      searchResult['allCompoundImage'] is String
-                                  ? convertBase64ToUrl(
-                                          searchResult['allCompoundImage'])
-                                      .split("::")
-                                  : [];
-
-                          for (int i = 0; i < compoundNums.length; i++) {
-                            CompoundModel compound = CompoundModel(
-                              compoundNo: compoundNums.isNotEmpty
-                                  ? compoundNums[i]
-                                  : '',
-                              amount: amounts.isNotEmpty ? amounts[i] : '',
-                              dateTime: dateTimes.isNotEmpty
-                                  ? dateTimes[i] // Assign the string directly
-                                  : DateTime.now()
-                                      .toIso8601String(), // Provide a default value in ISO 8601 format
-                              status: statuses.isNotEmpty ? statuses[i] : '',
-                              offence: offences.isNotEmpty ? offences[i] : '',
-                              kodHasil:
-                                  kodHasils.isNotEmpty ? kodHasils[i] : '',
-                              vehicleNum:
-                                  vehicleNums.isNotEmpty ? vehicleNums[i] : '',
-                              imageUrl:
-                                  imageUrls.isNotEmpty ? imageUrls[i] : '',
-                            );
-                            compounds.add(compound);
-                          }
-
-                          // Update the compoundList in the controller
-                          widget.controller.updateCompoundList(compounds);
-
-                          // Rebuild the widget tree to reflect the changes
-                          setState(() {});
-
-                          // Show a toast message based on the msg field in the response
-                          if (searchResult.containsKey('msg') &&
-                              searchResult['msg'] != null &&
-                              searchResult['msg'].isNotEmpty) {
-                            ShowToastDialog.showToast(searchResult['msg']);
-                          }
-                        } catch (e) {
-                          // Handle any errors that occur during the search
-                          print('Error searching: $e');
-                        } finally {
-                          // Set loading state back to false after search completes
-                          widget.controller.setLoading(false);
-                        }
-                      },
+                      onPress: _isPageLoading
+                          ? () {} // Provide a no-op function when loading
+                          : () {
+                              _handleSearch(); // Call the actual search function
+                            },
                     ),
                     if (_requestMethod == 'compound')
                       const SizedBox(
@@ -656,6 +549,115 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
             ),
           );
         });
+  }
+
+  Future<void> _handleSearch() async {
+    setState(() {
+      _isPageLoading = true; // Start loading
+    });
+
+    String searchText = _searchController.text;
+    widget.controller.setLoading(true);
+
+    try {
+      // Perform the search operation
+      Map<String, dynamic> searchResult =
+          await SearchSummonScreenController().searchCompound(
+        id: 'vendor_mptemerloh',
+        pass:
+            'M=Lu5k%r8uw!6yBq^T924bdjE_piB3DU2^d9eB39^7u9^GdAKe_IG5KbK&V2vt5=KpxkB',
+        requestMethod: _requestMethod,
+        compoundNum: _requestMethod == 'compound' ? searchText : '',
+        carNum: _requestMethod == 'car' ? searchText : '',
+      );
+
+      // Parse and update the compound list
+      List<CompoundModel> compounds = _parseSearchResult(searchResult);
+      widget.controller.updateCompoundList(compounds);
+
+      // Show a toast message if available
+      if (searchResult.containsKey('msg') &&
+          searchResult['msg'] != null &&
+          searchResult['msg'].isNotEmpty) {
+        ShowToastDialog.showToast(searchResult['msg']);
+      }
+
+      // If no compounds are found, show a Snackbar
+      if (compounds.isEmpty) {
+        _noCompoundSnackBar("No compound is found.".tr);
+      }
+    } catch (e) {
+      print('Error searching: $e');
+    } finally {
+      setState(() {
+        _isPageLoading = false; // Stop loading
+      });
+      widget.controller.setLoading(false);
+    }
+  }
+
+  List<CompoundModel> _parseSearchResult(Map<String, dynamic> searchResult) {
+    List<CompoundModel> compounds = [];
+
+    // Helper function to decode base64 strings
+    String convertBase64ToUrl(String base64Strings) {
+      final String decodedUrl = utf8.decode(base64.decode(base64Strings));
+      return decodedUrl;
+    }
+
+    // Extract data from the search result
+    List<String> compoundNums = searchResult['compound_num'] != null &&
+            searchResult['compound_num'] is String
+        ? searchResult['compound_num'].split("::")
+        : [];
+    List<String> amounts =
+        searchResult['amount'] != null && searchResult['amount'] is String
+            ? searchResult['amount'].split("::")
+            : [searchResult['amount'].toString()];
+    List<String> dateTimes =
+        searchResult['datetime'] != null && searchResult['datetime'] is String
+            ? searchResult['datetime'].split("::")
+            : [];
+    List<String> statuses =
+        searchResult['status'] != null && searchResult['status'] is String
+            ? searchResult['status'].split("::")
+            : [];
+    List<String> offences =
+        searchResult['offence'] != null && searchResult['offence'] is String
+            ? searchResult['offence'].split("::")
+            : [];
+    List<String> kodHasils =
+        searchResult['kod_hasil'] != null && searchResult['kod_hasil'] is String
+            ? searchResult['kod_hasil'].split("::")
+            : [];
+    List<String> vehicleNums = searchResult['vehicle_num'] != null &&
+            searchResult['vehicle_num'] is String
+        ? searchResult['vehicle_num'].split("::")
+        : [];
+    List<String> imageUrls = searchResult['allCompoundImage'] != null &&
+            searchResult['allCompoundImage'] is String
+        ? convertBase64ToUrl(searchResult['allCompoundImage']).split("::")
+        : [];
+
+    // Create `CompoundModel` objects and add them to the list
+    for (int i = 0; i < compoundNums.length; i++) {
+      CompoundModel compound = CompoundModel(
+        compoundNo: compoundNums.isNotEmpty ? compoundNums[i] : '',
+        amount: amounts.isNotEmpty ? amounts[i] : '',
+        dateTime: dateTimes.isNotEmpty
+            ? dateTimes[i] // Assign the string directly
+            : DateTime.now()
+                .toIso8601String(), // Provide a default value in ISO 8601 format
+        status: statuses.isNotEmpty ? statuses[i] : '',
+        offence: offences.isNotEmpty ? offences[i] : '',
+        kodHasil: kodHasils.isNotEmpty ? kodHasils[i] : '',
+        vehicleNum: vehicleNums.isNotEmpty ? vehicleNums[i] : '',
+        imageUrl: imageUrls.isNotEmpty ? imageUrls[i] : '',
+      );
+      compounds.add(compound);
+    }
+
+    return compounds;
   }
 
   void navigateToPayCompound(CompoundModel compoundModel) {
