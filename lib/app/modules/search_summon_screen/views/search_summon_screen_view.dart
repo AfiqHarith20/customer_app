@@ -157,7 +157,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
                       // _requestMethod == 'compound' ? 0.43 : 0.9,
                       txtSize: 14,
                       context,
-                      title: "Search".tr,
+                      title: _isPageLoading ? "Loading...".tr : "Search".tr,
                       txtColor: AppColors.lightGrey01,
                       bgColor: AppColors.darkGrey10,
                       onPress: _isPageLoading
