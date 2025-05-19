@@ -85,7 +85,6 @@ class LoginScreenView extends GetView<LoginScreenController> {
                     PasswordTextField(
                       title: "Password".tr,
                       controller: controller.passwordController.value,
-                      onPress: () {},
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

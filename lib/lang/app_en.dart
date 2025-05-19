@@ -430,4 +430,10 @@ const Map<String, String> enUS = {
   "Payment Success for company name ": "Payment Success for company name ",
   "Compound Details": "Compound Details",
   "Carousel Details": "Carousel Details",
+  "Invalid email or password. Please try again.":
+      "Invalid email or password. Please try again.",
+  "The email address is badly formatted.":
+      "The email address is badly formatted.",
+  "Something went wrong. Please try again.":
+      "Something went wrong. Please try again."
 };

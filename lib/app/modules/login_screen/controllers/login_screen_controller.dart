@@ -49,7 +49,9 @@ class LoginScreenController extends GetxController {
 
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
 
       // Close loader dialog
       ShowToastDialog.closeLoader();
@@ -64,17 +66,17 @@ class LoginScreenController extends GetxController {
         Get.offNamed(Routes.REGISTER_SCREEN);
       }
     } on FirebaseAuthException catch (e) {
-      // Handle sign-in failure
-      print("Sign-in failed: $e");
       ShowToastDialog.closeLoader();
+
       String errorMessage;
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        // Invalid email or password
-        errorMessage = "Invalid email or password. Please try again.";
+        errorMessage = "Invalid email or password. Please try again.".tr;
+      } else if (e.code == 'invalid-email') {
+        errorMessage = "The email address is badly formatted.".tr;
       } else {
-        // Other error, show generic message
-        errorMessage = "Something went wrong. Please try again.";
+        errorMessage = "Something went wrong. Please try again.".tr;
       }
+
       ShowToastDialog.showToast(errorMessage);
     }
   }

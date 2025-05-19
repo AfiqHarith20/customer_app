@@ -15,6 +15,15 @@ allprojects {
         google()
         mavenCentral()
     }
+
+        configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'androidx.core') {
+                details.useVersion '1.13.1' // 🔄 UPDATED from 1.12.0 to 1.13.1
+                details.because 'Fix crash on Android 15: EditorInfoCompat.setStylusHandwritingEnabled requires 1.13.1+'
+            }
+        }
+    }
 }
 
 rootProject.buildDir = '../build'

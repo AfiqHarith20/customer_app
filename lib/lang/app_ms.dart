@@ -70,6 +70,7 @@ const Map<String, String> msMY = {
       "Invite friends to use our app and earn exclusive rewards for every successful referral. Share the benefits today!",
   "Tap To Copy": "Tekan Untuk Salin",
   "Email": "E-mel",
+  "Password": "Kata Laluan",
   "How it Works": "Bagaimana ia berfungsi",
   "Refer Friends": "Rujuk Kawan",
   "Friends Join": "Kawan Turut Serta",
@@ -429,4 +430,9 @@ const Map<String, String> msMY = {
   "Payment Success for company name ": "Bayaran berjaya untuk syarikat ",
   "Compound Details": "Maklumat Kompaun",
   "Carousel Details": "Butiran Berita",
+  "Invalid email or password. Please try again.":
+      "Emel atau Kata Laluan tidak sah. Sila cuba lagi.",
+  "The email address is badly formatted.": "Format Emel tidak betul.",
+  "Something went wrong. Please try again.":
+      "Sesuatu telah berlaku. Sila cuba lagi."
 };

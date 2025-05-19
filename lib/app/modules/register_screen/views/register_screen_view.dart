@@ -11,7 +11,7 @@ import 'package:customer_app/themes/button_theme.dart';
 import '../controllers/register_screen_controller.dart';
 
 class RegisterScreenView extends GetView<RegisterScreenController> {
-  const RegisterScreenView({Key? key}) : super(key: key);
+  const RegisterScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,6 @@ class RegisterScreenView extends GetView<RegisterScreenController> {
                   PasswordTextField(
                     title: "Password".tr,
                     controller: controller.passwordController.value,
-                    onPress: () {},
                   ),
                   const SizedBox(
                     height: 32,
