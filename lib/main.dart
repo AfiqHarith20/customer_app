@@ -21,10 +21,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Preferences.initPref();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  }
 
   try {
     await FirebaseMessaging.instance.subscribeToTopic("nazifa");
