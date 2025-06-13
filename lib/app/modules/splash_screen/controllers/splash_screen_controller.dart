@@ -64,6 +64,7 @@ class SplashScreenController extends GetxController {
           if (value != null) {
             CustomerModel customerModel = value;
             customerModel.fcmToken = token;
+            print("FCM Token: ${customerModel.fcmToken}");
             FireStoreUtils.updateUser(customerModel);
           }
         });
