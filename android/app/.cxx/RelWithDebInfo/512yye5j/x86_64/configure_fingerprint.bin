@@ -2,6 +2,7 @@ C/C++ Structured Log~
 |
 z/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/additional_project_files.txtC
 A
+<<<<<<< Updated upstream
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	†³à–‡3 ’ö‰Œ3{
 y
 w/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/android_gradle_build.json	†³à–‡3 ”ö‰Œ3€
@@ -26,3 +27,29 @@ w
 u/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/symbol_folder_index.txt	†³à–‡3l –ö‰Œ3d
 b
 `/Users/terasync/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt	†³à–‡3¤ õå¼´Ö2
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	³¥ö—ý2 ®¥ö—ý2{
+y
+w/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/android_gradle_build.json	³¥ö—ý2 °¥ö—ý2€
+~
+|/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/android_gradle_build_mini.json	³¥ö—ý2„ ±¥ö—ý2m
+k
+i/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/build.ninja	³¥ö—ý2ÌË ˜¥ö—ý2q
+o
+m/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/build.ninja.txt	³¥ö—ý2v
+t
+r/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/build_file_index.txt	³¥ö—ý2` ²¥ö—ý2w
+u
+s/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/compile_commands.json	³¥ö—ý2{
+y
+w/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/compile_commands.json.bin	³¥ö—ý2	
+
+}/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/metadata_generation_command.txt	³¥ö—ý2
+ü ±¥ö—ý2t
+r
+p/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/prefab_config.json	³¥ö—ý2( ±¥ö—ý2y
+w
+u/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/symbol_folder_index.txt	³¥ö—ý2l ²¥ö—ý2d
+b
+`/Users/terasync/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt	³¥ö—ý2¤ õå¼´Ö2
+>>>>>>> Stashed changes

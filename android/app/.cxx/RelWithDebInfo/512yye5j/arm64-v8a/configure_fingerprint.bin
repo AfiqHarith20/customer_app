@@ -2,6 +2,7 @@ C/C++ Structured LogÅ
 
 }/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/additional_project_files.txtC
 A
+<<<<<<< Updated upstream
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	‹≤‡ñá3 †‡âåÅ3~
 |
 z/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/android_gradle_build.json	‹≤‡ñá3á ™‡âåÅ3Ñ
@@ -26,3 +27,29 @@ z
 x/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/symbol_folder_index.txt	‹≤‡ñá3o Ω‡âåÅ3d
 b
 `/Users/terasync/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt	‹≤‡ñá3§ ıÂº¥÷2
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	ﬂêˆó˝2 ƒêˆó˝2~
+|
+z/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/android_gradle_build.json	‡êˆó˝2á …êˆó˝2Ñ
+Å
+/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/android_gradle_build_mini.json	‡êˆó˝2ä ‘êˆó˝2p
+n
+l/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/build.ninja	‡êˆó˝2ﬁÀ íêˆó˝2t
+r
+p/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/build.ninja.txt	‡êˆó˝2y
+w
+u/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/build_file_index.txt	‡êˆó˝2` ÷êˆó˝2z
+x
+v/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/compile_commands.json	‡êˆó˝2~
+|
+z/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/compile_commands.json.bin	‡êˆó˝2	Ü
+É
+Ä/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/metadata_generation_command.txt	‡êˆó˝2
+ã	 ÷êˆó˝2w
+u
+s/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/prefab_config.json	‡êˆó˝2( ÷êˆó˝2|
+z
+x/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/arm64-v8a/symbol_folder_index.txt	‡êˆó˝2o ÷êˆó˝2d
+b
+`/Users/terasync/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt	‡êˆó˝2§ ıÂº¥÷2
+>>>>>>> Stashed changes
