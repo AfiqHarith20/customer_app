@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '183704717279',
     projectId: 'nazifa-parking-29f2b',
     storageBucket: 'nazifa-parking-29f2b.appspot.com',
-    iosBundleId: 'com.terasoft.nazifaparking',
+    iosBundleId: 'com.terasoft.nazifasb',
   );
 }

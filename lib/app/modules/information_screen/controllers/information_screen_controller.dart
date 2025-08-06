@@ -49,7 +49,7 @@ class InformationScreenController extends GetxController {
         'https://nazifa-parking-29f2b.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
     handleCodeInApp: true,
     iOSBundleId: 'com.example.ios',
-    androidPackageName: 'com.terasoft.nazifaparking',
+    androidPackageName: 'com.terasoft.nazifasb',
     androidInstallApp: true,
     androidMinimumVersion: '12',
   );

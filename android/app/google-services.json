@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "183704717279-2g7msne4bgeav8o4a5m80pmij6rsne96.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "8a8d79b06e21e8a8a38f7b8cb9c66d3ce51f1309"
+          }
+        },
+        {
+          "client_id": "183704717279-4dkc2nh9grhii5vc021eb73pg5rdjg8g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "d55348e6cf9a2ffcc0f05445eee0ef3b7a0be400"
+          }
+        },
+        {
+          "client_id": "183704717279-64ah57vntq3knbcd3eagvdpe18inf94e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "dd2bdb1e7f11485056d0601c40caa80933990272"
+          }
+        },
+        {
           "client_id": "183704717279-70d43lkos111fmjis7rul4tqvo5dormp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -23,11 +47,67 @@
           }
         },
         {
+          "client_id": "183704717279-7q4p732qouoh6nh18efhjkd5dvrqtlq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "7dc2afc81bfed6d9cb5dfde94cc90796e91e8c7e"
+          }
+        },
+        {
+          "client_id": "183704717279-9hfqgbt9pvpag30a6iak830patgfqh3v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "db494ca1367ebddcffe168c912ccbc0aa9b9d0c8"
+          }
+        },
+        {
+          "client_id": "183704717279-asn6p4bnk88a30n061aq6nhtlh65nh6g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "b3980a1c97141d99698ca8c02e465a7f5d5a853c"
+          }
+        },
+        {
           "client_id": "183704717279-cl4cg1calu1vrbt0vlems5odlaitalmc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.terasoft.nazifaparking",
             "certificate_hash": "b42844fe2ff576cd7e315bf955f48b3b5ea298b9"
+          }
+        },
+        {
+          "client_id": "183704717279-k8jhpvpdlaseap51nhdski5mb5u239j4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "2efeb2484e3766d2a19f9ffae8f0ff63037f357c"
+          }
+        },
+        {
+          "client_id": "183704717279-kfo3ceelo23h31klcjs8kk6pgbvcuhl5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "81d7572559dc1e614c47d33d903eb52c0780a6ff"
+          }
+        },
+        {
+          "client_id": "183704717279-kns6cosciu5sui330lvhhr9nf2mgtbt7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "d6606b8f1ec502b3f46cffdfa16fabc2ed984bf8"
+          }
+        },
+        {
+          "client_id": "183704717279-s7ajc7o1r823mbacsbhnl79h1hqdajgb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking",
+            "certificate_hash": "ffd6e9de40e80a451c770362a086cedc15fbd871"
           }
         },
         {
@@ -83,6 +163,14 @@
           }
         },
         {
+          "client_id": "183704717279-iodlf48s0f94uop2itgp03f1b6aa8vfn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking.owner",
+            "certificate_hash": "7dc2afc81bfed6d9cb5dfde94cc90796e91e8c7e"
+          }
+        },
+        {
           "client_id": "183704717279-i19m58avn6pfuukm5sae2gbb54frpimp.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -119,6 +207,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "183704717279-i1i3phctu70hhma2bd619q5drpntjgjg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifaparking.watchman",
+            "certificate_hash": "7dc2afc81bfed6d9cb5dfde94cc90796e91e8c7e"
+          }
+        },
+        {
           "client_id": "183704717279-j7ogmvl98j6b1m5dfiri9p4pffekq41h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -132,6 +228,50 @@
           "android_info": {
             "package_name": "com.terasoft.nazifaparking.watchman",
             "certificate_hash": "b42844fe2ff576cd7e315bf955f48b3b5ea298b9"
+          }
+        },
+        {
+          "client_id": "183704717279-i19m58avn6pfuukm5sae2gbb54frpimp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwuTUVKf5KLGdZ26xybWiAyAeYsA05oIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "183704717279-i19m58avn6pfuukm5sae2gbb54frpimp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "183704717279-1n39k1kjoftv1omg49pfg7ck57jrb9tq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.terasoft.nazifaparking.owner"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183704717279:android:2d0e323a9ea56f3b95266a",
+        "android_client_info": {
+          "package_name": "com.terasoft.nazifasb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "183704717279-r8khof11g5g3113fhkj09hnln76rajms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terasoft.nazifasb",
+            "certificate_hash": "81d7572559dc1e614c47d33d903eb52c0780a6ff"
           }
         },
         {

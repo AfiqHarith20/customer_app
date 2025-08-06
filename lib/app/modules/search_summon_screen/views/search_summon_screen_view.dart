@@ -576,10 +576,10 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
         ShowToastDialog.showToast(searchResult['msg']);
       }
 
-      // If no compounds are found, show a Snackbar
-      if (compounds.isEmpty) {
-        _noCompoundSnackBar("No compound is found.".tr);
-      }
+      // // If no compounds are found, show a Snackbar
+      // if (compounds.isEmpty) {
+      //   _noCompoundSnackBar("No compound is found.".tr);
+      // }
     } catch (e) {
       print('Error searching: $e');
     } finally {
@@ -776,9 +776,9 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
       }
 
       // If no compound is found, show a Snackbar
-      if (compounds.isEmpty) {
-        _noCompoundSnackBar("No compound is found.".tr);
-      }
+      // if (compounds.isEmpty) {
+      //   _noCompoundSnackBar("No compound is found.".tr);
+      // }
     } on SocketException catch (e) {
       // Handle connection problem
       _noConnectionSnackBar("Connection problem. Please try again.".tr);

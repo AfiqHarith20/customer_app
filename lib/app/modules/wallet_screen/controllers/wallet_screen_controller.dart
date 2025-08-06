@@ -200,7 +200,7 @@ class WalletScreenController extends GetxController {
   //   //initiate payPal plugin
   //   await _flutterPaypalNativePlugin.init(
   //     //your app id !!! No Underscore!!! see readme.md for help
-  //     returnUrl: "com.terasoft.nazifaparking://paypalpay",
+  //     returnUrl: "com.terasoft.nazifasb://paypalpay",
   //     //client id from developer dashboard
   //     clientID: paymentModel.value.paypal!.paypalClient.toString(),
   //     //sandbox, staging, live etc

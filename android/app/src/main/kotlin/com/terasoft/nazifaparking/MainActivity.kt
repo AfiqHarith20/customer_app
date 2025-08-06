@@ -1,4 +1,4 @@
-package com.terasoft.nazifaparking
+package com.terasoft.nazifasb
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity
