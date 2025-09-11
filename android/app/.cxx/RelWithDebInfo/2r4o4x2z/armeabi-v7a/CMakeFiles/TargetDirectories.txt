@@ -1,2 +1,0 @@
-/Volumes/Seagate/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/2r4o4x2z/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Volumes/Seagate/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/2r4o4x2z/armeabi-v7a/CMakeFiles/rebuild_cache.dir

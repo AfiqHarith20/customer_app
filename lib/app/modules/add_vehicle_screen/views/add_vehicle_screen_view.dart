@@ -2,9 +2,10 @@ import 'package:customer_app/app/models/vehicle_model.dart';
 import 'package:customer_app/app/modules/add_vehicle_screen/controllers/add_vehicle_screen_controller.dart';
 import 'package:customer_app/app/modules/add_vehicle_screen/controllers/edit_vehicle_screen_controller.dart';
 import 'package:customer_app/app/modules/vehicle_screen/controllers/vehicle_screen_controller.dart';
+import 'package:customer_app/app/routes/app_pages.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
 import 'package:customer_app/themes/app_colors.dart';
-import 'package:customer_app/themes/app_them_data.dart';
+import 'package:customer_app/themes/common_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,7 +48,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(
-            color: AppColors.darkGrey09,
+            color: Colors.black,
             strokeWidth: 2.0,
           ),
         ),
@@ -93,8 +94,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
         ),
         title: Text(
           vehicleData == null ? "New Vehicle".tr : "Edit Vehicle".tr,
-          style: const TextStyle(
-              color: AppColors.darkGrey10, fontFamily: AppThemData.medium),
+          style: const TextStyle(color: AppColors.darkGrey10),
         ),
         backgroundColor: AppColors.white,
         actions: vehicleData == null
@@ -144,10 +144,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                 const SizedBox(height: 16),
                 Text(
                   'PLATE NUMBER*'.tr,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: AppThemData.medium,
-                      color: AppColors.darkGrey08),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
@@ -178,22 +175,20 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Enter plate number'.tr,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
                         color: AppColors.yellow04,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
                         color: AppColors.yellow04,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
                         color: AppColors.yellow04,
                       ),
@@ -206,39 +201,42 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text(
                   'VEHICLE MANUFACTURE'.tr,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: AppThemData.medium,
-                      color: AppColors.darkGrey08),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
                 Obx(() {
                   return DropdownButtonFormField<VehicleManufactureModel>(
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 15),
-                      labelText: "Select vehicle manufacture".tr,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Image.asset(
+                          "assets/images/car-manufacturing.png",
+                          height: 24,
+                        ),
+                      ),
+                      labelText:
+                          "Select vehicle manufacture".tr, // Optional label
                       labelStyle: const TextStyle(
                         color: AppColors.darkGrey09,
                       ),
                       fillColor: AppColors.white,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                         borderSide: const BorderSide(
                           color: AppColors.yellow04,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                         borderSide: const BorderSide(
                           color: AppColors.yellow04,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                         borderSide: const BorderSide(
                           color: AppColors.yellow04,
                         ),
@@ -250,9 +248,15 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                             .map((VehicleManufactureModel vehicle) {
                             return DropdownMenuItem<VehicleManufactureModel>(
                               value: vehicle,
-                              child: Text(
-                                vehicle.name?.tr ?? '',
-                                style: const TextStyle(fontSize: 14),
+                              child: SizedBox(
+                                height: 48,
+                                child: Center(
+                                  child: Text(
+                                    vehicle.name?.tr ?? '',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ),
                               ),
                             );
                           }).toList()
@@ -260,9 +264,15 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                             .map((VehicleManufactureModel vehicle) {
                             return DropdownMenuItem<VehicleManufactureModel>(
                               value: vehicle,
-                              child: Text(
-                                vehicle.name?.tr ?? '',
-                                style: const TextStyle(fontSize: 14),
+                              child: SizedBox(
+                                height: 48,
+                                child: Center(
+                                  child: Text(
+                                    vehicle.name?.tr ?? '',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ),
                               ),
                             );
                           }).toList(),
@@ -285,13 +295,10 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                     validator: (value) => null, // Optional, no validation
                   );
                 }),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text(
                   'VEHICLE MODEL'.tr,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: AppThemData.medium,
-                      color: AppColors.darkGrey08),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
@@ -300,22 +307,20 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                       : controller2.vehicleModelController.value,
                   decoration: InputDecoration(
                     hintText: 'Enter vehicle model'.tr,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
                         color: AppColors.yellow04,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
                         color: AppColors.yellow04,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                       borderSide: const BorderSide(
                         color: AppColors.yellow04,
                       ),
@@ -323,39 +328,41 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                   ),
                   validator: (value) => null, // Optional, no validation
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text(
                   'COLOR'.tr,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: AppThemData.medium,
-                      color: AppColors.darkGrey08),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
                 Obx(() {
                   return DropdownButtonFormField<ColorHexModel>(
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 15),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Image.asset(
+                          "assets/images/pantone.png",
+                          height: 24,
+                        ),
+                      ),
                       labelText: "Select color".tr,
                       labelStyle: const TextStyle(
                         color: AppColors.darkGrey09,
                       ),
                       fillColor: AppColors.white,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                         borderSide: const BorderSide(
                           color: AppColors.yellow04,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                         borderSide: const BorderSide(
                           color: AppColors.yellow04,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                         borderSide: const BorderSide(
                           color: AppColors.yellow04,
                         ),
@@ -377,6 +384,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                                     color.name ?? '',
                                     style: const TextStyle(fontSize: 14),
                                   ),
+                                  const SizedBox(width: 5),
                                   Container(
                                     width: 24,
                                     height: 24,
@@ -403,6 +411,7 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                                     color.name ?? '',
                                     style: const TextStyle(fontSize: 14),
                                   ),
+                                  const SizedBox(width: 5),
                                   Container(
                                     width: 24,
                                     height: 24,
@@ -431,76 +440,63 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                     value: vehicleData == null
                         ? controller.selectedColor.value
                         : controller2.selectedColor.value,
+                    // validator: (value) =>
+                    //     value != null ? null : 'Color required'.tr,
                   );
                 }),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text(
                   'PRIMARY'.tr,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontFamily: AppThemData.medium,
-                      color: AppColors.darkGrey08),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
                 Obx(
                   () => Row(
                     children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Radio<bool>(
-                              value: true,
-                              groupValue: vehicleData == null
-                                  ? controller.isDefault.value
-                                  : controller2.isDefault.value,
-                              onChanged: (bool? value) {
-                                if (value != null) {
-                                  if (vehicleData == null) {
-                                    controller.isDefault.value = value;
-                                  } else {
-                                    controller2.isDefault.value = value;
-                                  }
-                                }
-                              },
-                            ),
-                            const Text('Yes'),
-                          ],
-                        ),
+                      Radio<bool>(
+                        value: true,
+                        groupValue: vehicleData == null
+                            ? controller.isDefault.value
+                            : controller2.isDefault.value,
+                        onChanged: (bool? value) {
+                          if (value != null) {
+                            if (vehicleData == null) {
+                              controller.isDefault.value = value;
+                            } else {
+                              controller2.isDefault.value = value;
+                            }
+                          }
+                        },
                       ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Radio<bool>(
-                              value: false,
-                              groupValue: vehicleData == null
-                                  ? controller.isDefault.value
-                                  : controller2.isDefault.value,
-                              onChanged: (bool? value) {
-                                if (value != null) {
-                                  if (vehicleData == null) {
-                                    controller.isDefault.value = value;
-                                  } else {
-                                    controller2.isDefault.value = value;
-                                  }
-                                }
-                              },
-                            ),
-                            const Text('No'),
-                          ],
-                        ),
+                      const Text('Yes'),
+                      Radio<bool>(
+                        value: false,
+                        groupValue: vehicleData == null
+                            ? controller.isDefault.value
+                            : controller2.isDefault.value,
+                        onChanged: (bool? value) {
+                          if (value != null) {
+                            if (vehicleData == null) {
+                              controller.isDefault.value = value;
+                            } else {
+                              controller2.isDefault.value = value;
+                            }
+                          }
+                        },
                       ),
+                      const Text('No'),
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkGrey09,
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      padding: const EdgeInsets.all(12.0),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
                     onPressed: () async {
@@ -547,8 +543,8 @@ class _AddVehicleScreenViewState extends State<AddVehicleScreenView> {
                           : 'UPDATE VEHICLE'.tr,
                       style: const TextStyle(
                         color: AppColors.white,
-                        fontFamily: AppThemData.bold,
-                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
                     ),
                   ),

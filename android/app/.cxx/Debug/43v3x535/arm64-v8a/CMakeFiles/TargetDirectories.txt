@@ -1,2 +1,0 @@
-/Volumes/One Touch/GitHub/customer_app/android/app/.cxx/Debug/43v3x535/arm64-v8a/CMakeFiles/edit_cache.dir
-/Volumes/One Touch/GitHub/customer_app/android/app/.cxx/Debug/43v3x535/arm64-v8a/CMakeFiles/rebuild_cache.dir
