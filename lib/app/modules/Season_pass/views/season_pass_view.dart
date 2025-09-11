@@ -19,7 +19,7 @@ import '../../../routes/app_pages.dart';
 import '../controllers/season_pass_controller.dart';
 
 class SeasonPassView extends StatefulWidget {
-  const SeasonPassView({super.key});
+  const SeasonPassView({Key? key}) : super(key: key);
 
   @override
   _SeasonPassViewState createState() => _SeasonPassViewState();
@@ -31,8 +31,15 @@ class _SeasonPassViewState extends State<SeasonPassView> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(SeasonPassController());
+    controller = Get.put(SeasonPassController()); // Initialize the controller
   }
+
+  // @override
+  // void dispose() {
+  //   Get.delete<
+  //       SeasonPassController>(); // Don't forget to delete the controller when the widget is disposed
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +56,9 @@ class _SeasonPassViewState extends State<SeasonPassView> {
             appBar: AppBar(
               title: Text(
                 "Season Pass".tr,
-                style: const TextStyle(
-                  color: AppColors.darkGrey07,
-                  fontFamily: AppThemData.bold,
-                ),
+                style: const TextStyle(color: AppColors.darkGrey07),
               ),
               backgroundColor: AppColors.white,
-              elevation: 0,
-              centerTitle: true,
               leading: IconButton(
                 color: AppColors.darkGrey07,
                 icon: const Icon(Icons.arrow_back),
@@ -66,13 +68,16 @@ class _SeasonPassViewState extends State<SeasonPassView> {
               ),
             ),
             body: controller.isLoading.value
-                ? Center(child: Constant.loader())
+                ? Constant.loader()
                 : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
-                      _buildSegmentedControl(controller),
-                      const SizedBox(height: 16),
+                      // Custom sliding segmented control
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      _buildCustomSliding(controller),
+                      // Content based on selected segment
                       _buildContent(context, controller.seasonPassList,
                           controller.privatePassList),
                     ],
@@ -83,68 +88,26 @@ class _SeasonPassViewState extends State<SeasonPassView> {
     );
   }
 
-  Widget _buildSegmentedControl(SeasonPassController controller) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildSegmentButton(
-            context,
-            title: "Season Pass".tr,
-            isSelected: controller.selectedSegment.value == 0,
-            onTap: () => controller.changeSegment(0),
-          ),
-          _buildSegmentButton(
-            context,
-            title: "Reserve Lot".tr,
-            isSelected: controller.selectedSegment.value == 1,
-            onTap: () => controller.changeSegment(1),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSegmentButton(BuildContext context,
-      {required String title,
-      required bool isSelected,
-      required VoidCallback onTap}) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.darkGrey10 : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              title,
-              style: TextStyle(
-                color: isSelected ? AppColors.white : AppColors.darkGrey07,
-                fontFamily: isSelected ? AppThemData.bold : AppThemData.medium,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ),
+  Widget _buildCustomSliding(SeasonPassController controller) {
+    return Center(
+      child: SlidingSwitch(
+        value: controller.selectedSegment == 0 ? true : false,
+        width: 350,
+        onChanged: (bool value) {
+          controller.changeSegment(value);
+        },
+        height: 40,
+        animationDuration: const Duration(milliseconds: 400),
+        onTap: () {},
+        onDoubleTap: () {},
+        onSwipe: () {},
+        textOff: "Season Pass".tr,
+        textOn: "Reserve Lot".tr,
+        colorOn: Colors.black,
+        colorOff: Colors.black,
+        background: Colors.amber,
+        buttonColor: const Color(0xfff7f5f7),
+        inactiveColor: const Color(0xff636f7b),
       ),
     );
   }
@@ -155,7 +118,7 @@ class _SeasonPassViewState extends State<SeasonPassView> {
       List<PrivatePassModel> privatePassList) {
     return Expanded(
       child: Obx(() {
-        if (controller.selectedSegment.value == 0) {
+        if (controller.selectedSegment.value == false) {
           return _buildPassSection(context, seasonPassList);
         } else {
           return _buildPrivatePassSection(context, privatePassList);
@@ -167,20 +130,12 @@ class _SeasonPassViewState extends State<SeasonPassView> {
   Widget _buildPassSection(
       BuildContext context, List<SeasonPassModel> seasonPassList) {
     return controller.isLoading.value
-        ? Center(child: Constant.loader())
+        ? Constant.loader()
         : ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemCount: seasonPassList.length,
             itemBuilder: (context, index) {
               SeasonPassModel seasonPassModel = seasonPassList[index];
-              return _buildPassCard(
-                context,
-                passName: seasonPassModel.passName.toString().tr,
-                price: 'RM ${seasonPassModel.price}',
-                validity: '${seasonPassModel.validity}'.tr,
-                onBuy: () => _onBuyTapped(context, controller, seasonPassModel),
-                isPrivate: false,
-              );
+              return _buildPassItem(context, seasonPassModel);
             },
           );
   }
@@ -188,195 +143,180 @@ class _SeasonPassViewState extends State<SeasonPassView> {
   Widget _buildPrivatePassSection(
       BuildContext context, List<PrivatePassModel> privatePassList) {
     return controller.isLoading.value
-        ? Center(child: Constant.loader())
+        ? Constant.loader()
         : ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemCount: privatePassList.length,
             itemBuilder: (context, index) {
               PrivatePassModel privatePassModel = privatePassList[index];
-              return _buildPassCard(
-                context,
-                passName: privatePassModel.passName.toString().tr,
-                price: 'RM ${privatePassModel.price}',
-                validity: '${privatePassModel.validity}'.tr,
-                onBuy: () =>
-                    _onBuyTapped(context, controller, privatePassModel),
-                isPrivate: true,
-              );
+              return _buildPassItem(context, privatePassModel);
             },
           );
   }
 
-  Widget _buildPassCard(BuildContext context,
-      {required String passName,
-      required String price,
-      required String validity,
-      required VoidCallback onBuy,
-      required bool isPrivate}) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
+  Widget _buildPassItem(BuildContext context, dynamic passModel) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.darkGrey02.withOpacity(0.5)),
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  height: 50,
-                  width: 50,
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: ListTile(
+                leading: Container(
+                  height: 56,
+                  width: 56,
                   decoration: BoxDecoration(
-                    color: AppColors.yellow04,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                      color: AppColors.yellow04,
+                      borderRadius: BorderRadius.circular(200)),
                   child: Center(
                     child: SvgPicture.asset(
                       'assets/icons/ic_pass.svg',
-                      height: 24,
-                      width: 24,
-                      color: AppColors.white,
+                      height: 20,
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        passName,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontFamily: AppThemData.bold,
-                          color: AppColors.darkGrey08,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        price,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: AppThemData.bold,
-                          color: AppColors.yellow04,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Divider(height: 1, color: AppColors.lightGrey05),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Validity:".tr,
+                title: Text(
+                  passModel.passName.toString().tr,
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontFamily: AppThemData.regular,
-                    color: AppColors.darkGrey07,
-                  ),
-                ),
-                Text(
-                  validity,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontFamily: AppThemData.medium,
-                    color: AppColors.labelColorLightPrimary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: onBuy,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.yellow04,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  elevation: 0,
-                ),
-                child: Text(
-                  "Buy".tr,
-                  style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     fontFamily: AppThemData.bold,
-                    color: AppColors.white,
+                    color: AppColors.darkGrey08,
+                  ),
+                ),
+                subtitle: Text(
+                  'RM ${passModel.price} ',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontFamily: AppThemData.medium,
+                    color: AppColors.yellow04,
                   ),
                 ),
               ),
             ),
+            Divider(height: 2, color: AppColors.darkGrey02.withOpacity(0.5)),
+            const SizedBox(height: 10),
+            itemWidget(
+                subText: '${passModel.validity}'.tr, title: "Validity:".tr),
+            InkWell(
+              onTap: () async {
+                bool isLogin = await FireStoreUtils.isLogin();
+
+                if (!isLogin) {
+                  // If the user is not logged in, show the login dialog
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DialogBox(
+                        imageAsset: "assets/images/ic_log_in.png",
+                        onPressConfirm: () async {
+                          // Navigate to the login screen
+                          Get.offAllNamed(Routes.LOGIN_SCREEN);
+                        },
+                        onPressConfirmBtnName: "Login".tr,
+                        onPressConfirmColor: AppColors.green04,
+                        onPressCancel: () {
+                          Get.back();
+                        },
+                        content:
+                            "Please login or register before proceeding.".tr,
+                        subTitle: "Login Required".tr,
+                        onPressCancelBtnName: "Cancel".tr,
+                        onPressCancelColor: AppColors.darkGrey01,
+                      );
+                    },
+                  );
+                } else {
+                  // If the user is logged in, check email verification
+                  bool emailVerified = await controller.isEmailVerified();
+                  if (!emailVerified) {
+                    // Show the email verification message
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DialogBoxNotify(
+                          imageAsset: "assets/images/ic_email.png",
+                          onPressConfirm: () async {
+                            Navigator.of(context).pop();
+                          },
+                          onPressConfirmBtnName: "Ok".tr,
+                          onPressConfirmColor: AppColors.yellow04,
+                          content:
+                              "Please verify your email before proceeding.".tr,
+                          subTitle: "Email Verification".tr,
+                        );
+                      },
+                    );
+                  } else {
+                    // Email is verified, navigate to the respective purchase page
+                    if (passModel is SeasonPassModel) {
+                      Get.toNamed(Routes.PURCHASE_PASS,
+                          arguments: {"seasonPassModel": passModel});
+                    } else if (passModel is PrivatePassModel) {
+                      Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {
+                        "privatePassModel": passModel,
+                        "selectedSegment": controller.selectedSegment.value,
+                      });
+                    }
+                  }
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.only(left: 15, right: 15, top: 10),
+                height: 48,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppColors.yellow04,
+                    borderRadius: BorderRadius.circular(200)),
+                child: Center(
+                  child: Text(
+                    passModel is SeasonPassModel ? "Buy".tr : "Buy".tr,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontFamily: AppThemData.regular,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
           ],
         ),
       ),
     );
   }
 
-  void _onBuyTapped(BuildContext context, SeasonPassController controller,
-      dynamic passModel) async {
-    bool isLogin = await FireStoreUtils.isLogin();
-    if (!isLogin) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return DialogBox(
-            imageAsset: "assets/images/ic_log_in.png",
-            onPressConfirm: () async {
-              Get.offAllNamed(Routes.LOGIN_SCREEN);
-            },
-            onPressConfirmBtnName: "Login".tr,
-            onPressConfirmColor: AppColors.green04,
-            onPressCancel: () {
-              Get.back();
-            },
-            content: "Please login or register before proceeding.".tr,
-            subTitle: "Login Required".tr,
-            onPressCancelBtnName: "Cancel".tr,
-            onPressCancelColor: AppColors.darkGrey01,
-          );
-        },
-      );
-    } else {
-      bool emailVerified = await controller.isEmailVerified();
-      if (!emailVerified) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return DialogBoxNotify(
-              imageAsset: "assets/images/ic_email.png",
-              onPressConfirm: () async {
-                Navigator.of(context).pop();
-              },
-              onPressConfirmBtnName: "Ok".tr,
-              onPressConfirmColor: AppColors.yellow04,
-              content: "Please verify your email before proceeding.".tr,
-              subTitle: "Email Verification".tr,
-            );
-          },
-        );
-      } else {
-        if (controller.selectedSegment.value == 0 &&
-            passModel is SeasonPassModel) {
-          Get.toNamed(Routes.PURCHASE_PASS,
-              arguments: {"seasonPassModel": passModel});
-        } else if (controller.selectedSegment.value == 1 &&
-            passModel is PrivatePassModel) {
-          Get.toNamed(Routes.PURCHASE_PASS_PRIVATE, arguments: {
-            "privatePassModel": passModel,
-            "selectedSegment": controller.selectedSegment.value,
-          });
-        }
-      }
-    }
+  Widget itemWidget({
+    required String subText,
+    required String title,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title.tr,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: AppThemData.regular,
+              color: AppColors.darkGrey07,
+            ),
+          ),
+          Text(
+            subText.tr,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: AppThemData.medium,
+              color: AppColors.labelColorLightPrimary,
+            ),
+          ),
+        ],
+      ).marginOnly(left: 10, right: 10),
+    );
   }
 }

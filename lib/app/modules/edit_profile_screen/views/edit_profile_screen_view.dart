@@ -16,7 +16,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreenView extends StatelessWidget {
-  const EditProfileScreenView({super.key});
+  const EditProfileScreenView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

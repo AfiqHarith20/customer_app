@@ -1,9 +1,8 @@
-// ignore_for_file: unused_import
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:customer_app/app/modules/notification_screen/controllers/notification_screen_controller.dart';
 import 'package:customer_app/constant/constant.dart';
 import 'package:customer_app/constant/dialogue_box.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -12,7 +11,7 @@ import '../../../../themes/app_colors.dart';
 import '../../../../themes/common_ui.dart';
 
 class NotificationScreenView extends GetView<NotificationScreenController> {
-  const NotificationScreenView({super.key});
+  const NotificationScreenView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +89,7 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                           // First tab: Notifications
                           RefreshIndicator(
                             onRefresh: () async {
-                              controller.listenToNotifications();
+                              await controller.loadNotifications();
                             },
                             child: ListView.builder(
                               itemCount: controller.notifyList.length,
@@ -190,7 +189,7 @@ class NotificationScreenView extends GetView<NotificationScreenController> {
                           // Second tab: Activity
                           RefreshIndicator(
                             onRefresh: () async {
-                              controller.listenToNotifications();
+                              controller.loadNotifications();
                             },
                             child: ListView.builder(
                               itemCount: controller.notifyList.length,
@@ -431,7 +430,7 @@ class NotificationCard extends StatelessWidget {
   final NotificationScreenController controller;
 
   const NotificationCard({
-    super.key,
+    Key? key,
     this.title,
     this.createAt,
     this.message,
@@ -440,7 +439,7 @@ class NotificationCard extends StatelessWidget {
     required this.onTap,
     required this.isRead,
     required this.controller,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

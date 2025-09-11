@@ -8,6 +8,22 @@ import 'package:customer_app/themes/common_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// Example function to convert color hex codes to color names
+String getColorNameFromHex(String? colorHex) {
+  // This is just an example map, you might need to implement or use a library for this conversion
+  Map<String, String> colorMap = {
+    '#FF0000': 'Red',
+    '#00FF00': 'Green',
+    '#0000FF': 'Blue',
+    // Add more color mappings as needed
+  };
+
+  // Default to returning hex if no match found
+  return colorHex != null && colorHex.isNotEmpty
+      ? colorMap[colorHex] ?? colorHex
+      : '';
+}
+
 // Function to convert color hex codes to Color objects
 Color getColorFromHex(String? colorHex) {
   if (colorHex == null || colorHex.isEmpty) {
@@ -35,7 +51,7 @@ class VehicleScreenView extends StatelessWidget {
         },
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16.0),
+            padding: const EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () async {
                 await Get.toNamed(Routes.ADD_NEW_VEHICLE);
@@ -43,24 +59,17 @@ class VehicleScreenView extends StatelessWidget {
                 await controller.fetchVehicle();
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                height: 40,
+                width: 100,
                 decoration: BoxDecoration(
                   color: AppColors.yellow04,
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.darkGrey02.withOpacity(0.2),
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(
                   child: Text(
                     "Add".tr,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 13,
                       fontFamily: AppThemData.bold,
                       color: AppColors.darkGrey08,
                     ),
@@ -68,14 +77,14 @@ class VehicleScreenView extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(
-              color: AppColors.darkGrey09,
+              color: Colors.black,
               strokeWidth: 2.0,
               strokeCap: StrokeCap.round,
             ),
@@ -101,122 +110,137 @@ class VehicleScreenView extends StatelessWidget {
 
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: ListView.builder(
-            itemCount: controller.vehicleList.length,
-            itemBuilder: (context, index) {
-              var vehicle = controller.vehicleList[index];
-              final vehicleNo = vehicle['vehicleNo'] ?? '';
-              final colorHex = vehicle['colorHex'];
-              final vehicleManufacturer = vehicle['vehicleManufacturer'] ?? '';
-              final vehicleModel = vehicle['vehicleModel'] ?? '';
-              final vehicleDefault = vehicle['default'] ?? false;
-              final vehicleColor = getColorFromHex(colorHex);
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: controller.vehicleList.length,
+                  itemBuilder: (context, index) {
+                    var vehicle = controller.vehicleList[index];
+                    final vehicleNo = vehicle['vehicleNo'] ?? '';
+                    final colorHex = vehicle['colorHex'];
+                    final vehicleManufacturer =
+                        vehicle['vehicleManufacturer'] ?? '';
+                    final vehicleModel = vehicle['vehicleModel'] ?? '';
+                    final vehicleDefault = vehicle['default'] ?? false;
+                    final colorName = getColorNameFromHex(colorHex);
+                    final vehicleColor = getColorFromHex(colorHex);
 
-              return Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                margin: const EdgeInsets.only(bottom: 12.0),
-                child: InkWell(
-                  onTap: () async {
-                    if (vehicle != null) {
-                      await Get.toNamed(
-                        Routes.ADD_NEW_VEHICLE,
-                        arguments: {
-                          'vehicleNo': vehicle['vehicleNo'],
-                          'colorHex': vehicle['colorHex'],
-                          'vehicleManufacturer': vehicle['vehicleManufacturer'],
-                          'vehicleModel': vehicle['vehicleModel'],
-                          'default': vehicle['default'],
-                          'documentId': vehicle['documentId'],
-                        },
-                      );
-                      // Call fetchVehicle to refresh the vehicle list after returning
-                      await controller.fetchVehicle();
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
+                    return Container(
+                      padding: const EdgeInsets.all(16.0),
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.yellow04,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
                                 (vehicleManufacturer?.isEmpty ?? true) &&
                                         (vehicleModel?.isEmpty ?? true)
                                     ? 'No data'
                                     : '${vehicleManufacturer ?? ''}${vehicleManufacturer != null && vehicleModel != null ? ' - ' : ''}${vehicleModel ?? ''}',
                                 style: const TextStyle(
                                   color: AppColors.darkGrey10,
-                                  fontFamily: AppThemData.medium,
                                   fontSize: 16.0,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            if (vehicleDefault)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 4.0,
-                                  horizontal: 10.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Text(
-                                  'PRIMARY'.tr,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontFamily: AppThemData.bold,
+                              if (vehicleDefault)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4.0,
+                                    horizontal: 8.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Text(
+                                    'PRIMARY'.tr,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
+                            ],
+                          ),
+                          const SizedBox(height: 14.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        vehicleNo,
+                                        style: const TextStyle(
+                                          color: AppColors.white,
+                                          fontFamily: AppThemData.medium,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  if (colorHex != null && colorHex.isNotEmpty)
+                                    Container(
+                                      width: 40,
+                                      height: 47,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        color: vehicleColor,
+                                      ),
+                                    ),
+                                ],
                               ),
-                          ],
-                        ),
-                        const SizedBox(height: 16.0),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Text(
-                                vehicleNo,
-                                style: const TextStyle(
-                                  color: AppColors.white,
-                                  fontFamily: AppThemData.bold,
-                                  fontSize: 24,
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  size: 32,
                                 ),
+                                onPressed: () async {
+                                  if (vehicle != null) {
+                                    await Get.toNamed(
+                                      Routes.ADD_NEW_VEHICLE,
+                                      arguments: {
+                                        'vehicleNo': vehicle['vehicleNo'],
+                                        'colorHex': vehicle['colorHex'],
+                                        'vehicleManufacturer':
+                                            vehicle['vehicleManufacturer'],
+                                        'vehicleModel': vehicle['vehicleModel'],
+                                        'default': vehicle['default'],
+                                        'documentId': vehicle['documentId'],
+                                      },
+                                    );
+                                    // Call fetchVehicle to refresh the vehicle list after returning
+                                    await controller.fetchVehicle();
+                                  }
+                                },
                               ),
-                            ),
-                            const SizedBox(width: 12.0),
-                            if (colorHex != null && colorHex.isNotEmpty)
-                              Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: vehicleColor,
-                                  border: Border.all(color: Colors.black12),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+              const SizedBox(height: 16.0),
+            ],
           ),
         );
       }),

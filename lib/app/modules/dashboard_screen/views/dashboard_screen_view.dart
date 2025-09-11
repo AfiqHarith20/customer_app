@@ -14,19 +14,27 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    // Check if the keyboard is open.
     bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Obx(
       () => Scaffold(
-        body: controller.currentPage,
+        body: controller.pageList[controller.selectedIndex.value],
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
           currentIndex: controller.selectedIndex.value,
           showUnselectedLabels: true,
-          onTap: (int index) {
-            // Use a unified method to handle navigation and login checks
-            controller.handleNavigation(index);
+          onTap: (int index) async {
+            if (index == 3 || index == 4) {
+              // Check if the user is logged in before allowing access to History or Profile
+              bool isLoggedIn = await FireStoreUtils.isLogin();
+              if (!isLoggedIn) {
+                Get.toNamed(
+                    Routes.LOGIN_SCREEN); // Redirect to login if not logged in
+                return;
+              }
+            }
+            controller.selectedIndex.value =
+                index; // Normal navigation if logged in
           },
           selectedItemColor: AppColors.yellow04,
           showSelectedLabels: true,
@@ -70,8 +78,7 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
                     SvgPicture.asset("assets/icons/ic_myprofile_active.svg"),
                 icon: SvgPicture.asset(
                   "assets/icons/ic_myprofile.svg",
-                  colorFilter: const ColorFilter.mode(
-                      AppColors.darkGrey04, BlendMode.srcIn),
+                  color: AppColors.darkGrey04,
                 ),
                 label: "My Profile".tr),
           ],
@@ -86,16 +93,26 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
             child: FloatingActionButton(
               shape: const CircleBorder(),
               backgroundColor: AppColors.yellow04,
-              onPressed: () {
-                // Use the same unified navigation method for the FAB
-                controller.handleNavigation(2);
+              onPressed: () async {
+                // Check if user is logged in before allowing access to floating action
+                bool isLoggedIn = await FireStoreUtils.isLogin();
+                if (!isLoggedIn) {
+                  Get.toNamed(Routes
+                      .LOGIN_SCREEN); // Redirect to login if not logged in
+                  return;
+                }
+
+                // If logged in, navigate to the inspect page
+                DashboardScreenController dashboardScreenController =
+                    Get.put(DashboardScreenController());
+                dashboardScreenController
+                    .selectedIndex(2); // Go to Inspect page
               },
               child: SvgPicture.asset(
                 "assets/icons/ic_frame_inspect.svg",
                 height: 32,
                 width: 32,
-                colorFilter: const ColorFilter.mode(
-                    AppColors.darkGrey10, BlendMode.srcIn),
+                color: AppColors.darkGrey10,
               ),
             ),
           ),

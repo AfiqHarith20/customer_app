@@ -15,12 +15,12 @@ if (localPropertiesFile.exists()) {
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = '26'
+    flutterVersionCode = '23'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.0.17'
+    flutterVersionName = '1.0.15'
 }
 
   def keystoreProperties = new Properties()
@@ -40,12 +40,6 @@ android {
         targetCompatibility JavaVersion.VERSION_17
 
         coreLibraryDesugaringEnabled true
-    }
-    
-    packagingOptions {
-        jniLibs {
-            useLegacyPackaging = false
-        }
     }
 
     kotlinOptions {
@@ -111,8 +105,6 @@ dependencies {
 
     // Correct way to include core library desugaring
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.3"
-    implementation 'com.google.android.play:integrity:1.3.0'
-
 }
 
 

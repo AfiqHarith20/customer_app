@@ -27,18 +27,18 @@ class BookingSummaryScreenController extends GetxController {
       await getData();
     }
 
+
+
     update();
   }
 
   getData() async {
-    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid())
-        .then((value) {
+    await FireStoreUtils.getUserProfile(FireStoreUtils.getCurrentUid()).then((value) {
       if (value != null) {
         customerModel.value = value;
       }
     });
-    await FireStoreUtils.getReview(bookingModel.value.id.toString())
-        .then((value) {
+    await FireStoreUtils.getReview(bookingModel.value.id.toString()).then((value) {
       if (value != null) {
         reviewModel.value = value;
         rating.value = double.parse(reviewModel.value.rating.toString());
@@ -53,13 +53,11 @@ class BookingSummaryScreenController extends GetxController {
     if (bookingModel.value.coupon != null) {
       if (bookingModel.value.coupon!.id != null) {
         if (bookingModel.value.coupon!.isFix == true) {
-          couponAmount.value =
-              double.parse(bookingModel.value.coupon!.amount.toString());
+          couponAmount.value = double.parse(bookingModel.value.coupon!.amount.toString());
         } else {
-          couponAmount.value =
-              double.parse(bookingModel.value.subTotal.toString()) *
-                  double.parse(bookingModel.value.coupon!.amount.toString()) /
-                  100;
+          couponAmount.value = double.parse(bookingModel.value.subTotal.toString()) *
+              double.parse(bookingModel.value.coupon!.amount.toString()) /
+              100;
         }
       }
     }
@@ -73,15 +71,13 @@ class BookingSummaryScreenController extends GetxController {
         taxAmount.value = (double.parse(taxAmount.value) +
                 Constant().calculateTax(
                     amount:
-                        (double.parse(bookingModel.value.subTotal.toString()) -
-                                double.parse(couponAmount.toString()))
+                        (double.parse(bookingModel.value.subTotal.toString()) - double.parse(couponAmount.toString()))
                             .toString(),
                     taxModel: element))
             .toStringAsFixed(Constant.currencyModel!.decimalDigits!);
       }
     }
-    return (double.parse(bookingModel.value.subTotal.toString()) -
-            double.parse(couponAmount.toString())) +
+    return (double.parse(bookingModel.value.subTotal.toString()) - double.parse(couponAmount.toString())) +
         double.parse(taxAmount.value);
   }
 
@@ -97,11 +93,9 @@ class BookingSummaryScreenController extends GetxController {
         isCredit: true,
         note: "Refund Fees");
 
-    await FireStoreUtils.setWalletTransaction(transactionModel)
-        .then((value) async {
+    await FireStoreUtils.setWalletTransaction(transactionModel).then((value) async {
       if (value == true) {
-        await FireStoreUtils.updateUserWallet(
-            amount: calculateAmount().toString());
+        await FireStoreUtils.updateUserWallet(amount: calculateAmount().toString());
       }
     });
 
@@ -116,12 +110,10 @@ class BookingSummaryScreenController extends GetxController {
         userId: bookingModel.value.parkingDetails!.ownerId.toString(),
         note: "Parking fees revers");
 
-    await FireStoreUtils.setWalletTransaction(transactionParkingModel)
-        .then((value) async {
+    await FireStoreUtils.setWalletTransaction(transactionParkingModel).then((value) async {
       if (value == true) {
         await FireStoreUtils.updateOtherUserWallet(
-            amount: "-${calculateAmount().toString()}",
-            id: bookingModel.value.parkingDetails!.ownerId.toString());
+            amount: "-${calculateAmount().toString()}", id: bookingModel.value.parkingDetails!.ownerId.toString());
       }
     });
 
@@ -137,8 +129,7 @@ class BookingSummaryScreenController extends GetxController {
         userId: bookingModel.value.parkingDetails!.ownerId.toString(),
         note: "Admin commission fees revers");
 
-    await FireStoreUtils.setWalletTransaction(adminCommissionWallet)
-        .then((value) async {
+    await FireStoreUtils.setWalletTransaction(adminCommissionWallet).then((value) async {
       if (value == true) {
         await FireStoreUtils.updateOtherUserWallet(
             amount:

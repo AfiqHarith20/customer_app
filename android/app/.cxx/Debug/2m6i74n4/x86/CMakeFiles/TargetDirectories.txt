@@ -1,2 +1,0 @@
-/Volumes/Seagate/GitHub/customer_app/android/app/.cxx/Debug/2m6i74n4/x86/CMakeFiles/edit_cache.dir
-/Volumes/Seagate/GitHub/customer_app/android/app/.cxx/Debug/2m6i74n4/x86/CMakeFiles/rebuild_cache.dir
