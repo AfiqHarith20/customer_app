@@ -228,7 +228,8 @@ class _HomeViewState extends State<HomeView> {
                                   children: [
                                     Center(
                                       child: Text(
-                                        'Hi, ${controller.customerModel.value.fullName ?? ''}',
+                                        // Add ?. to safely access the fullName
+                                        'Hi, ${controller.customerModel.value?.fullName ?? ''}',
                                         style: const TextStyle(
                                           fontFamily: AppThemData.bold,
                                           fontSize: 18,
@@ -241,8 +242,9 @@ class _HomeViewState extends State<HomeView> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
+                                          // Add ?. to safely access the countryCode
                                           controller.customerModel.value
-                                                  .countryCode
+                                                  ?.countryCode
                                                   ?.toString() ??
                                               '',
                                           style: const TextStyle(
@@ -251,8 +253,9 @@ class _HomeViewState extends State<HomeView> {
                                           ),
                                         ),
                                         Text(
+                                          // Add ?. to safely access the phoneNumber
                                           controller.customerModel.value
-                                                  .phoneNumber
+                                                  ?.phoneNumber
                                                   ?.toString() ??
                                               '',
                                           style: const TextStyle(
