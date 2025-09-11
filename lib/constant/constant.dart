@@ -58,6 +58,24 @@ class Constant {
 
   static String? referralAmount = "0";
 
+  // This is the missing method that will display a message when a list is empty.
+  static Widget emptyView(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          message.tr,
+          style: const TextStyle(
+            fontSize: 16,
+            fontFamily: AppThemData.bold,
+            color: AppColors.darkGrey08,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
   static Future<String> uploadUserImageToFireStorage(
       File image, String filePath, String fileName) async {
     Reference upload =

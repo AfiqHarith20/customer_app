@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/terasync/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/terasync/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Volumes/Seagate/GitHub/customer_app/android/app/.cxx/Debug/2m6i74n4/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/terasync/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Volumes/Seagate/GitHub/customer_app/android/app/.cxx/Debug/2m6i74n4/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

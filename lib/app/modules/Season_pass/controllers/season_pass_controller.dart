@@ -11,7 +11,7 @@ class SeasonPassController extends GetxController {
   //TODO: Implement SeasonPassController
   RxBool isLoading = true.obs;
   // Define an observable to track the selected segment
-  RxBool selectedSegment = false.obs;
+  RxInt selectedSegment = 0.obs;
 
   RxList<SeasonPassModel> seasonPassList = <SeasonPassModel>[].obs;
   RxList<PrivatePassModel> privatePassList = <PrivatePassModel>[].obs;
@@ -72,7 +72,7 @@ class SeasonPassController extends GetxController {
   }
 
   // Method to change the selected segment
-  void changeSegment(bool value) {
-    selectedSegment.value = value; // Convert int to bool
+  void changeSegment(int value) {
+    selectedSegment.value = value;
   }
 }

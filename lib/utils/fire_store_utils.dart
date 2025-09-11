@@ -13,6 +13,7 @@ import 'package:customer_app/app/models/currency_model.dart';
 import 'package:customer_app/app/models/customer_model.dart';
 import 'package:customer_app/app/models/language_model.dart';
 import 'package:customer_app/app/models/my_purchase_pass_private_model.dart';
+import 'package:customer_app/app/models/news_model.dart';
 import 'package:customer_app/app/models/owner_model.dart';
 import 'package:customer_app/app/models/parking_model.dart';
 import 'package:customer_app/app/models/payment_method_model.dart';
@@ -41,9 +42,17 @@ class FireStoreUtils {
   static FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   StreamController<List<ParkingModel>>? getNearestParkingRequestController;
+  static FirebaseAuth auth = FirebaseAuth.instance;
 
   static String getCurrentUid() {
-    return FirebaseAuth.instance.currentUser!.uid;
+    // Check if the user is authenticated before returning the UID
+    if (auth.currentUser != null) {
+      return auth.currentUser!.uid;
+    } else {
+      // Return an empty string or null if the user is not logged in.
+      // Returning null is a better practice here.
+      return '';
+    }
   }
 
   static String getUuid() {
@@ -1249,6 +1258,50 @@ class FireStoreUtils {
     } catch (error) {
       print("Failed to delete cart item: $error");
       return false;
+    }
+  }
+
+  // New method to get news/information
+  static Future<List<NewsModel>?> getNews() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('information')
+          .where("active", isEqualTo: true)
+          .orderBy('date', descending: true)
+          .get();
+
+      final newsList = querySnapshot.docs.map((doc) {
+        // Assuming you have a NewsModel class that can parse the data
+        return NewsModel.fromJson(doc.data());
+      }).toList();
+
+      return newsList;
+    } catch (e) {
+      print('Error fetching news: $e');
+      return null;
+    }
+  }
+
+  static Future<void> addNotification(Map<String, dynamic> data) async {
+    try {
+      final userUid = getCurrentUid();
+      if (userUid.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('notifications')
+            .doc(userUid)
+            .collection('messages')
+            .add({
+          "title": data['title'] ?? '',
+          "message": data['body'] ?? '',
+          "category": data['category'] ?? '',
+          "reference": data['reference'] ?? '',
+          "isRead": false,
+          "createAt": FieldValue.serverTimestamp(), // Use server timestamp
+        });
+        print('Notification saved to Firestore!');
+      }
+    } catch (e) {
+      print('Error saving notification: $e');
     }
   }
 }

@@ -2,11 +2,7 @@ import 'dart:io';
 
 import 'package:customer_app/app/models/app_version_model.dart';
 import 'package:customer_app/app/models/server_maintenance_model.dart';
-import 'package:customer_app/app/modules/cart/controllers/cart_controller.dart';
-import 'package:customer_app/constant/dialogue_box.dart';
-import 'package:customer_app/firebase_options.dart';
 import 'package:customer_app/services/localization_service.dart';
-import 'package:customer_app/themes/app_colors.dart';
 import 'package:customer_app/utils/fire_store_utils.dart';
 import 'package:customer_app/utils/preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,6 +12,21 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'app/routes/app_pages.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+  if (message.notification != null) {
+    // Save the notification data to Firestore
+    FireStoreUtils.addNotification({
+      "title": message.notification!.title,
+      "body": message.notification!.body,
+      "category": message.data['category'] ?? 'General',
+      "reference": message.data['reference'] ?? '',
+    });
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +42,25 @@ Future<void> main() async {
   } catch (e) {
     print('Failed to subscribe to topic: $e');
   }
+
+  // Handle background messages
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Handle foreground messages
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+
+    // Save the notification to Firestore
+    if (message.notification != null) {
+      FireStoreUtils.addNotification({
+        "title": message.notification!.title,
+        "body": message.notification!.body,
+        "category": message.data['category'] ?? 'General',
+        "reference": message.data['reference'] ?? '',
+      });
+    }
+  });
 
   final bool shouldShowUpdateDialog = await checkForAppUpdate();
   final ServerMaintenanceModel? maintenanceInfo = await checkForMaintenance();
