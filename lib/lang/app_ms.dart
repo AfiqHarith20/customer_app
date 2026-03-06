@@ -1,4 +1,44 @@
 const Map<String, String> msMY = {
+  "Email required": "E-mel diperlukan",
+  "email_required": "E-mel diperlukan",
+  "password_required": "Kata laluan diperlukan",
+  "phone_number_required": "Nombor telefon diperlukan",
+  "email_not_found": "E-mel tidak ditemui. Sila semak dan cuba lagi.",
+  "incorrect_password": "Kata laluan tidak betul. Sila cuba lagi.",
+  "invalid_email_format": "Format e-mel tidak sah.",
+  "user_account_disabled": "Akaun anda telah disekat.",
+  "too_many_login_attempts":
+      "Terlalu banyak percubaan log masuk. Sila cuba kemudian.",
+  "network_error_check_connection":
+      "Ralat rangkaian. Sila semak sambungan anda.",
+  "email_password_login_disabled":
+      "Log masuk e-mel/kata laluan sedang dilumpuhkan.",
+  "authentication_failed": "Pengesahan gagal. Sila cuba lagi.",
+  "invalid_phone_number": "Format nombor telefon tidak sah.",
+  "too_many_verification_requests":
+      "Terlalu banyak permintaan pengesahan. Sila cuba kemudian.",
+  "verification_failed": "Pengesahan gagal. Sila cuba lagi.",
+  "verification_service_error":
+      "Ralat perkhidmatan pengesahan. Sila cuba lagi.",
+  "google_signin_cancelled": "Log masuk Google telah dibatalkan.",
+  "google_signin_error": "Ralat log masuk Google. Sila cuba lagi.",
+  "apple_signin_cancelled": "Log masuk Apple telah dibatalkan.",
+  "apple_signin_not_interactive":
+      "Log masuk Apple tidak tersedia pada masa ini.",
+  "apple_signin_error": "Ralat log masuk Apple. Sila cuba lagi.",
+  "something_went_wrong": "Sesuatu telah berlaku. Sila cuba lagi.",
+  "verification_email_sent": "E-mel pengesahan telah dihantar ke",
+  "error_sending_verification_email":
+      "Ralat menghantar e-mel pengesahan. Sila cuba lagi.",
+  "failed_create_user_profile":
+      "Gagal membuat profil pengguna. Sila cuba lagi.",
+  "account_disabled_contact_admin":
+      "Akaun anda telah disekat. Sila hubungi pentadbir.",
+  "user_profile_not_found": "Profil pengguna tidak ditemui.",
+  "user_does_not_exist": "Pengguna tidak wujud.",
+  "error_retrieving_user_profile":
+      "Ralat mendapatkan profil pengguna. Sila cuba lagi.",
+  "email_verification": "Pengesahan E-mel",
   "Register_New_Account": "Daftar Akaun Baru",
   "CouponCode": "KodKupon",
   "Do you need some space for \nparking your vehicle":
@@ -38,7 +78,6 @@ const Map<String, String> msMY = {
   "Log Out": "Log Keluar",
   "Log Out Confirmation": "Pengesahan Log Keluar",
   "Cancel": "Batal",
-  "Email required": "E-mel diperlukan",
   "Enter Email": "Masukkan E-mel",
   "Password required": "Kata laluan diperlukan",
   "Enter Password": "Masukkan Kata Laluan",

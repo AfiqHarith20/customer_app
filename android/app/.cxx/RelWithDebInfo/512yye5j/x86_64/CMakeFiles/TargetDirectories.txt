@@ -1,2 +1,0 @@
-/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/CMakeFiles/edit_cache.dir
-/Users/terasync/Documents/GitHub/customer_app/android/app/.cxx/RelWithDebInfo/512yye5j/x86_64/CMakeFiles/rebuild_cache.dir

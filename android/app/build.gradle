@@ -13,32 +13,24 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '23'
-}
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: flutter.versionCode
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: flutter.versionName
 
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0.15'
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
-
-  def keystoreProperties = new Properties()
-  def keystorePropertiesFile = rootProject.file('key.properties')
-   if (keystorePropertiesFile.exists()) {
-       keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-  }
 
 
 android {
     namespace "com.terasoft.nazifasb"
-    compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 36
+    ndkVersion "26.1.10909125"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
-
         coreLibraryDesugaringEnabled true
     }
 
@@ -51,45 +43,58 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.terasoft.nazifasb"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 24
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+
+        ndk {
+            // Support both 32-bit and 64-bit ARM ABIs so more devices remain supported.
+            // AAB will still allow Play to deliver device-specific APKs.
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
     }
 
     signingConfigs {
-       release {
-           keyAlias keystoreProperties['keyAlias']
-           keyPassword keystoreProperties['keyPassword']
-           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-           storePassword keystoreProperties['storePassword']
-       }
-   }
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file(System.getProperty("user.home") + "/.android/debug.keystore")
+            storePassword 'android'
+        }
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
 
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            // signingConfig signingConfigs.debug
-            signingConfig signingConfigs.release
+        debug {
+            signingConfig signingConfigs.debug
         }
+        release {
+            signingConfig signingConfigs.release
+            // Enable code shrinking and resource shrinking for release builds.
+            // This runs R8 to remove unused code/resources and produce mapping files.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // 🔥 THIS MUST BE INSIDE android{} !!
+    aaptOptions {
+        ignoreAssetsPattern "!*.so"
     }
 
     lintOptions {
         disable 'ExactAlarm'
         baseline file("lint-baseline.xml")
     }
-
-    // applicationVariants.all { variant ->
-    //     variant.outputs.each { output ->
-    //         output.processResourcesProvider.get().dependsOn 'processDebugGoogleServices'
-    //     }
-    // }
 }
 
 flutter {
@@ -103,23 +108,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:21.5.0'
     implementation 'com.google.firebase:firebase-messaging:23.3.1'
 
-    // Correct way to include core library desugaring
+
+    // We do not add Play Core by default since the app doesn't use Play Store deferred components.
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.3"
 }
 
-
-// flavorDimensions "dev"
-
-// productFlavors {
-//     dev {
-//         dimension "dev"
-//         resValue "string", "Nazifa Park", "Development application"
-//         applicationIdSuffix ".dev"
-//     }
-
-//     prod{
-//         dimension "prod"
-//         resValue "string", "Nazifa Parking", "Production application"
-//         applicationIdSuffix ".prod"
-//     }
-// }
+// No forced Play Core resolution; avoid pulling conflicting Play Core artifacts.

@@ -17,8 +17,6 @@ import '../controllers/home_controller.dart';
 
 int _currentIndex = 0;
 
-List<String> imagesList = [];
-
 final List<String> titles = [
   ' Coffee ',
   ' Bread ',
@@ -33,44 +31,137 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
+// Widget that loads a network image, measures its aspect ratio and sizes itself accordingly.
+class NetworkImageWithAspect extends StatefulWidget {
+  final String imageUrl;
+  final Widget? placeholder;
+  final Widget? errorWidget;
+
+  const NetworkImageWithAspect({
+    Key? key,
+    required this.imageUrl,
+    this.placeholder,
+    this.errorWidget,
+  }) : super(key: key);
+
+  @override
+  _NetworkImageWithAspectState createState() => _NetworkImageWithAspectState();
+}
+
+class _NetworkImageWithAspectState extends State<NetworkImageWithAspect> {
+  double? _aspectRatio;
+  ImageStream? _imageStream;
+  ImageInfo? _imageInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolveImage();
+  }
+
+  @override
+  void didUpdateWidget(covariant NetworkImageWithAspect oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.imageUrl != widget.imageUrl) {
+      _resolveImage();
+    }
+  }
+
+  void _resolveImage() {
+    if (widget.imageUrl.isEmpty) return;
+    final provider = NetworkImage(widget.imageUrl);
+    final oldStream = _imageStream;
+    _imageStream = provider.resolve(const ImageConfiguration());
+    if (_imageStream!.key != oldStream?.key) {
+      oldStream?.removeListener(
+          ImageStreamListener(_handleImage, onError: _handleError));
+      _imageStream!.addListener(
+          ImageStreamListener(_handleImage, onError: _handleError));
+    }
+  }
+
+  void _handleImage(ImageInfo info, bool _) {
+    if (!mounted) return;
+    setState(() {
+      _imageInfo = info;
+      _aspectRatio = info.image.width / info.image.height;
+    });
+  }
+
+  void _handleError(dynamic error, StackTrace? stackTrace) {
+    if (!mounted) return;
+    setState(() {
+      _aspectRatio = null;
+      _imageInfo = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _imageStream?.removeListener(
+        ImageStreamListener(_handleImage, onError: _handleError));
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.imageUrl.isEmpty) {
+      return widget.errorWidget ?? const SizedBox.shrink();
+    }
+
+    // While we don't have the measured aspect ratio, show placeholder with a default ratio
+    if (_aspectRatio == null) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: widget.placeholder ?? const SizedBox.shrink(),
+      );
+    }
+
+    return AspectRatio(
+      aspectRatio: _aspectRatio!,
+      child: Image.network(
+        widget.imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return widget.placeholder ??
+              const Center(child: CircularProgressIndicator());
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return widget.errorWidget ?? const SizedBox.shrink();
+        },
+      ),
+    );
+  }
+}
+
 class _HomeViewState extends State<HomeView> {
   List<dynamic> items = [];
 
   @override
   void initState() {
     super.initState();
-    fetchCarouselImages(); // Fetch carousel images on initialization
     fetchInformation();
-  }
-
-  void fetchCarouselImages() async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('carousel')
-              .orderBy('date', descending: true) // Order by 'date' descending
-              .get();
-
-      // Extract image URLs from documents in the 'carousel' collection
-      List<String> urls = querySnapshot.docs
-          .map((doc) => doc.data()['image'].toString())
-          .toList();
-
-      setState(() {
-        imagesList = urls; // Update imagesList with fetched URLs
-      });
-    } catch (e) {
-      print('Error fetching carousel images: $e');
-    }
   }
 
   void fetchInformation() async {
     try {
+      print("Fetching 'information' documents where active==true");
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
               .collection('information')
               .where("active", isEqualTo: true)
               .get();
+
+      print(
+          "Information query returned ${querySnapshot.docs.length} documents.");
+      if (querySnapshot.docs.isNotEmpty) {
+        print(
+            'First information document data: ${querySnapshot.docs.first.data()}');
+        print('');
+      } else {
+        print('No information documents found in Firestore.');
+      }
 
       List<dynamic> fetchedItems = querySnapshot.docs.map((doc) {
         return {
@@ -82,14 +173,17 @@ class _HomeViewState extends State<HomeView> {
           "categories": doc.data()['categories'].toString(),
         };
       }).toList();
+
+      print('Parsed ${fetchedItems.length} information items.');
+
       fetchedItems.sort((a, b) {
         return b['pubDate'].compareTo(a['pubDate']);
       });
       setState(() {
         items = fetchedItems;
       });
-    } catch (e) {
-      print('Error fetching information: $e');
+    } catch (e, s) {
+      print('Error fetching information: $e\n$s');
     }
   }
 
@@ -268,10 +362,17 @@ class _HomeViewState extends State<HomeView> {
                               CarouselSlider(
                                 options: CarouselOptions(
                                   autoPlay: true,
+                                  autoPlayInterval: const Duration(seconds: 4),
+                                  autoPlayAnimationDuration:
+                                      const Duration(milliseconds: 700),
+                                  autoPlayCurve: Curves.easeInOutCubic,
+                                  enableInfiniteScroll: true,
                                   enlargeCenterPage: true,
+                                  enlargeStrategy:
+                                      CenterPageEnlargeStrategy.scale,
                                   scrollDirection: Axis.horizontal,
                                   viewportFraction:
-                                      0.8, // Adjust this to show partial items on the sides
+                                      0.85, // slightly larger viewport for nicer scale
                                   onPageChanged: (index, reason) {
                                     setState(() {
                                       _currentIndex = index;
@@ -308,14 +409,20 @@ class _HomeViewState extends State<HomeView> {
                                           borderRadius: const BorderRadius.all(
                                             Radius.circular(20.0),
                                           ),
-                                          child: Image.network(
-                                            carousel.image!,
-                                            fit: BoxFit
-                                                .fill, // Change this to scale down the image
-                                            width:
-                                                null, // Remove double.infinity to let the image set its width
-                                            height:
-                                                null, // Remove double.infinity to let the image set its height
+                                          child: NetworkImageWithAspect(
+                                            imageUrl: carousel.image ?? '',
+                                            placeholder: Container(
+                                              color: Colors.grey[200],
+                                              child: const Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              )),
+                                            ),
+                                            errorWidget: Image.asset(
+                                              Constant.userPlaceHolder,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -325,20 +432,25 @@ class _HomeViewState extends State<HomeView> {
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: imagesList.map((urlOfItem) {
-                                  int index = imagesList.indexOf(urlOfItem);
-                                  return Container(
-                                    width: 10.0,
-                                    height: 10.0,
+                                children: controller.carouselData
+                                    .map((carouselModel) {
+                                  int index = controller.carouselData
+                                      .indexOf(carouselModel);
+                                  final bool isActive = _currentIndex == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 350),
+                                    curve: Curves.easeInOut,
+                                    width: isActive ? 12.0 : 8.0,
+                                    height: 8.0,
                                     margin: const EdgeInsets.symmetric(
                                       vertical: 10.0,
-                                      horizontal: 2.0,
+                                      horizontal: 4.0,
                                     ),
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: _currentIndex == index
-                                          ? const Color.fromRGBO(0, 0, 0, 0.8)
-                                          : const Color.fromRGBO(0, 0, 0, 0.3),
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: isActive
+                                          ? const Color.fromRGBO(0, 0, 0, 0.85)
+                                          : const Color.fromRGBO(0, 0, 0, 0.25),
                                     ),
                                   );
                                 }).toList(),

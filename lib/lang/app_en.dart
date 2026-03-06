@@ -1,4 +1,42 @@
 const Map<String, String> enUS = {
+  "Email required": "Email required",
+  "email_required": "Email required",
+  "password_required": "Password required",
+  "phone_number_required": "Phone number required",
+  "email_not_found": "Email not found. Please check and try again.",
+  "incorrect_password": "Incorrect password. Please try again.",
+  "invalid_email_format": "Invalid email format.",
+  "user_account_disabled": "Your account has been disabled.",
+  "too_many_login_attempts": "Too many login attempts. Please try again later.",
+  "network_error_check_connection":
+      "Network error. Please check your connection.",
+  "email_password_login_disabled":
+      "Email/password login is currently disabled.",
+  "authentication_failed": "Authentication failed. Please try again.",
+  "invalid_phone_number": "Invalid phone number format.",
+  "too_many_verification_requests":
+      "Too many verification requests. Please try again later.",
+  "verification_failed": "Verification failed. Please try again.",
+  "verification_service_error": "Verification service error. Please try again.",
+  "google_signin_cancelled": "Google sign-in was cancelled.",
+  "google_signin_error": "Google sign-in error. Please try again.",
+  "apple_signin_cancelled": "Apple sign-in was cancelled.",
+  "apple_signin_not_interactive":
+      "Apple sign-in is not available at this moment.",
+  "apple_signin_error": "Apple sign-in error. Please try again.",
+  "something_went_wrong": "Something went wrong. Please try again.",
+  "verification_email_sent": "Verification email has been sent to",
+  "error_sending_verification_email":
+      "Error sending verification email. Please try again.",
+  "failed_create_user_profile":
+      "Failed to create user profile. Please try again.",
+  "account_disabled_contact_admin":
+      "Your account has been disabled. Please contact admin.",
+  "user_profile_not_found": "User profile not found.",
+  "user_does_not_exist": "User does not exist.",
+  "error_retrieving_user_profile":
+      "Error retrieving user profile. Please try again.",
+  "email_verification": "Email Verification",
   "Register_New_Account": "Register New Account",
   "CouponCode": "CouponCode",
   "Do you need some space for \nparking your vehicle":
@@ -38,7 +76,6 @@ const Map<String, String> enUS = {
   "Log Out": "Log Out",
   "Log Out Confirmation": "Log Out Confirmation",
   "Cancel": "Cancel",
-  "Email required": "Email required",
   "Enter Email": "Enter Email",
   "Password required": "Password required",
   "Enter Password": "Enter Password",

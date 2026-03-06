@@ -1,11 +1,11 @@
 buildscript {
-    ext.kotlin_version = '2.0.0'
+    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.0'
+        classpath 'com.android.tools.build:gradle:8.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.15'
     }
@@ -17,12 +17,11 @@ allprojects {
         mavenCentral()
     }
 
-        configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'androidx.core') {
-                details.useVersion '1.13.1' // 🔄 UPDATED from 1.12.0 to 1.13.1
-                details.because 'Fix crash on Android 15: EditorInfoCompat.setStylusHandwritingEnabled requires 1.13.1+'
-            }
+configurations.all {
+        resolutionStrategy {
+            force 'androidx.appcompat:appcompat:1.7.0'
+            force 'androidx.core:core:1.13.1'
+            force 'androidx.activity:activity:1.10.0'
         }
     }
 }

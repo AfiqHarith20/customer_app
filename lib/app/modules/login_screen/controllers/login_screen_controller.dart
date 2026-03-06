@@ -33,13 +33,31 @@ class LoginScreenController extends GetxController {
 
   @override
   void dispose() {
-    // Clean up resources here
     emailController.value.dispose();
     passwordController.value.dispose();
     loginformKey.value.currentState?.dispose();
-    // Dispose any other resources
-
     super.dispose();
+  }
+
+  String _getFirebaseAuthErrorMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'user-not-found':
+        return "email_not_found".tr;
+      case 'wrong-password':
+        return "incorrect_password".tr;
+      case 'invalid-email':
+        return "invalid_email_format".tr;
+      case 'user-disabled':
+        return "user_account_disabled".tr;
+      case 'too-many-requests':
+        return "too_many_login_attempts".tr;
+      case 'network-request-failed':
+        return "network_error_check_connection".tr;
+      case 'operation-not-allowed':
+        return "email_password_login_disabled".tr;
+      default:
+        return "authentication_failed".tr;
+    }
   }
 
   sendSignIn() async {
@@ -48,111 +66,157 @@ class LoginScreenController extends GetxController {
     String password = passwordController.value.text;
 
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      if (email.isEmpty) {
+        ShowToastDialog.closeLoader();
+        ShowToastDialog.showToast("email_required".tr);
+        return;
+      }
+
+      if (password.isEmpty) {
+        ShowToastDialog.closeLoader();
+        ShowToastDialog.showToast("password_required".tr);
+        return;
+      }
+
+      UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(
         email: email,
         password: password,
-      );
+      )
+          .timeout(const Duration(seconds: 30), onTimeout: () {
+        throw FirebaseAuthException(
+          code: 'network-request-failed',
+          message: 'Request timeout. Please check your connection.',
+        );
+      });
 
-      // Close loader dialog
       ShowToastDialog.closeLoader();
 
-      // Existing user: check if user exists in Firestore
       bool userExists =
           await FireStoreUtils.userExistOrNot(userCredential.user!.uid);
       if (userExists) {
-        // User exists in Firestore, navigate to dashboard screen
         Get.offAllNamed(Routes.DASHBOARD_SCREEN);
       } else {
         Get.offNamed(Routes.REGISTER_SCREEN);
       }
     } on FirebaseAuthException catch (e) {
       ShowToastDialog.closeLoader();
-
-      String errorMessage;
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        errorMessage = "Invalid email or password. Please try again.".tr;
-      } else if (e.code == 'invalid-email') {
-        errorMessage = "The email address is badly formatted.".tr;
-      } else {
-        errorMessage = "Something went wrong. Please try again.".tr;
-      }
-
+      String errorMessage = _getFirebaseAuthErrorMessage(e);
       ShowToastDialog.showToast(errorMessage);
+    } catch (e) {
+      ShowToastDialog.closeLoader();
+      if (e.toString().contains('SocketException')) {
+        ShowToastDialog.showToast("network_error_check_connection".tr);
+      } else {
+        ShowToastDialog.showToast("something_went_wrong".tr);
+      }
+      debugPrint("Login error: $e");
     }
   }
 
   sendCode() async {
     ShowToastDialog.showLoader("please_wait".tr);
-    await FirebaseAuth.instance
-        .verifyPhoneNumber(
-      phoneNumber: countryCode.value + phoneNumberController.value.text,
-      verificationCompleted: (PhoneAuthCredential credential) {},
-      verificationFailed: (FirebaseAuthException e) {
-        debugPrint("FirebaseAuthException--->${e.message}");
-        ShowToastDialog.closeLoader();
-        if (e.code == 'invalid-phone-number') {
-          ShowToastDialog.showToast("invalid_phone_number".tr);
-        } else {
-          ShowToastDialog.showToast(e.code);
-        }
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        ShowToastDialog.closeLoader();
-        Get.toNamed(Routes.OTP_SCREEN, arguments: {
-          "countryCode": countryCode.value,
-          "phoneNumber": phoneNumberController.value.text,
-          "verificationId": verificationId,
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    )
-        .catchError((error) {
-      debugPrint("catchError--->$error");
+    String phoneNumber = phoneNumberController.value.text.trim();
+
+    if (phoneNumber.isEmpty) {
       ShowToastDialog.closeLoader();
-      ShowToastDialog.showToast("multiple_time_request".tr);
-    });
+      ShowToastDialog.showToast("phone_number_required".tr);
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: countryCode.value + phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        verificationFailed: (FirebaseAuthException e) {
+          debugPrint("FirebaseAuthException--> ${e.message}");
+          ShowToastDialog.closeLoader();
+
+          String errorMessage;
+          if (e.code == 'invalid-phone-number') {
+            errorMessage = "invalid_phone_number".tr;
+          } else if (e.code == 'too-many-requests') {
+            errorMessage = "too_many_verification_requests".tr;
+          } else if (e.code == 'network-request-failed') {
+            errorMessage = "network_error_check_connection".tr;
+          } else {
+            errorMessage = "verification_failed".tr;
+          }
+          ShowToastDialog.showToast(errorMessage);
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          ShowToastDialog.closeLoader();
+          Get.toNamed(Routes.OTP_SCREEN, arguments: {
+            "countryCode": countryCode.value,
+            "phoneNumber": phoneNumber,
+            "verificationId": verificationId,
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } catch (e) {
+      debugPrint("Send code error: $e");
+      ShowToastDialog.closeLoader();
+
+      if (e.toString().contains('SocketException')) {
+        ShowToastDialog.showToast("network_error_check_connection".tr);
+      } else if (e.toString().contains('PlatformException')) {
+        ShowToastDialog.showToast("verification_service_error".tr);
+      } else {
+        ShowToastDialog.showToast("something_went_wrong".tr);
+      }
+    }
   }
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser =
+          await GoogleSignIn().signIn().timeout(
+                const Duration(seconds: 30),
+                onTimeout: () => throw Exception('Google sign-in timeout'),
+              );
 
-      // Obtain the auth details from the request
+      if (googleUser == null) {
+        ShowToastDialog.showToast("google_signin_cancelled".tr);
+        return null;
+      }
+
       final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+          await googleUser.authentication;
 
-      // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
 
-      // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = _getFirebaseAuthErrorMessage(e);
+      ShowToastDialog.showToast(errorMessage);
     } catch (e) {
-      debugPrint(e.toString());
-      ShowToastDialog.showToast("Error signing in with Google: $e");
+      debugPrint("Google sign-in error: $e");
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('timeout')) {
+        ShowToastDialog.showToast("network_error_check_connection".tr);
+      } else {
+        ShowToastDialog.showToast("google_signin_error".tr);
+      }
     }
     return null;
   }
 
   loginWithGoogle() async {
     try {
-      // Show loader dialog
-      ShowToastDialog.showLoader("Please Wait..".tr);
+      ShowToastDialog.showLoader("please_wait".tr);
 
-      // Attempt Google sign-in
       UserCredential? userCredential = await signInWithGoogle();
       if (userCredential == null) {
-        print("Google sign-in canceled or failed.");
         ShowToastDialog.closeLoader();
         return;
       }
 
-      // Close loader dialog
       ShowToastDialog.closeLoader();
 
-      // Handle user based on whether they are new or existing
       if (userCredential.additionalUserInfo!.isNewUser) {
         CustomerModel customerModel = CustomerModel(
           id: userCredential.user!.uid,
@@ -181,9 +245,9 @@ class LoginScreenController extends GetxController {
         }
       }
     } catch (e) {
-      print("Error signing in with Google: $e");
+      debugPrint("Google login error: $e");
       ShowToastDialog.closeLoader();
-      ShowToastDialog.showToast("Something went wrong. Please try again.");
+      ShowToastDialog.showToast("something_went_wrong".tr);
     }
   }
 
@@ -192,31 +256,43 @@ class LoginScreenController extends GetxController {
       final rawNonce = generateNonce();
       final nonce = sha256ofString(rawNonce);
 
-      // Request credential for the currently signed in Apple account.
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
-        // webAuthenticationOptions: WebAuthenticationOptions(clientId: clientID, redirectUri: Uri.parse(redirectURL)),
         nonce: nonce,
-      ).catchError((error) {
-        debugPrint("catchError--->$error");
-        ShowToastDialog.closeLoader();
-        return null;
-      });
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => throw Exception('Apple sign-in timeout'),
+      );
 
-      // Create an `OAuthCredential` from the credential returned by Apple.
       final oauthCredential = OAuthProvider("apple.com").credential(
         idToken: appleCredential.identityToken,
         rawNonce: rawNonce,
       );
 
-      // Sign in the user with Firebase. If the nonce we generated earlier does
-      // not match the nonce in `appleCredential.identityToken`, sign in will fail.
       return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    } on SignInWithAppleAuthorizationException catch (e) {
+      debugPrint("Apple authorization error: ${e.code}");
+      if (e.code == AuthorizationErrorCode.canceled) {
+        ShowToastDialog.showToast("apple_signin_cancelled".tr);
+      } else if (e.code == AuthorizationErrorCode.notInteractive) {
+        ShowToastDialog.showToast("apple_signin_not_interactive".tr);
+      } else {
+        ShowToastDialog.showToast("apple_signin_error".tr);
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = _getFirebaseAuthErrorMessage(e);
+      ShowToastDialog.showToast(errorMessage);
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Apple sign-in error: $e");
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('timeout')) {
+        ShowToastDialog.showToast("network_error_check_connection".tr);
+      } else {
+        ShowToastDialog.showToast("apple_signin_error".tr);
+      }
     }
     return null;
   }
@@ -229,7 +305,6 @@ class LoginScreenController extends GetxController {
         .join();
   }
 
-  /// Returns the sha256 hash of [input] in hex notation.
   String sha256ofString(String input) {
     final bytes = utf8.encode(input);
     final digest = sha256.convert(bytes);
@@ -238,91 +313,98 @@ class LoginScreenController extends GetxController {
 
   loginWithApple() async {
     ShowToastDialog.showLoader("please_wait".tr);
-    await signInWithApple().then((value) async {
+    try {
+      UserCredential? userCredential = await signInWithApple();
       ShowToastDialog.closeLoader();
-      if (value != null) {
-        String fcmToken = await NotificationService.getToken();
 
-        if (value.additionalUserInfo!.isNewUser) {
-          String? email = value.user!.email;
-          String initialName = email != null ? email.split('@')[0] : 'User';
+      if (userCredential == null) {
+        return;
+      }
 
-          CustomerModel customerModel = CustomerModel();
-          customerModel.id = value.user!.uid ?? '';
-          customerModel.email = email ?? '';
-          customerModel.fullName = initialName;
-          customerModel.profilePic = value.user!.photoURL ?? '';
-          customerModel.loginType = Constant.appleLoginType;
-          customerModel.countryCode = countryCode.value;
-          customerModel.phoneNumber = phoneNumberController.value.text ?? '';
-          customerModel.fcmToken = fcmToken ?? '';
-          customerModel.gender = selectedGender.value ?? '';
-          customerModel.identificationType = selectedIc.value;
-          customerModel.identificationNo =
-              identificationNoController.value.text ?? '';
-          customerModel.createdAt = Timestamp.now();
+      String fcmToken = await NotificationService.getToken();
 
-          // Update user information in Firestore
-          await FireStoreUtils.updateUser(customerModel).then((success) async {
-            if (success) {
-              // Send email verification
-              await sendEmailVerification();
-              Get.offAllNamed(Routes.DASHBOARD_SCREEN);
-            } else {
-              ShowToastDialog.showToast(
-                  "Failed to create user. Please try again.");
-            }
-          });
-        } else {
-          // User already exists, check if it exists in Firestore
-          FireStoreUtils.userExistOrNot(value.user!.uid)
-              .then((userExists) async {
-            if (userExists == true) {
-              // User exists in Firestore, retrieve user profile
-              CustomerModel? customerModel =
-                  await FireStoreUtils.getUserProfile(value.user!.uid);
-              if (customerModel != null) {
-                // Update FCM token if needed
-                if (customerModel.fcmToken != fcmToken) {
-                  customerModel.fcmToken = fcmToken;
-                  await FireStoreUtils.updateUser(customerModel);
-                }
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        String? email = userCredential.user!.email;
+        String initialName = email != null ? email.split('@')[0] : 'User';
 
-                if (customerModel.active == true) {
-                  Get.offAllNamed(Routes.DASHBOARD_SCREEN);
-                } else {
-                  ShowToastDialog.showToast(
-                      "Unable to Log In? Please Contact the Admin for Assistance");
-                }
+        CustomerModel customerModel = CustomerModel();
+        customerModel.id = userCredential.user!.uid ?? '';
+        customerModel.email = email ?? '';
+        customerModel.fullName = initialName;
+        customerModel.profilePic = userCredential.user!.photoURL ?? '';
+        customerModel.loginType = Constant.appleLoginType;
+        customerModel.countryCode = countryCode.value;
+        customerModel.phoneNumber = phoneNumberController.value.text ?? '';
+        customerModel.fcmToken = fcmToken ?? '';
+        customerModel.gender = selectedGender.value ?? '';
+        customerModel.identificationType = selectedIc.value;
+        customerModel.identificationNo =
+            identificationNoController.value.text ?? '';
+        customerModel.createdAt = Timestamp.now();
+
+        try {
+          await FireStoreUtils.updateUser(customerModel);
+          await sendEmailVerification();
+          Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+        } catch (e) {
+          debugPrint("Error creating user profile: $e");
+          ShowToastDialog.showToast("failed_create_user_profile".tr);
+        }
+      } else {
+        try {
+          bool userExists =
+              await FireStoreUtils.userExistOrNot(userCredential.user!.uid);
+
+          if (userExists) {
+            CustomerModel? customerModel =
+                await FireStoreUtils.getUserProfile(userCredential.user!.uid);
+            if (customerModel != null) {
+              if (customerModel.fcmToken != fcmToken) {
+                customerModel.fcmToken = fcmToken;
+                await FireStoreUtils.updateUser(customerModel);
+              }
+
+              if (customerModel.active == true) {
+                Get.offAllNamed(Routes.DASHBOARD_SCREEN);
+              } else {
+                ShowToastDialog.showToast("account_disabled_contact_admin".tr);
               }
             } else {
-              // User does not exist, this should not happen in the Apple sign-in flow
-              ShowToastDialog.showToast(
-                  "User does not exist. Please try again.");
+              ShowToastDialog.showToast("user_profile_not_found".tr);
             }
-          });
+          } else {
+            ShowToastDialog.showToast("user_does_not_exist".tr);
+          }
+        } catch (e) {
+          debugPrint("Error retrieving user profile: $e");
+          if (e.toString().contains('SocketException')) {
+            ShowToastDialog.showToast("network_error_check_connection".tr);
+          } else {
+            ShowToastDialog.showToast("error_retrieving_user_profile".tr);
+          }
         }
       }
-    });
+    } catch (e) {
+      debugPrint("Apple login error: $e");
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast("something_went_wrong".tr);
+    }
   }
 
   Future<void> sendEmailVerification() async {
     try {
       String email = FirebaseAuth.instance.currentUser?.email ?? '';
       await FirebaseAuth.instance.currentUser?.sendEmailVerification();
-      _showEmailVerifiedSnackbar("A verification email has been sent to ".tr +
-          email +
-          ". Please verify your email to make sure you can make any transaction."
-              .tr);
-    } catch (error) {
-      print('Error sending verification email: $error');
-      ShowToastDialog.showToast('Error sending verification email');
+      _showEmailVerifiedSnackbar("${"verification_email_sent".tr} $email");
+    } catch (e) {
+      debugPrint('Error sending verification email: $e');
+      ShowToastDialog.showToast('error_sending_verification_email'.tr);
     }
   }
 
   void _showEmailVerifiedSnackbar(String message) {
     Get.snackbar(
-      "Email Verification".tr,
+      "email_verification".tr,
       message,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 8),

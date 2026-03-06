@@ -83,466 +83,496 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
   @override
   Widget build(BuildContext context) {
     return GetX<SearchSummonScreenController>(
-        init: SearchSummonScreenController(),
-        builder: (controller) {
-          return Scaffold(
+      init: SearchSummonScreenController(),
+      builder: (controller) {
+        return Scaffold(
+          backgroundColor: AppColors.lightGrey02,
+          appBar: UiInterface().customAppBar(
             backgroundColor: AppColors.lightGrey02,
-            appBar: UiInterface().customAppBar(
-              backgroundColor: AppColors.lightGrey02,
-              context,
-              "Search & Pay Compound".tr,
-              isBack: false,
-            ),
-            body: Column(
-              children: [
-                Text(
-                  'Search with'.tr,
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontFamily: AppThemData.medium,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: SlidingSwitch(
-                    value: _requestMethod == 'compound' ? false : true,
-                    width: 340,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _requestMethod = value ? 'car' : 'compound';
-                        _hintText = value
-                            ? 'Enter Plate number'.tr
-                            : 'Enter compound number'.tr;
-                        _searchController.clear();
-                      });
-                    },
-                    height: 40,
-                    animationDuration: const Duration(milliseconds: 400),
-                    onTap: () {},
-                    onDoubleTap: () {},
-                    onSwipe: () {},
-                    textOff: "Compound No.".tr,
-                    textOn: "Plate No.".tr,
-                    colorOn: Colors.black,
-                    colorOff: Colors.black,
-                    background: Colors.amber,
-                    buttonColor: const Color(0xfff7f5f7),
-                    inactiveColor: const Color(0xff636f7b),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: SearchBar(
-                    textCapitalization: TextCapitalization.characters,
-                    controller: _searchController,
-                    leading: const Icon(Icons.search),
-                    side: WidgetStateProperty.all(
-                      const BorderSide(color: Colors.grey),
-                    ),
-                    hintText: _hintText,
-                    shape: WidgetStateProperty.all(
-                      const ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+            context,
+            "Search & Pay Compound".tr,
+            isBack: false,
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ButtonThem.buildButton(
-                      btnHeight: 40,
-                      btnWidthRatio: 0.43,
-                      // _requestMethod == 'compound' ? 0.43 : 0.9,
-                      txtSize: 14,
-                      context,
-                      title: _isPageLoading ? "Loading...".tr : "Search".tr,
-                      txtColor: AppColors.lightGrey01,
-                      bgColor: AppColors.darkGrey10,
-                      onPress: _isPageLoading
-                          ? () {} // Provide a no-op function when loading
-                          : () {
-                              _handleSearch(); // Call the actual search function
-                            },
+                    Text(
+                      'Search with'.tr,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: AppThemData.bold,
+                        fontSize: 18,
+                        color: Colors.black87,
+                      ),
                     ),
-                    if (_requestMethod == 'compound')
-                      const SizedBox(
-                        width: 10,
-                      ),
-                    if (_requestMethod == 'compound')
-                      ButtonThem.buildButton(
-                        btnHeight: 40,
-                        btnWidthRatio: 0.43,
-                        txtSize: 14,
-                        context,
-                        title: "Scan a Barcode".tr,
-                        txtColor: AppColors.lightGrey01,
-                        bgColor: AppColors.darkGrey10,
-                        onPress: () async {
-                          final result = await Get.toNamed(
-                            Routes.QRCODE_SCREEN,
-                            arguments: {
-                              'controller': QRCodeScanController(),
-                              'searchController': _searchController,
-                            },
-                          );
-                          if (result != null &&
-                              result is Map<String, dynamic>) {
-                            // Check if the result contains the compound number
-                            if (result.containsKey('compoundNumber')) {
-                              // Set the compound number in the search bar
-                              _searchController.text = result['compoundNumber'];
-                              // Trigger the API request automatically
-                              await _triggerApiRequest();
-                            }
-                          }
+                    const SizedBox(height: 12),
+                    Center(
+                      child: SlidingSwitch(
+                        value: _requestMethod == 'compound' ? false : true,
+                        width: 340,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _requestMethod = value ? 'car' : 'compound';
+                            _hintText = value
+                                ? 'Enter Plate number'.tr
+                                : 'Enter compound number'.tr;
+                            _searchController.clear();
+                          });
                         },
+                        onTap: () {
+                          // Optional: Add your tap logic here
+                        },
+                        onDoubleTap: () {
+                          // Optional: Add your double tap logic here
+                        },
+                        onSwipe: () {
+                          // Optional: Add your swipe logic here
+                        },
+                        height: 44,
+                        animationDuration: const Duration(milliseconds: 300),
+                        textOff: "Compound No.".tr,
+                        textOn: "Plate No.".tr,
+                        colorOn: Colors.black,
+                        colorOff: Colors.black,
+                        background: Colors.amber,
+                        buttonColor: Colors.white,
+                        inactiveColor: Colors.grey.shade600,
                       ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Search Bar
+                    SearchBar(
+                      textCapitalization: TextCapitalization.characters,
+                      controller: _searchController,
+                      hintText: _hintText,
+                      leading: const Icon(Icons.search, color: Colors.black54),
+                      elevation: WidgetStateProperty.all(2),
+                      backgroundColor: WidgetStateProperty.all(Colors.white),
+                      shadowColor: WidgetStateProperty.all(
+                          Colors.black.withOpacity(0.05)),
+                      side: WidgetStateProperty.all(
+                        BorderSide(color: Colors.grey.shade300),
+                      ),
+                      shape: WidgetStateProperty.all(
+                        const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Search & Scan Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonThem.buildButton(
+                          btnHeight: 44,
+                          btnWidthRatio: 0.43,
+                          txtSize: 14,
+                          context,
+                          title: _isPageLoading ? "Loading...".tr : "Search".tr,
+                          txtColor: Colors.white,
+                          bgColor: AppColors.darkGrey10,
+                          onPress:
+                              _isPageLoading ? () {} : () => _handleSearch(),
+                        ),
+                        if (_requestMethod == 'compound') ...[
+                          const SizedBox(width: 12),
+                          ButtonThem.buildButton(
+                            btnHeight: 44,
+                            btnWidthRatio: 0.43,
+                            txtSize: 14,
+                            context,
+                            title: "Scan a Barcode".tr,
+                            txtColor: Colors.white,
+                            bgColor: Colors.amber,
+                            onPress: () async {
+                              final result = await Get.toNamed(
+                                Routes.QRCODE_SCREEN,
+                                arguments: {
+                                  'controller': QRCodeScanController(),
+                                  'searchController': _searchController,
+                                },
+                              );
+                              if (result != null &&
+                                  result is Map<String, dynamic> &&
+                                  result.containsKey('compoundNumber')) {
+                                _searchController.text =
+                                    result['compoundNumber'];
+                                await _triggerApiRequest();
+                              }
+                            },
+                          ),
+                        ]
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Results Section
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      child: widget.controller.isLoading
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(24.0),
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.amber,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : widget.controller.compoundList.isEmpty
+                              ? Center(
+                                  key: const ValueKey('empty'),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 40),
+                                    child: Text(
+                                      "No compounds found".tr,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black54,
+                                        fontFamily: AppThemData.medium,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : ListView.separated(
+                                  key: const ValueKey('list'),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount:
+                                      widget.controller.compoundList.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: 12),
+                                  itemBuilder: (context, index) {
+                                    CompoundModel compound =
+                                        widget.controller.compoundList[index];
+                                    List<String> imageUrls =
+                                        compound.imageUrl?.split(";") ?? [];
+
+                                    return AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeOutCubic,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.05),
+                                            blurRadius: 6,
+                                            offset: const Offset(0, 3),
+                                          )
+                                        ],
+                                      ),
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 12),
+                                        title: Text(
+                                          compound.compoundNo ?? '',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: AppThemData.bold,
+                                            color: AppColors.darkGrey07,
+                                          ),
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              Constant.amountShow(
+                                                amount: (compound.amount !=
+                                                            null &&
+                                                        double.tryParse(compound
+                                                                .amount!) !=
+                                                            null)
+                                                    ? compound.amount.toString()
+                                                    : '0.00',
+                                              ),
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey07,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              compound.vehicleNum ?? '',
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey07,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              compound.dateTime ?? '',
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey03,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              '${compound.offence != null && compound.offence!.isNotEmpty ? compound.offence!.length > 30 ? compound.offence!.substring(0, 30) : compound.offence : ''}\n'
+                                              '${compound.offence != null && compound.offence!.length > 51 ? compound.offence!.substring(30, 51) : ''}',
+                                              style: const TextStyle(
+                                                color: AppColors.darkGrey03,
+                                                fontFamily: AppThemData.medium,
+                                                fontSize: 12,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: SizedBox(
+                                          width:
+                                              100, // Safe width for two icons
+                                          child: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                // Image Gallery Button
+                                                Obx(() {
+                                                  bool isLoading = widget
+                                                      .controller
+                                                      .isImageLoading(
+                                                          compound.compoundNo ??
+                                                              '');
+                                                  return InkWell(
+                                                    onTap: isLoading
+                                                        ? null
+                                                        : () async {
+                                                            widget.controller
+                                                                .setImageLoading(
+                                                                    compound.compoundNo ??
+                                                                        '',
+                                                                    true);
+                                                            try {
+                                                              bool isLogin =
+                                                                  await FireStoreUtils
+                                                                      .isLogin();
+                                                              if (!isLogin) {
+                                                                _showLoginDialog();
+                                                              } else {
+                                                                bool
+                                                                    emailVerified =
+                                                                    await widget
+                                                                        .controller
+                                                                        .isEmailVerified();
+                                                                if (emailVerified) {
+                                                                  _showImageGridDialog(
+                                                                      imageUrls);
+                                                                } else {
+                                                                  showVerifyEmailDialog();
+                                                                }
+                                                              }
+                                                            } finally {
+                                                              widget.controller
+                                                                  .setImageLoading(
+                                                                      compound.compoundNo ??
+                                                                          '',
+                                                                      false);
+                                                            }
+                                                          },
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              6),
+                                                      decoration: BoxDecoration(
+                                                        shape:
+                                                            BoxShape.rectangle,
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.amber),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      child: isLoading
+                                                          ? const SizedBox(
+                                                              width: 24,
+                                                              height: 24,
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                                color: Colors
+                                                                    .amber,
+                                                              ),
+                                                            )
+                                                          : Image.asset(
+                                                              "assets/images/image-gallery.png",
+                                                              width: 24,
+                                                              height: 24,
+                                                            ),
+                                                    ),
+                                                  );
+                                                }),
+                                                const SizedBox(width: 6),
+                                                // Payment Button
+                                                Obx(() {
+                                                  bool isLoading = widget
+                                                      .controller
+                                                      .isPaymentLoading(
+                                                          compound.compoundNo ??
+                                                              '');
+                                                  return InkWell(
+                                                    onTap: isLoading
+                                                        ? null
+                                                        : () async {
+                                                            widget.controller
+                                                                .setPaymentLoading(
+                                                                    compound.compoundNo ??
+                                                                        '',
+                                                                    true);
+                                                            try {
+                                                              bool isLogin =
+                                                                  await FireStoreUtils
+                                                                      .isLogin();
+                                                              if (!isLogin) {
+                                                                _showLoginDialog();
+                                                              } else {
+                                                                bool
+                                                                    emailVerified =
+                                                                    await widget
+                                                                        .controller
+                                                                        .isEmailVerified();
+                                                                if (emailVerified) {
+                                                                  navigateToPayCompound(
+                                                                      compound);
+                                                                } else {
+                                                                  showVerifyEmailDialog();
+                                                                }
+                                                              }
+                                                            } finally {
+                                                              widget.controller
+                                                                  .setPaymentLoading(
+                                                                      compound.compoundNo ??
+                                                                          '',
+                                                                      false);
+                                                            }
+                                                          },
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              6),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.amber,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      child: isLoading
+                                                          ? const SizedBox(
+                                                              width: 24,
+                                                              height: 24,
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            )
+                                                          : Image.asset(
+                                                              "assets/images/money.png",
+                                                              width: 24,
+                                                              height: 24,
+                                                            ),
+                                                    ),
+                                                  );
+                                                }),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                    ),
                   ],
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const SizedBox(height: 2),
-                Expanded(
-                  child: widget.controller.isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.darkGrey10,
-                            ),
-                          ),
-                        ) // Show loading indicator
-                      : ListView.builder(
-                          itemCount: widget.controller.compoundList.length,
-                          itemBuilder: (controller, index) {
-                            // print('Building item at index: $index');
-                            CompoundModel compoundModel =
-                                widget.controller.compoundList[index];
-                            List<String> imageUrls =
-                                compoundModel.imageUrl!.split(";");
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors
-                                      .lightGrey06, // Specify the border color
-                                  width: 3.0, // Specify the border width
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  8.0,
-                                ), // Specify the border radius
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Wrap(
-                                      direction: Axis.vertical,
-                                      children: [
-                                        Text(
-                                          compoundModel.compoundNo.toString(),
-                                          style: const TextStyle(
-                                            color: AppColors.darkGrey07,
-                                            fontFamily: AppThemData.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        Text(
-                                          Constant.amountShow(
-                                            amount: (compoundModel.amount !=
-                                                        null &&
-                                                    double.tryParse(
-                                                            compoundModel
-                                                                .amount!) !=
-                                                        null)
-                                                ? compoundModel.amount
-                                                    .toString()
-                                                : '0.00', // Use a default value if invalid
-                                          ),
-                                          style: const TextStyle(
-                                            color: AppColors.darkGrey07,
-                                            fontFamily: AppThemData.medium,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 3),
-                                        Text(
-                                          compoundModel.vehicleNum ?? '',
-                                          style: const TextStyle(
-                                            color: AppColors.darkGrey07,
-                                            fontFamily: AppThemData.medium,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3),
-                                        Text(
-                                          compoundModel.dateTime!,
-                                          style: const TextStyle(
-                                            color: AppColors.darkGrey03,
-                                            fontFamily: AppThemData.medium,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3),
-                                        // Text(
-                                        //   compoundModel.status
-                                        //       .toString(),
-                                        //   style: TextStyle(
-                                        //     color: compoundModel
-                                        //                 .status ==
-                                        //             'unpaid'
-                                        //         ? Colors.red
-                                        //         : AppColors.green04,
-                                        //     fontFamily:
-                                        //         AppThemData.medium,
-                                        //     fontSize: 14,
-                                        //   ),
-                                        // ),
-                                        // const SizedBox(height: 3),
-                                        Text(
-                                          // Safely handle the substring to prevent RangeError
-                                          '${compoundModel.offence != null && compoundModel.offence!.isNotEmpty ? compoundModel.offence!.length > 30 ? compoundModel.offence!.substring(0, 30) : compoundModel.offence : ''}\n'
-                                          '${compoundModel.offence != null && compoundModel.offence!.length > 51 ? compoundModel.offence!.substring(30, 51) : ''}',
-                                          style: const TextStyle(
-                                            color: AppColors.darkGrey03,
-                                            fontFamily: AppThemData.medium,
-                                            fontSize: 12,
-                                          ),
-                                          overflow: TextOverflow
-                                              .ellipsis, // This property will handle overflow text
-                                          maxLines:
-                                              2, // Set the maximum number of lines
-                                        ),
-                                        const SizedBox(height: 10),
-                                      ],
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        // Only show the image gallery icon if not in the process of making payment
-                                        widget.controller.isMakingPayment
-                                            ? Container()
-                                            : InkWell(
-                                                onTap: () async {
-                                                  bool isLogin =
-                                                      await FireStoreUtils
-                                                          .isLogin();
-                                                  if (!isLogin) {
-                                                    // If the user is not logged in, show the login dialog
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return DialogBox(
-                                                          imageAsset:
-                                                              "assets/images/ic_log_in.png",
-                                                          onPressConfirm:
-                                                              () async {
-                                                            // Navigate to the login screen
-                                                            Get.offAllNamed(Routes
-                                                                .LOGIN_SCREEN);
-                                                          },
-                                                          onPressConfirmBtnName:
-                                                              "Login".tr,
-                                                          onPressConfirmColor:
-                                                              AppColors.green04,
-                                                          onPressCancel: () {
-                                                            Get.back();
-                                                          },
-                                                          content:
-                                                              "Please login or register before proceeding."
-                                                                  .tr,
-                                                          subTitle:
-                                                              "Login Required"
-                                                                  .tr,
-                                                          onPressCancelBtnName:
-                                                              "Cancel".tr,
-                                                          onPressCancelColor:
-                                                              AppColors
-                                                                  .darkGrey01,
-                                                        );
-                                                      },
-                                                    );
-                                                  } else {
-                                                    bool emailVerified =
-                                                        await widget.controller
-                                                            .isEmailVerified();
-                                                    if (emailVerified) {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return Dialog(
-                                                            child: SizedBox(
-                                                              width:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
-                                                              height: 215,
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child: GridView
-                                                                    .builder(
-                                                                  gridDelegate:
-                                                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                                                    crossAxisCount:
-                                                                        3,
-                                                                    crossAxisSpacing:
-                                                                        4.0,
-                                                                    mainAxisSpacing:
-                                                                        4.0,
-                                                                  ),
-                                                                  itemCount:
-                                                                      imageUrls
-                                                                          .length,
-                                                                  itemBuilder:
-                                                                      (context,
-                                                                          index) {
-                                                                    return InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        showImageFullScreen(
-                                                                            imageUrls[index]);
-                                                                      },
-                                                                      child: Image
-                                                                          .network(
-                                                                        imageUrls[
-                                                                            index],
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    } else {
-                                                      showVerifyEmailDialog();
-                                                    }
-                                                  }
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 45.0,
-                                                    horizontal: 5.0,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.rectangle,
-                                                    border: Border.all(
-                                                      color: Colors.amber,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                  ),
-                                                  child: Image.asset(
-                                                    "assets/images/image-gallery.png",
-                                                    width: 30,
-                                                    height: 25,
-                                                  ),
-                                                ),
-                                              ),
-                                        const SizedBox(width: 2),
-                                        InkWell(
-                                          onTap: () async {
-                                            // Check if the user is logged in
-                                            bool isLogin =
-                                                await FireStoreUtils.isLogin();
-
-                                            if (!isLogin) {
-                                              // If the user is not logged in, show the login dialog
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return DialogBox(
-                                                    imageAsset:
-                                                        "assets/images/ic_log_in.png",
-                                                    onPressConfirm: () async {
-                                                      // Navigate to the login screen
-                                                      Get.offAllNamed(
-                                                          Routes.LOGIN_SCREEN);
-                                                    },
-                                                    onPressConfirmBtnName:
-                                                        "Login".tr,
-                                                    onPressConfirmColor:
-                                                        AppColors.green04,
-                                                    onPressCancel: () {
-                                                      Get.back();
-                                                    },
-                                                    content:
-                                                        "Please login or register before proceeding."
-                                                            .tr,
-                                                    subTitle:
-                                                        "Login Required".tr,
-                                                    onPressCancelBtnName:
-                                                        "Cancel".tr,
-                                                    onPressCancelColor:
-                                                        AppColors.darkGrey01,
-                                                  );
-                                                },
-                                              );
-                                            } else {
-                                              // If the user is logged in, check email verification
-                                              bool emailVerified = await widget
-                                                  .controller
-                                                  .isEmailVerified();
-                                              if (emailVerified) {
-                                                // Navigate to pay compound if email is verified
-                                                navigateToPayCompound(
-                                                    compoundModel);
-                                              } else {
-                                                // Show the email verification dialog
-                                                showVerifyEmailDialog();
-                                              }
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 45.0,
-                                              horizontal: 5.0,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.rectangle,
-                                              color: Colors.amber,
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                            child: Image.asset(
-                                              "assets/images/money.png",
-                                              width: 30,
-                                              height: 28,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                ),
-              ],
+              ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLoginDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogBox(
+          imageAsset: "assets/images/ic_log_in.png",
+          onPressConfirm: () async {
+            Get.offAllNamed(Routes.LOGIN_SCREEN);
+          },
+          onPressConfirmBtnName: "Login".tr,
+          onPressConfirmColor: AppColors.green04,
+          onPressCancel: () => Get.back(),
+          content: "Please login or register before proceeding.".tr,
+          subTitle: "Login Required".tr,
+          onPressCancelBtnName: "Cancel".tr,
+          onPressCancelColor: AppColors.darkGrey01,
+        );
+      },
+    );
+  }
+
+  void _showImageGridDialog(List<String> imageUrls) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 215,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 4.0,
+                  mainAxisSpacing: 4.0,
+                ),
+                itemCount: imageUrls.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () => showImageFullScreen(imageUrls[index]),
+                    child: Image.network(
+                      imageUrls[index],
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _handleSearch() async {
@@ -779,7 +809,7 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
       // if (compounds.isEmpty) {
       //   _noCompoundSnackBar("No compound is found.".tr);
       // }
-    } on SocketException catch (e) {
+    } on SocketException {
       // Handle connection problem
       _noConnectionSnackBar("Connection problem. Please try again.".tr);
     }
@@ -787,20 +817,20 @@ class _SearchSummonScreenViewState extends State<SearchSummonScreenView> {
     widget.controller.setLoading(false);
   }
 
-  void _noCompoundSnackBar(String message) {
-    Get.snackbar(
-      "No Compound".tr,
-      message,
-      snackPosition: SnackPosition.TOP,
-      duration: const Duration(seconds: 3),
-      backgroundColor: Colors.grey[900],
-      colorText: Colors.white,
-      margin: const EdgeInsets.all(16.0),
-      borderRadius: 10.0,
-      snackStyle: SnackStyle.FLOATING,
-      animationDuration: const Duration(milliseconds: 500),
-    );
-  }
+  // void _noCompoundSnackBar(String message) {
+  //   Get.snackbar(
+  //     "No Compound".tr,
+  //     message,
+  //     snackPosition: SnackPosition.TOP,
+  //     duration: const Duration(seconds: 3),
+  //     backgroundColor: Colors.grey[900],
+  //     colorText: Colors.white,
+  //     margin: const EdgeInsets.all(16.0),
+  //     borderRadius: 10.0,
+  //     snackStyle: SnackStyle.FLOATING,
+  //     animationDuration: const Duration(milliseconds: 500),
+  //   );
+  // }
 
   void _noConnectionSnackBar(String message) {
     Get.snackbar(

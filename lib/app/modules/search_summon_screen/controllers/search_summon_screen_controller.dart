@@ -64,6 +64,25 @@ class SearchSummonScreenController extends GetxController {
     });
   }
 
+// Track loading state per compound for image and payment separately
+  final RxMap<String, bool> _isImageLoading = <String, bool>{}.obs;
+  final RxMap<String, bool> _isPaymentLoading = <String, bool>{}.obs;
+
+// Getters
+  bool isImageLoading(String compoundNo) =>
+      _isImageLoading[compoundNo] ?? false;
+  bool isPaymentLoading(String compoundNo) =>
+      _isPaymentLoading[compoundNo] ?? false;
+
+// Setters
+  void setImageLoading(String compoundNo, bool value) {
+    _isImageLoading[compoundNo] = value;
+  }
+
+  void setPaymentLoading(String compoundNo, bool value) {
+    _isPaymentLoading[compoundNo] = value;
+  }
+
   Future<bool> isEmailVerified() async {
     User? user = _auth.currentUser;
     await user?.reload(); // Reloads the user to ensure the latest data

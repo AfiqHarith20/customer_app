@@ -927,18 +927,23 @@ class FireStoreUtils {
   static Future<List<CarouselModel>?> getCarousel() async {
     List<CarouselModel> carouselData = [];
     try {
+      log("Fetching carousel documents where active==true from Collection: ${CollectionName.carousel}");
       final querySnapshot = await fireStore
           .collection(CollectionName.carousel)
           .where("active", isEqualTo: true)
           .get();
 
+      log("Carousel query returned ${querySnapshot.docs.length} documents.");
+      int idx = 0;
       for (var element in querySnapshot.docs) {
+        log("Carousel doc[$idx] id=${element.id} data=${element.data()}");
         CarouselModel carouselModel = CarouselModel.fromJson(element.data());
         carouselData.add(carouselModel);
-        print('Data length: ${carouselData.length}');
+        idx++;
       }
+      log("Parsed ${carouselData.length} carousel models.");
     } catch (error) {
-      log("Failed to get data: $error");
+      log("Failed to get carousel data: $error");
       return null;
     }
     return carouselData;

@@ -8,10 +8,16 @@ import 'package:customer_app/themes/button_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../controllers/login_screen_controller.dart';
 
 class LoginScreenView extends GetView<LoginScreenController> {
   const LoginScreenView({super.key});
+
+  Future<String> _getAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    return "${info.version} (${info.buildNumber})";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -220,8 +226,28 @@ class LoginScreenView extends GetView<LoginScreenController> {
                         },
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
+                    const SizedBox(height: 20),
+                    Center(
+                      child: FutureBuilder<String>(
+                        future: _getAppVersion(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const SizedBox(); // or CircularProgressIndicator()
+                          } else if (snapshot.hasError) {
+                            return const SizedBox();
+                          } else {
+                            return Text(
+                              "Version ${snapshot.data}",
+                              style: const TextStyle(
+                                color: Colors.black38,
+                                fontSize: 12,
+                                fontFamily: AppThemData.medium,
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ],
                 ),

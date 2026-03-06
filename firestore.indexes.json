@@ -1,0 +1,20 @@
+{
+  "indexes": [
+    {
+      "collectionId": "notifications",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "createAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "messages",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "createAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

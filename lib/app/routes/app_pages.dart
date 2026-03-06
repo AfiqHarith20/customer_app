@@ -174,7 +174,7 @@ class AppPages {
         transitionDuration: const Duration(milliseconds: 250)),
     GetPage(
       name: _Paths.DASHBOARD_SCREEN,
-      page: () => const DashboardScreenView(),
+      page: () => DashboardScreenView(),
       binding: DashboardScreenBinding(),
     ),
     GetPage(
